@@ -1,0 +1,4 @@
+vendor/
+application/Config.php
+.DS_Store
+Thumbs.db
