@@ -1,0 +1,323 @@
+<div class="empresas-main-content">
+    <!-- TITULO -->
+        <p style="font-size: clamp(1.5rem, 5vw, 3.2rem); font-weight: 900; color: #0E46A3; text-align: center; margin: 40px 0 10px 0; letter-spacing: 1px;">
+          Tu marca de telefonía, tu inversión, tu futuro
+        </p>
+    <!-- ENCUESTA + COTIZADOR CON DISEÑO -->
+      <div id="cotizador-form-container" style="max-width:800px; margin:40px auto; font-family:'Segoe UI', Tahoma, sans-serif;">
+        <div style="padding:30px; border-radius:20px; background:#fdfdfd; box-shadow:0 8px 24px rgba(0,0,0,0.08);">
+
+            <h2 style="text-align:center; font-size:2rem; color:#006FA6; margin-bottom:25px; font-weight:800; letter-spacing:1px;">
+            Haz tu cotizacion
+            </h2>
+
+            <form id="contact-form" method="GET" action="https://script.google.com/macros/s/AKfycbxcQrRyK-bjGqQG3Ztsujz5GLEiQdnbqMNbr6rRzfAIpSQkNOka3kl3WRp6JH89UUuv/exec" style="background: white; padding: 30px; border-radius: 18px; box-shadow: 0 12px 35px rgba(0,0,0,0.08); width: 100%; position: relative; overflow: hidden; border: 2px solid transparent; background-image: linear-gradient(white, white), linear-gradient(135deg,#00b4d8,#0077b6); background-origin: border-box; background-clip: padding-box, border-box;">
+                <!-- Campos de contacto -->
+                <div style="display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 200px;">
+                        <label style="font-size: 14px; font-weight: 600; color: #555; margin-bottom: 5px; display: block;">Nombre</label>
+                        <input type="text" name="nombre" required placeholder="Tu nombre" style="width: 100%; padding: 12px; border-radius: 8px; border: none; background: #f0f2f5;">
+                    </div>
+                    <div style="flex: 1; min-width: 200px;">
+                        <label style="font-size: 14px; font-weight: 600; color: #555; margin-bottom: 5px; display: block;">Apellido</label>
+                        <input type="text" name="apellido" required placeholder="Tu apellido" style="width: 100%; padding: 12px; border-radius: 8px; border: none; background: #f0f2f5;">
+                    </div>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="font-size: 14px; font-weight: 600; color: #555; margin-bottom: 5px; display: block;">Correo</label>
+                    <input type="email" name="correo" required placeholder="tu@correo.com" style="width: 100%; padding: 12px; border-radius: 8px; border: none; background: #f0f2f5;">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="font-size: 14px; font-weight: 600; color: #555; margin-bottom: 5px; display: block;">Teléfono</label>
+                    <input type="tel" name="telefono" maxlength="10" pattern="[0-9]{10}" required placeholder="Ingrese 10 dígitos" style="width: 100%; padding: 12px; border-radius: 8px; border: none; background: #f0f2f5;">
+                </div>
+                <!-- Servicio de interés -->
+                <div style="margin-bottom: 20px;">
+                    <label style="font-size: 14px; font-weight: 600; color: #555; margin-bottom: 10px; display: block;">Servicio de interés</label>
+                    <div id="servicios-interes-container" style="display: flex; flex-direction: column; gap: 8px;">
+                        <label class="service-label" style="display: flex; align-items: center; padding: 8px 12px; border-radius: 6px; background: #f8f9fa; cursor: pointer; transition: all 0.2s; font-size: 13px; font-weight: 500;">
+                            <input type="radio" name="servicio_interes" value="tarifas preferenciales" required style="margin-right: 8px; accent-color: #0077b6;">
+                            Tarifas preferenciales
+                        </label>
+                        <label class="service-label" style="display: block; padding: 8px 12px; border-radius: 6px; background: #f8f9fa; cursor: pointer; transition: all 0.2s; font-size: 13px; font-weight: 500;">
+                            <input type="radio" name="servicio_interes" value="marca rapida" onclick="toggleFeatures('marca rapida')" style="margin-right: 8px; accent-color: #0077b6;">
+                            B) $35,000 - $60,000 Marca Rápida
+                            <div class="features" data-service="marca rapida" style="margin-top:10px; display:none; padding-left: 20px; border-left: 2px solid #0077b6; margin-left: 5px;">
+                                <p style="margin:0; font-weight:700; color:#006FA6;">Incluye:</p>
+                                <ul style="margin:6px 0 0 18px; color:#444; line-height:1.6; list-style-type: '▪ ';">
+                                    <li>1,000 SIMs</li>
+                                    <li>Marca en Diaplay</li>
+                                    <li>Tarifas propias</li>
+                                    <li>App del cliente</li>
+                                    <li>Plataforma web Administrativa</li>
+                                    <li>App para ventas</li>
+                                </ul>
+                            </div>
+                        </label>
+                        <label class="service-label" style="display: block; padding: 8px 12px; border-radius: 6px; background: #f8f9fa; cursor: pointer; transition: all 0.2s; font-size: 13px; font-weight: 500;">
+                            <input type="radio" name="servicio_interes" value="marca blanca" onclick="toggleFeatures('marca blanca')" style="margin-right: 8px; accent-color: #0077b6;">
+                            C) $200,000 - $280,000 Marca Blanca
+                            <div class="features" data-service="marca blanca" style="margin-top:10px; display:none; padding-left: 20px; border-left: 2px solid #0077b6; margin-left: 5px;">
+                                <p style="margin:0; font-weight:700; color:#006FA6;">Incluye:</p>
+                                <ul style="margin:6px 0 0 18px; color:#444; line-height:1.6; list-style-type: '▪ ';">
+                                    <li>5,000 SIMs Brandeados</li>hh
+                                    <li>Marca en Diaplay</li>
+                                    <li>Tarifas propias</li>
+                                    <li>App del cliente</li>
+                                    <li>Plataforma web Administrativa</li>
+                                    <li>Página Web</li>
+                                    <li>Bot de WhatsApp</li>
+                                    <li>App para ventas</li>
+                                </ul>
+                            </div>
+                        </label>
+                        <label class="service-label" style="display: block; padding: 8px 12px; border-radius: 6px; background: #f8f9fa; cursor: pointer; transition: all 0.2s; font-size: 13px; font-weight: 500;">
+                            <input type="radio" name="servicio_interes" value="distribuciones" onclick="toggleFeatures('distribuciones')" style="margin-right: 8px; accent-color: #0077b6;">
+                            Distribuciones
+                            <div class="features" data-service="distribuciones" style="margin-top:10px; display:none; padding-left: 20px; border-left: 2px solid #0077b6; margin-left: 5px;">
+                                <strong style="font-size:1.05rem; color:#222;">$0.00</strong>
+                                <p style="margin:0; font-weight:700; color:#006FA6;">DISTRIBUCIÓN LIKEPHONE</p>
+                            </div>
+                        </label>
+                        <label class="service-label" style="display: flex; align-items: center; padding: 8px 12px; border-radius: 6px; background: #f8f9fa; cursor: pointer; transition: all 0.2s; font-size: 13px; font-weight: 500;">
+                            <input type="radio" name="servicio_interes" value="iot" style="margin-right: 8px; accent-color: #0077b6;">
+                            IOT
+                        </label>
+                        <label class="service-label" style="display: flex; align-items: center; padding: 8px 12px; border-radius: 6px; background: #f8f9fa; cursor: pointer; transition: all 0.2s; font-size: 13px; font-weight: 500;">
+                            <input type="radio" name="servicio_interes" value="likecheck" style="margin-right: 8px; accent-color: #0077b6;">
+                            Likecheck
+                        </label>
+                    </div>
+                </div>
+
+                <!-- II. Motivación -->
+                <h3 style="color:#333; font-size:1.2rem; margin:25px 0 12px;">II. ¿Qué te motiva a crear tu propia marca de telefonía?</h3>
+                <div style="display:grid; gap:10px;">
+                    <label style="color:#555; font-size: 13px;"><input type="checkbox" name="motivacion" value="Generar ingresos extra" style="margin-right:8px;"> Generar ingresos extra</label>
+                    <label style="color:#555; font-size: 13px;"><input type="checkbox" name="motivacion" value="Expandir mi portafolio de servicios" style="margin-right:8px;"> Expandir mi portafolio de servicios</label>
+                    <label style="color:#555; font-size: 13px;"><input type="checkbox" name="motivacion" value="Desarrollar inteligencia de negocio" style="margin-right:8px;"> Desarrollar inteligencia de negocio</label>
+                    <label style="color:#555; font-size: 13px;"><input type="checkbox" name="motivacion" value="Crear mi propia marca de telefonía" style="margin-right:8px;"> Crear mi propia marca de telefonía</label>
+                </div>
+
+                <!-- III. Giro -->
+                <h3 style="color:#333; font-size:1.2rem; margin:25px 0 12px;">III. Cual es el giro actual de tu negocio</h3>
+                <select name="giro" required style="width:100%; padding:14px; border-radius:12px; border:1px solid #ccc; font-size:1rem; color:#444; background:#fff;">
+                    <option value="Estoy emprendiendo">Estoy emprendiendo</option>
+                    <option value="Distribuidor de Telecomunicaciones">Distribuidor de Telecomunicaciones</option>
+                    <option value="Servicios de tecnología">Servicios de tecnología</option>
+                    <option value="Venta al público">Venta al público</option>
+                    <option value="Financiero">Financiero</option>
+                    <option value="Educación">Educación</option>
+                    <option value="Entretenimiento">Entretenimiento</option>
+                    <option value="político o institucional">político o institucional</option>
+                    <option value="otros">otros</option>
+                </select>
+
+                <button type="submit" style="width:100%; margin-top:25px; padding:16px; border:none; border-radius:15px; background:#006FA6; color:#fff; font-size:1.15rem; font-weight:700; cursor:pointer; transition:0.3s;">
+                    Enviar
+                </button>
+            </form>
+        </div>
+    </div>
+
+
+    <style>
+    .package .card { transition:all 0.25s ease; }
+    .package.selected .card { border-color:#006FA6; box-shadow:0 8px 20px rgba(0,111,166,0.2); transform:translateY(-4px); }
+
+    /* Mostrar características con CSS cuando el radio está seleccionado */
+    .service-label .features { display: none; }
+    .service-label input[type="radio"]:checked ~ .features { display: block !important; }
+    </style>
+
+    <script>
+    // Lógica robusta para mostrar/ocultar características
+    function resetFeatures() {
+        var allFeatures = document.querySelectorAll('.features');
+        var allLabels = document.querySelectorAll('.service-label');
+        for (var i = 0; i < allFeatures.length; i++) {
+            allFeatures[i].style.display = 'none';
+        }
+        for (var j = 0; j < allLabels.length; j++) {
+            allLabels[j].style.background = '#f8f9fa';
+            allLabels[j].style.border = 'none';
+        }
+    }
+
+    function toggleFeatures(selectedValue) {
+        try {
+            resetFeatures();
+            // Encuentra el radio seleccionado por valor
+            var radio = document.querySelector('input[name="servicio_interes"][value="' + selectedValue + '"]');
+            if (!radio) return;
+            var label = radio.closest('.service-label');
+            if (!label) return;
+            var features = label.querySelector('.features');
+            if (features) {
+                // Forzar visibilidad por si hay CSS externo que lo oculte
+                if (features.style && features.style.setProperty) {
+                    features.style.setProperty('display', 'block', 'important');
+                } else {
+                    features.style.display = 'block';
+                }
+            }
+            label.style.background = '#eaf7ff';
+            label.style.border = '1px solid #0077b6';
+        } catch (e) {
+            console.error('Error al mostrar características:', e);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Enlazar por change para máxima compatibilidad
+        var radios = document.querySelectorAll('input[name="servicio_interes"]');
+        for (var i = 0; i < radios.length; i++) {
+            radios[i].addEventListener('change', function() {
+                toggleFeatures(this.value);
+            });
+        }
+        // Inicializar si ya hay uno seleccionado (por ejemplo, al recargar)
+        var checked = document.querySelector('input[name="servicio_interes"]:checked');
+        if (checked) {
+            toggleFeatures(checked.value);
+        }
+
+        // Lógica de envío del formulario
+        const contactForm = document.getElementById('contact-form');
+        if (contactForm) {
+            contactForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Validación HTML5
+                if (!contactForm.checkValidity()) {
+                    // Forzar UI nativa y alerta amigable
+                    try { contactForm.reportValidity(); } catch(_) {}
+                    showCustomAlert('Por favor, completa todos los campos requeridos.', 'error');
+                    return;
+                }
+
+                const nombre = document.querySelector('input[name="nombre"]').value.trim();
+                const apellido = document.querySelector('input[name="apellido"]').value.trim();
+                const correo = document.querySelector('input[name="correo"]').value.trim();
+                const telefono = document.querySelector('input[name="telefono"]').value.trim();
+                const servicioInteres = document.querySelector('input[name="servicio_interes"]:checked');
+                const motivacionesSeleccionadas = document.querySelectorAll('input[name="motivacion"]:checked');
+                
+                // Validaciones adicionales robustas
+                if (!nombre || !apellido || !correo || !servicioInteres) {
+                    showCustomAlert('Por favor, completa todos los campos requeridos.', 'error');
+                    return;
+                }
+                // Teléfono 10 dígitos numéricos
+                if (!/^\d{10}$/.test(telefono)) {
+                    showCustomAlert('El teléfono debe tener exactamente 10 dígitos numéricos.', 'error');
+                    return;
+                }
+                // Al menos una motivación marcada
+                if (motivacionesSeleccionadas.length === 0) {
+                    showCustomAlert('Selecciona al menos una motivación en la sección II.', 'error');
+                    return;
+                }
+                
+                const emailRegex = /^[^@]+@[^@]+\.[^@]+$/;
+                if (!emailRegex.test(correo)) {
+                    showCustomAlert('Por favor, ingresa un correo electrónico válido.', 'error');
+                    return;
+                }
+
+                const iframe = document.createElement('iframe');
+                iframe.style.display = 'none';
+                iframe.name = 'hidden_iframe';
+                document.body.appendChild(iframe);
+
+                const tempForm = document.createElement('form');
+                tempForm.method = 'GET';
+                tempForm.action = this.action;
+                tempForm.target = 'hidden_iframe';
+                tempForm.style.display = 'none';
+                
+                const formData = new FormData(this);
+                formData.forEach((value, key) => {
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = key;
+                    
+                    if (key === 'nombre' || key === 'apellido' || key === 'servicio_interes') {
+                        input.value = value.toUpperCase();
+                    } else {
+                        input.value = value;
+                    }
+                    
+                    tempForm.appendChild(input);
+                });
+                
+                document.body.appendChild(tempForm);
+                tempForm.submit();
+                
+                showCustomAlert('Tus datos han sido enviados, en un momento te contactamos.', 'success');
+                this.reset();
+                // Resetear estilos de los labels de forma segura
+                try {
+                    resetFeatures();
+                } catch (_) {
+                    // Fallback por si cambia la función
+                    document.querySelectorAll('.features').forEach(function(feature){
+                        feature.style.display = 'none';
+                    });
+                    document.querySelectorAll('.service-label').forEach(function(label){
+                        label.style.background = '#f8f9fa';
+                        label.style.border = 'none';
+                    });
+                }
+                
+                setTimeout(() => {
+                    if (document.body.contains(iframe)) {
+                        document.body.removeChild(iframe);
+                    }
+                    if (document.body.contains(tempForm)) {
+                        document.body.removeChild(tempForm);
+                    }
+                }, 2000);
+            });
+        }
+        
+        function showCustomAlert(message, type = 'success') {
+            const overlay = document.createElement('div');
+            overlay.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 10000; display: flex; justify-content: center; align-items: center;';
+            
+            const modal = document.createElement('div');
+            modal.style.cssText = 'background: white; border-radius: 20px; padding: 40px 30px; text-align: center; max-width: 400px; width: 90%; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); animation: modalSlideIn 0.3s ease-out;';
+            
+            const style = document.createElement('style');
+            style.textContent = '@keyframes modalSlideIn { from { opacity: 0; transform: scale(0.8) translateY(-20px); } to { opacity: 1; transform: scale(1) translateY(0); } }';
+            document.head.appendChild(style);
+            
+            const iconColor = type === 'success' ? '#4CAF50' : '#f44336';
+            const iconSymbol = type === 'success' ? '✓' : '✕';
+            
+            modal.innerHTML = '<div style="width: 80px; height: 80px; border: 3px solid ' + iconColor + '; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; font-size: 40px; color: ' + iconColor + '; font-weight: bold;">' + iconSymbol + '</div>' +
+                              '<h2 style="font-size: 24px; font-weight: bold; color: #333; margin: 0 0 15px 0; font-family: \'Segoe UI\', Arial, sans-serif;">' + (type === 'success' ? '¡Listo!' : '¡Error!') + '</h2>' +
+                              '<p style="font-size: 16px; color: #666; margin: 0 0 30px 0; line-height: 1.4; font-family: \'Segoe UI\', Arial, sans-serif;">' + message + '</p>' +
+                              '<button onclick="this.closest(\'.custom-alert-overlay\').remove()" style="background: #00b4d8; color: white; border: none; padding: 12px 30px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s ease; font-family: \'Segoe UI\', Arial, sans-serif;" onmouseover="this.style.background=\'#0096c7\'" onmouseout="this.style.background=\'#00b4d8\'">Aceptar</button>';
+
+            overlay.className = 'custom-alert-overlay';
+            overlay.appendChild(modal);
+            document.body.appendChild(overlay);
+            
+            overlay.addEventListener('click', function(e) {
+                if (e.target === overlay) {
+                    overlay.remove();
+                }
+            });
+            
+            if (type === 'success') {
+                setTimeout(() => {
+                    if (document.body.contains(overlay)) {
+                        overlay.remove();
+                    }
+                }, 5000);
+            }
+        }
+    });
+    </script>
+</div>

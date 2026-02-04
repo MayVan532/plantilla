@@ -1,0 +1,358 @@
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+<?php
+  $app = $this->lc_app ?? [];
+  $crm = $this->lc_crm ?? [];
+  $agendaLink = $this->lc_appcrm_agenda_link ?? null;
+
+  // Debug temporal para inspeccionar id_bloque y link cuando se pasa ?debugcms=1
+  if (isset($_GET['debugcms'])) {
+    echo '<pre style="background:#fffbe6;border:1px solid #f0c36d;padding:10px;font-size:11px;">';
+    echo "DEBUG app_crm: ";
+    var_dump(
+      'id106', isset($this->debug_lc_106['blockId']) ? $this->debug_lc_106['blockId'] : null,
+      'agendaLink', $agendaLink
+    );
+    echo '</pre>';
+  }
+
+  $appImgItem = $app['imagen'][0] ?? null;
+  $appImgSrc = is_array($appImgItem) ? ($appImgItem['imagen'] ?? null) : $appImgItem;
+  $appTitulo = $app['titulo'][0]['titulo'] ?? ($app['titulo'][0] ?? null);
+  $appTextoRaw = $app['texto'][0]['texto'] ?? ($app['texto'][0] ?? null);
+
+  $crmImgItem = $crm['imagen'][0] ?? null;
+  $crmImgSrc = is_array($crmImgItem) ? ($crmImgItem['imagen'] ?? null) : $crmImgItem;
+  $crmTitulo = $crm['titulo'][0]['titulo'] ?? ($crm['titulo'][0] ?? null);
+  $crmTextoRaw = $crm['texto'][0]['texto'] ?? ($crm['texto'][0] ?? null);
+
+  $appLista = isset($app['lista_item']) ? (array)$app['lista_item'] : [];
+  $crmLista = isset($crm['lista_item']) ? (array)$crm['lista_item'] : [];
+
+  $appTextsUnique = [];
+  if (!empty($appLista)) {
+    foreach ($appLista as $txt) {
+      $norm = trim(preg_replace('/\s+/', ' ', (string)$txt));
+      if ($norm === '') continue;
+      $appTextsUnique[] = $norm;
+    }
+  }
+  $crmTextsUnique = [];
+  if (!empty($crmLista)) {
+    foreach ($crmLista as $txt) {
+      $norm = trim(preg_replace('/\s+/', ' ', (string)$txt));
+      if ($norm === '') continue;
+      $crmTextsUnique[] = $norm;
+    }
+  }
+?>
+
+<div class="likecheck-main-content">
+    <div class="container-fluid p-0" style="width: 100%;">
+        <div class="section-container active" id="appcrm-content" style="padding: 70px 0 60px; margin-top: 1px; background: #ffffff; width: 100%; position: relative; overflow: hidden;">
+               
+                <div class="row align-items-center mb-5" data-aos="fade-up">
+                        <!-- Imagen App -->
+                        <div class="col-lg-5 col-md-12 text-center mb-4 mb-lg-0" data-aos="fade-right">
+                            <div class="image-container" style="position: relative; display: inline-block; max-width: 100%; overflow: visible;">
+                                <?php if (!empty($appImgSrc)) { ?>
+                                  <img src="<?php echo htmlspecialchars((string)$appImgSrc); ?>" alt="App LikeCheck" class="app-image img-fluid" style="animation-delay: 0.2s;">
+                                <?php } else { ?>
+                                  <div style="width:100%; max-width:420px; height:280px; background:#eef3f7; border:1px solid #d9e5f0; border-radius:12px;"></div>
+                                <?php } ?>
+                            </div>
+                        </div>
+                        <!-- Primer grupo de textos -->
+                        <div class="col-lg-5 col-md-12">
+                            <?php if (!empty($appTitulo)) { ?>
+                              <h2 style="font-family: 'Poppins', sans-serif; font-weight: 700; color: #182c83; text-align: center; margin: 0 0 15px 0; text-transform: uppercase; letter-spacing: 1px; font-size: 1.8rem;">
+                                <?php echo htmlspecialchars((string)$appTitulo); ?>
+                              </h2>
+                            <?php } else { ?>
+                              <div style="height:22px; width:60%; background:#e3e8ee; border-radius:8px; margin:0 0 12px 0;"></div>
+                            <?php } ?>
+                            <div class="feature-card" style="background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border-radius: 15px; padding: 25px 20px; border: 1px solid rgba(201,226,255,0.8); font-size: 0.9rem; margin: 0 auto; max-width: 90%;">
+                                <?php if (!empty($appTextoRaw)) { ?>
+                                  <p class="feature-text" style="margin-bottom: 18px; font-weight: 700; text-align: center; color: #00aecd; font-size: 1rem;">
+                                    <?php echo htmlspecialchars((string)$appTextoRaw); ?>
+                                  </p>
+                                <?php } ?>
+                                <?php if (!empty($appTextsUnique)) { foreach ($appTextsUnique as $txt) { ?>
+                                  <div class="feature-item"><div class="check-icon"><i class="fas fa-check" style="color: white; font-size: 0.85rem;"></i></div><p class="feature-text"><?php echo htmlspecialchars((string)$txt); ?></p></div>
+                                <?php } } else { ?>
+                                  <div class="feature-item"><div class="check-icon"><i class="fas fa-check"></i></div><p class="feature-text" style="opacity:.5;">&nbsp;</p></div>
+                                  <div class="feature-item"><div class="check-icon"><i class="fas fa-check"></i></div><p class="feature-text" style="opacity:.5;">&nbsp;</p></div>
+                                  <div class="feature-item"><div class="check-icon"><i class="fas fa-check"></i></div><p class="feature-text" style="opacity:.5;">&nbsp;</p></div>
+                                <?php } ?>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row align-items-center justify-content-center" data-aos="fade-up">
+                        <!-- Segundo grupo de textos -->
+                        <div class="col-lg-5 col-md-12 mb-4 mb-lg-0">
+                            <?php if (!empty($crmTitulo)) { ?>
+                              <h2 style="font-family: 'Poppins', sans-serif; font-weight: 700; color: #182c83; text-align: center; margin: 0 0 15px 0; text-transform: uppercase; letter-spacing: 1px; font-size: 1.8rem;">
+                                <?php echo htmlspecialchars((string)$crmTitulo); ?>
+                              </h2>
+                            <?php } else { ?>
+                              <div style="height:22px; width:60%; background:#e3e8ee; border-radius:8px; margin:0 0 12px 0;"></div>
+                            <?php } ?>
+                            <div class="feature-card" style="background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border-radius: 15px; padding: 25px 20px; border: 1px solid rgba(201,226,255,0.8); font-size: 0.9rem; margin: 0 auto; max-width: 90%;">
+                                <?php if (!empty($crmTextoRaw)) { ?>
+                                  <p class="feature-text" style="margin-bottom: 18px; font-weight: 700; text-align: center; color: #00aecd; font-size: 1rem;">
+                                    <?php echo htmlspecialchars((string)$crmTextoRaw); ?>
+                                  </p>
+                                <?php } ?>
+                                <?php if (!empty($crmTextsUnique)) { foreach ($crmTextsUnique as $txt) { ?>
+                                  <div class="feature-item"><div class="check-icon"><i class="fas fa-check" style="color: white; font-size: 0.85rem;"></i></div><p class="feature-text"><?php echo htmlspecialchars((string)$txt); ?></p></div>
+                                <?php } } else { ?>
+                                  <div class="feature-item"><div class="check-icon"><i class="fas fa-check"></i></div><p class="feature-text" style="opacity:.5;">&nbsp;</p></div>
+                                  <div class="feature-item"><div class="check-icon"><i class="fas fa-check"></i></div><p class="feature-text" style="opacity:.5;">&nbsp;</p></div>
+                                  <div class="feature-item"><div class="check-icon"><i class="fas fa-check"></i></div><p class="feature-text" style="opacity:.5;">&nbsp;</p></div>
+                                <?php } ?>
+                            </div>
+                        </div>
+                        <!-- Imagen CRM -->
+                        <div class="col-lg-5 col-md-12 text-center" data-aos="fade-left">
+                            <div class="image-container" style="position: relative; display: inline-block; max-width: 100%; overflow: visible;">
+                                <div class="glow-effect" style="position: absolute; width: 160%; height: 160%; top: -30%; left: -30%; background: radial-gradient(circle at center, rgba(78,67,118,0.45), transparent 70%); filter: blur(50px); z-index: -1;"></div>
+                                <?php if (!empty($crmImgSrc)) { ?>
+                                  <img src="<?php echo htmlspecialchars((string)$crmImgSrc); ?>" alt="CRM Dashboard" class="crm-image img-fluid" style="max-width: 100%; height: auto;">
+                                <?php } else { ?>
+                                  <div style="width:100%; max-width:520px; height:320px; background:#eef3f7; border:1px solid #d9e5f0; border-radius:12px;"></div>
+                                <?php } ?>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center mt-5" style="animation: slideUp 0.8s ease both 0.7s;">
+                        <?php if (!empty($agendaLink)) { ?>
+                          <a href="<?php echo htmlspecialchars((string)$agendaLink); ?>" class="action-button" target="_blank" rel="noopener" style="display: inline-block; background: linear-gradient(45deg, #00c2cb, #00a0bb); color: white; font-weight: 600; padding: 16px 60px; font-size: 1.2rem; text-decoration: none; box-shadow: 0 10px 20px rgba(0, 194, 203, 0.4); transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px; border-radius: 0 !important; min-width: 260px;">
+                              AGENDA TU DEMO <i class="fas fa-chevron-right"></i>
+                          </a>
+                        <?php } else { ?>
+                          <div style="height:48px; width:260px; background:#cfd6dd; margin:0 auto;"></div>
+                        <?php } ?>
+                    </div>
+                </div>
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                    const animatedElements = [
+                        '.feature-item',
+                        '.app-image',
+                        '.crm-image',
+                        '.section-title',
+                        '.subtitle',
+                        '.action-button',
+                        '.feature-card',
+                        '.feature-badge'
+                    ];
+                    function animateOnScroll() {
+                        animatedElements.forEach(selector => {
+                    const elements = document.querySelectorAll(selector);
+                        elements.forEach(item => {
+                    const position = item.getBoundingClientRect().top;
+                    const screenPosition = window.innerHeight / 1.1;                                              
+                    if (position < screenPosition) {
+                        item.style.opacity = '1';
+                        item.style.transform = 'translateY(0)';
+                        item.classList.add('animated');
+                        }
+                        });
+                        });
+                        }
+                    const featureItems = document.querySelectorAll('.feature-item');
+                        featureItems.forEach(item => {
+                        item.addEventListener('mouseenter', function() {
+                        this.style.transform = 'translateY(-5px) scale(1.03)';
+                    const checkIcon = this.querySelector('.check-icon');
+                    if (checkIcon) {
+                        checkIcon.style.transform = 'scale(1.2) rotate(10deg)';
+                        }
+                        });             
+                        item.addEventListener('mouseleave', function() {
+                        this.style.transform = '';
+                    const checkIcon = this.querySelector('.check-icon');
+                    if (checkIcon) {
+                        checkIcon.style.transform = '';
+                        }
+                        });
+                        });
+                    function parallaxEffect() {
+                    const decorationCircles = document.querySelectorAll('.decoration-circle');
+                        window.addEventListener('mousemove', function(e) {
+                    const x = e.clientX / window.innerWidth;
+                    const y = e.clientY / window.innerHeight;                                           
+                        decorationCircles.forEach((circle, index) => {
+                    const speed = (index + 1) * 10;
+                    const offsetX = (x - 0.5) * speed;
+                    const offsetY = (y - 0.5) * speed;
+                        circle.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+                        });
+                        });
+                        }
+                    const actionButton = document.querySelector('.action-button');
+                    if (actionButton) {
+                        actionButton.addEventListener('mouseenter', function() {
+                        this.style.transform = 'translateY(-3px) scale(1.05)';
+                        this.style.boxShadow = '0 15px 25px rgba(0, 114, 255, 0.5)';
+                        });         
+                        actionButton.addEventListener('mouseleave', function() {
+                        this.style.transform = '';
+                        this.style.boxShadow = '';
+                        });
+                        }
+                        animateOnScroll();
+                        parallaxEffect();
+                    let lastScrollTime = 0;
+                        window.addEventListener('scroll', function() {
+                    const now = Date.now();
+                    if (now - lastScrollTime > 50) { // 50ms throttle
+                        lastScrollTime = now;
+                        animateOnScroll();
+                        }
+                        });
+                    if (!CSS.supports('(backdrop-filter: blur(10px))')) {
+                    const featureCard = document.querySelector('.feature-card');
+                    if (featureCard) {
+                        featureCard.style.background = 'rgba(43, 88, 118, 0.8)';
+                        }                   
+                    const featureItems = document.querySelectorAll('.feature-item');
+                        featureItems.forEach(item => {
+                        item.style.background = 'rgba(43, 88, 118, 0.4)';
+                        });
+                        }
+                        });
+                </script>                 
+            </div>
+        </div>
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+            @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap');
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+            @keyframes slideUp {
+                from { transform: translateY(40px); opacity: 0; }
+                to { transform: translateY(0); opacity: 1; }
+            }
+            @keyframes slideInLeft {
+                from { transform: translateX(-50px); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideInRight {
+                from { transform: translateX(50px); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes float {
+                0%, 100% { transform: translateY(0); }
+                50% { transform: translateY(-12px); }
+            }
+            @keyframes pulse {
+                0% { transform: scale(1); }
+                50% { transform: scale(1.05); }
+                100% { transform: scale(1); }
+            }
+            @keyframes glow {
+                0% { box-shadow: 0 0 10px rgba(101, 183, 255, 0.5); }
+                50% { box-shadow: 0 0 20px rgba(101, 183, 255, 0.8); }
+                100% { box-shadow: 0 0 10px rgba(101, 183, 255, 0.5); }
+            }
+            #appcrm-content {
+                position: relative;
+                z-index: 1;
+                /* Se eliminó box-shadow para uniformidad visual */
+            }
+            .feature-item {
+                margin-bottom: 25px;
+                padding: 12px 15px;
+                background: rgba(255, 255, 255, 0.9);
+                border-radius: 12px;
+                transition: all 0.3s ease;
+                animation: slideUp 0.6s ease both;
+                backdrop-filter: blur(5px);
+                border: 1px solid rgba(201, 226, 255, 0.7);
+                /* Se eliminó box-shadow para uniformidad visual */
+                display: flex;
+                align-items: center;
+            }
+            .feature-item:hover {
+                transform: translateY(-5px);
+                background: rgba(255, 255, 255, 1);
+                /* Se eliminó box-shadow para uniformidad visual */
+                border: 1px solid rgba(7, 153, 182, 0.3);
+            }
+            .feature-item:nth-child(1) { animation-delay: 0.1s; }
+            .feature-item:nth-child(2) { animation-delay: 0.2s; }
+            .feature-item:nth-child(3) { animation-delay: 0.3s; }
+            .feature-item:nth-child(4) { animation-delay: 0.4s; }
+            .feature-item:nth-child(5) { animation-delay: 0.5s; }
+            .feature-item:nth-child(6) { animation-delay: 0.6s; }
+            .check-icon {
+                display: inline-flex;
+                justify-content: center;
+                align-items: center;
+                width: 32px;
+                height: 32px;
+                min-width: 32px;
+                background: linear-gradient(135deg, #00c6ff, #0072ff);
+                border-radius: 50%;
+                margin-right: 12px;
+                /* Se eliminó box-shadow para uniformidad visual */
+                position: relative;
+                z-index: 1;
+                transition: all 0.3s ease;
+            }
+            .feature-item:hover .check-icon {
+                transform: scale(1.1) rotate(5deg);
+            }
+            .feature-text {
+                margin: 0;
+                color: #051440;
+                font-size: 0.95rem;
+                font-weight: 600;
+                flex: 1;
+            }
+            .section-title {
+                text-align: center;
+                font-size: 3.2rem;
+                font-weight: 800;
+                color: #ffffff;
+                margin-bottom: 50px;
+                font-family: 'Montserrat', sans-serif;
+                position: relative;
+                text-transform: uppercase;
+                letter-spacing: 2px;
+                text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+                animation: fadeIn 1s ease both;
+            }
+            .section-title:after {
+                content: "";
+                position: absolute;
+                bottom: -15px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 80px;
+                height: 5px;
+                background: linear-gradient(90deg, #00c6ff, #0072ff);
+                border-radius: 5px;
+            }
+            .app-image {
+                max-height: 1100px;
+                width: auto;
+                min-width: 380px;
+                display: inline-block;
+                object-fit: contain;
+            }
+            .crm-image {
+                max-height: 1100px;
+                width: auto;
+                min-width: 380px;
+                display: inline-block;
+                object-fit: contain;
+            }
+        </style>
+    </div>
+

@@ -1,0 +1,64 @@
+<div class="personas-main-content" style="background:#f3f4f6; min-height:100vh; padding:0;">
+
+  <div class="container-fluid">
+    <div class="row no-gutters">
+      <?php $activeMenu = 'miperfil'; require __DIR__ . '/_sidebarUsuarios.phtml'; ?>
+      <div class="col-12 col-lg-10" style="padding-left:0; padding-right:0;">
+        <?php require __DIR__ . '/_headerUsuarios.phtml'; ?>
+        <div style="padding:16px 24px 24px 24px;">
+          <div style="font-size:18px; font-weight:600; color:#111827; margin-bottom:14px; text-align:left;">Mi Perfil</div>
+
+          <div class="row" style="margin:0 -8px;">
+            <div class="col-12 col-lg-8" style="padding:0 8px 16px 8px;">
+              <div style="background:#ffffff; border-radius:18px; padding:24px 24px 20px 24px; box-shadow:0 18px 40px rgba(15,23,42,.08);">
+                <div style="display:flex; flex-direction:column; align-items:center; margin-bottom:18px;">
+                  <div style="width:80px; height:80px; border-radius:999px; border:2px solid #e5e7eb; display:flex; align-items:center; justify-content:center; margin-bottom:10px;">
+                    <i class="fas fa-user" style="font-size:32px; color:#6b7280;"></i>
+                  </div>
+                  <button type="button" style="border:none; background:#00bcd4; color:#f9fafb; font-size:13px; padding:7px 16px; border-radius:4px; font-weight:600;">Seleccionar foto de perfil</button>
+                </div>
+
+                <form>
+                  <div style="margin-bottom:10px; font-size:13px; color:#374151;">Nombre:</div>
+                  <div style="margin-bottom:10px;"><input type="text" style="width:100%; border:1px solid #d1d5db; border-radius:4px; padding:8px 10px; font-size:14px;" value="" /></div>
+
+                  <div style="margin-bottom:10px; font-size:13px; color:#374151;">Apellido Paterno:</div>
+                  <div style="margin-bottom:10px;"><input type="text" style="width:100%; border:1px solid #d1d5db; border-radius:4px; padding:8px 10px; font-size:14px;" value="" /></div>
+
+                  <div style="margin-bottom:10px; font-size:13px; color:#374151;">Apellido Materno:</div>
+                  <div style="margin-bottom:10px;"><input type="text" style="width:100%; border:1px solid #d1d5db; border-radius:4px; padding:8px 10px; font-size:14px;" value="" /></div>
+
+                  <div style="margin-bottom:10px; font-size:13px; color:#374151;">Teléfono:</div>
+                  <div style="margin-bottom:10px;"><input type="text" style="width:100%; border:1px solid #d1d5db; border-radius:4px; padding:8px 10px; font-size:14px;" value="" /></div>
+
+                  <div style="margin-bottom:10px; font-size:13px; color:#374151;">Correo electrónico:</div>
+                  <div style="margin-bottom:10px;"><input type="email" style="width:100%; border:1px solid #d1d5db; border-radius:4px; padding:8px 10px; font-size:14px;" value="" /></div>
+
+                  <div style="margin-bottom:10px; font-size:13px; color:#374151;">*Opcional Cambiar</div>
+                  <div style="margin-bottom:14px;"><input type="password" placeholder="Contraseña" style="width:100%; border:1px solid #d1d5db; border-radius:4px; padding:8px 10px; font-size:14px;" /></div>
+
+                  <div style="display:flex; justify-content:flex-end;">
+                    <button type="submit" style="border:1px solid #00bcd4; background:#00bcd4; color:#f9fafb; font-size:14px; padding:8px 18px; border-radius:4px; font-weight:600;">Guardar</button>
+                  </div>
+                </form>
+
+              </div>
+            </div>
+
+            <div class="col-12 col-lg-4" style="padding:0 8px 16px 8px;">
+              <div style="background:#ffffff; border-radius:18px; padding:18px 20px 18px 20px; box-shadow:0 18px 40px rgba(15,23,42,.08); min-height:160px; display:flex; flex-direction:column; justify-content:space-between;">
+                <div style="font-size:13px; color:#374151; margin-bottom:18px;">
+                  ¿Deseas eliminar tu cuenta LikePhone? Da clic en el siguiente botón. Esta operación es irreversible.
+                </div>
+                <div style="display:flex; justify-content:flex-start;">
+                  <button type="button" style="border:1px solid #00bcd4; background:#00bcd4; color:#f9fafb; font-size:13px; padding:7px 18px; border-radius:4px; font-weight:600;">Eliminar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,11 @@
+Options All -Indexes
+RewriteEngine On
+
+# Redirigir la raíz al landing de Personas (ruta absoluta)
+RewriteRule ^$ /personas/inicio/ [R=302,L]
+
+# Reglas para enrutamiento a index.php
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-l
+RewriteRule ^(.+)$ index.php?url=$1 [QSA,L]

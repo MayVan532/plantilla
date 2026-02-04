@@ -1,0 +1,300 @@
+<div class="empresas-main-content" style="background:#ffffff;">
+    <!-- BANNER (B92) -->
+    <div style="position: relative; max-width: 100%; overflow: hidden; margin-top: 0; background:#ffffff; border-radius:0px;">
+        <div style="display: block; width: 100%;">
+            <?php $b92=$this->iot_banner1 ?? null; $b92Href=$this->iot_banner1_link ?? null; ?>
+            <?php if (!empty($b92['imagen'])) { ?>
+              <?php if ($b92Href) { ?><a href="<?php echo htmlspecialchars($b92Href); ?>"><?php } ?>
+                <img src="<?php echo htmlspecialchars($b92['imagen']); ?>" style="width: 100%; height: auto; display: block;">
+              <?php if ($b92Href) { ?></a><?php } ?>
+            <?php } else { ?>
+              <div style="width:100%;height:260px;background:#eef3f7;border-radius:12px;"></div>
+            <?php } ?>
+        </div>
+    </div>
+    <!-- TITULO -->
+    <p style="font-size: 3.2rem; font-weight: 900; color: #006FA6; text-align: center; margin-bottom: 10px; letter-spacing: 1px; margin-top: 35px;">
+        INTERNET DE LAS COSAS</span>
+    </p>
+    
+    <!-- SUBTITULO -->
+    <p style="width: 90%; margin: 40px auto 0 auto; text-align: center; font-size: 22px; color: #000000; line-height: 1.8; font-weight: 500; letter-spacing: 0.5px; text-shadow: 1px 1px 2px rgba(0,0,0,0.1);">
+        Implementa proyectos para Monitoreo y rastreo de personas, vehículos y equipos, así como metrificación de indicadores específicos.
+    </p>
+    <!-- TEXTOS E ICONOS (Diseño con estilos aplicados directamente) -->
+    <div style="position: relative; max-width: 1200px; margin: 40px auto 10px; padding: 30px 20px 0; font-family: Arial, sans-serif; background:#f5f7fb; border-radius:12px;">
+        <!-- Línea de progreso -->
+        <div style="position: absolute; left: 8%; right: 8%; top: 82px; height: 16px; border-radius: 10px; background: linear-gradient(90deg, #7ad9e9 0%, #0098cf 35%, #1b2a70 70%, #9aa0b3 100%); opacity: 0.9; z-index: 1; box-shadow: 0 4px 8px rgba(0,0,0,0.1);"></div>
+            <!-- Flechas centradas en la línea -->
+            <div style="position: absolute; top: 75px; z-index: 3; left: 23%;">
+                <div style="width: 0; height: 0; border-top: 18px solid transparent; border-bottom: 18px solid transparent; border-left: 28px solid #1b2a70; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));"></div>
+            </div>
+            <div style="position: absolute; top: 75px; z-index: 3; left: 48.5%;">
+                <div style="width: 0; height: 0; border-top: 18px solid transparent; border-bottom: 18px solid transparent; border-left: 28px solid #1b2a70; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));"></div>
+            </div>
+            <div style="position: absolute; top: 75px; z-index: 3; left: 74%;">
+                <div style="width: 0; height: 0; border-top: 18px solid transparent; border-bottom: 18px solid transparent; border-left: 28px solid #1b2a70; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));"></div>
+            </div>
+            <div style="display: flex; align-items: flex-start; justify-content: space-between; position: relative; z-index: 2;">
+            <!-- Paso 1 -->
+            <div style="flex: 1; text-align: center; position: relative; margin: 0 8px;">
+                <div style="width: 100px; height: 100px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; overflow: hidden; box-shadow: 0 12px 24px rgba(0,0,0,0.15); transition: transform 0.3s ease; background: linear-gradient(135deg, #00b5e2, #0098cf);">
+                    <img src="<?php echo BASE_URL; ?>resources/assets/images/empresas/IOT_Arrendamiento.png" alt="Arrendamiento" style="width: 70%; height: 70%; object-fit: contain;">
+                </div>
+                <div style="background: linear-gradient(145deg, #ffffff, #f8f9fa); margin-top: 15px; padding: 18px 20px; border-radius: 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.12); text-align: left; border: 1px solid rgba(27,42,112,0.1); transition: all 0.3s ease; min-height: 120px; display: flex; flex-direction: column; justify-content: space-between;">
+                    <h3 style="font-size: 17px; font-weight: 800; color: #1b2a70; margin: 0 0 8px; text-shadow: 0 1px 2px rgba(0,0,0,0.05);">Arrendamiento</h3>
+                    <p style="font-size: 13px; color: #4a4a4a; line-height: 1.6; margin: 0;">Geolocalización de dispositivos o equipos arrendados, metrificación remota de usabilidad.</p>
+                </div>
+            </div>
+
+            <!-- Paso 2 -->
+            <div style="flex: 1; text-align: center; position: relative; margin: 0 8px;">
+                <div style="width: 100px; height: 100px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; overflow: hidden; box-shadow: 0 12px 24px rgba(0,0,0,0.15); transition: transform 0.3s ease; background: linear-gradient(135deg, #0084d1, #006bb3);">
+                    <img src="<?php echo BASE_URL; ?>resources/assets/images/empresas/IOT_Logística.png" alt="Logística y traslado" style="width: 70%; height: 70%; object-fit: contain;">
+                </div>
+                <div style="background: linear-gradient(145deg, #ffffff, #f8f9fa); margin-top: 15px; padding: 18px 20px; border-radius: 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.12); text-align: left; border: 1px solid rgba(27,42,112,0.1); transition: all 0.3s ease; min-height: 120px; display: flex; flex-direction: column; justify-content: space-between;">
+                    <h3 style="font-size: 17px; font-weight: 800; color: #1b2a70; margin: 0 0 8px; text-shadow: 0 1px 2px rgba(0,0,0,0.05);">Logística y traslado</h3>
+                    <p style="font-size: 13px; color: #4a4a4a; line-height: 1.6; margin: 0;">Rastreo de vehículos y metrificación de indicadores de desempeño y rendimiento para optimizar costos de operación.</p>
+                </div>
+            </div>
+
+            <!-- Paso 3 -->
+            <div style="flex: 1; text-align: center; position: relative; margin: 0 8px;">
+                <div style="width: 100px; height: 100px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; overflow: hidden; box-shadow: 0 12px 24px rgba(0,0,0,0.15); transition: transform 0.3s ease; background: linear-gradient(135deg, #1b2a70, #0f1a4a);">
+                    <img src="<?php echo BASE_URL; ?>resources/assets/images/empresas/IOT_Remotas.png" alt="Actividades Remotas" style="width: 70%; height: 70%; object-fit: contain;">
+                </div>
+                <div style="background: linear-gradient(145deg, #ffffff, #f8f9fa); margin-top: 15px; padding: 18px 20px; border-radius: 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.12); text-align: left; border: 1px solid rgba(27,42,112,0.1); transition: all 0.3s ease; min-height: 120px; display: flex; flex-direction: column; justify-content: space-between;">
+                    <h3 style="font-size: 17px; font-weight: 800; color: #1b2a70; margin: 0 0 8px; text-shadow: 0 1px 2px rgba(0,0,0,0.05);">Actividades Remotas</h3>
+                    <p style="font-size: 13px; color: #4a4a4a; line-height: 1.6; margin: 0;">Control de asistencia por reconocimiento facial, geolocalización, incidencias de prenómina y trazabilidad en la ejecución de actividades.</p>
+                </div>
+            </div>
+
+            <!-- Paso 4 -->
+            <div style="flex: 1; text-align: center; position: relative; margin: 0 8px;">
+                <div style="width: 100px; height: 100px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; overflow: hidden; box-shadow: 0 12px 24px rgba(0,0,0,0.15); transition: transform 0.3s ease; background: linear-gradient(135deg, #0d193e, #081128);">
+                    <img src="<?php echo BASE_URL; ?>resources/assets/images/empresas/IOT_Monitoreo.png" alt="Monitoreo" style="width: 70%; height: 70%; object-fit: contain;">
+                </div>
+                <div style="background: linear-gradient(145deg, #ffffff, #f8f9fa); margin-top: 15px; padding: 18px 20px; border-radius: 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.12); text-align: left; border: 1px solid rgba(27,42,112,0.1); transition: all 0.3s ease; min-height: 120px; display: flex; flex-direction: column; justify-content: space-between;">
+                    <h3 style="font-size: 17px; font-weight: 800; color: #1b2a70; margin: 0 0 8px; text-shadow: 0 1px 2px rgba(0,0,0,0.05);">Monitoreo</h3>
+                    <p style="font-size: 13px; color: #4a4a4a; line-height: 1.6; margin: 0;">Cámaras de vigilancia, verificación de consumos, etc.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Texto principal (B93) -->
+    <?php $my=$this->iot_mayor??[]; $myImg=$my['imagen'][0]??null; $myTit=$my['titulo'][0]??null; $mySub=$my['subtitulo'][0]??null; $myTxt=$my['texto'][0]??null; ?>
+    <div style="flex: 1 1 300px; color: #161179; font-size: 28px; font-weight: bold; min-width: 280px; margin-bottom: 20px; text-align: center; margin-top: 40px;">
+        <?php if ($myTit) { echo htmlspecialchars($myTit); } else { ?><span style="display:inline-block;height:18px;width:60%;background:#e6eaf1;border-radius:8px;"></span><?php } ?>
+    </div>
+    <!-- SUBTITULO -->
+    <p style="width: 70%; margin: 35px auto 0 auto; text-align: center; font-size: 20px; color: #161179; line-height: 1.5;">
+        <?php 
+          if ($myTxt) { 
+            echo nl2br(htmlspecialchars($myTxt)); 
+          } elseif ($mySub) { 
+            echo nl2br(htmlspecialchars($mySub)); 
+          } else { 
+        ?>
+            <span style="display:inline-block;height:14px;width:85%;background:#edf1f5;border-radius:7px;"></span>
+        <?php } ?>
+    </p>
+    <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 40px; max-width: 1100px; margin: auto; margin-top: 40px;padding: 0 20px;">
+        <div style="flex: 1 1 350px; min-width:300px; display:flex; justify-content:center;">
+            <div style="background:#ffffff; border-radius:12px; padding:10px; width:100%; max-width:520px; display:flex; justify-content:center;">
+                <?php if ($myImg) { ?><img src="<?php echo htmlspecialchars($myImg); ?>" style="width: 500px; max-width: 100%; height: auto; border-radius: 0; background: transparent;"><?php } else { ?><div style="width:100%;max-width:500px;height:260px;background:#eef3f7;border-radius:12px;"></div><?php } ?>
+            </div>
+        </div>
+        <?php 
+          $items = isset($my['lista_item']) ? array_values(array_filter(array_map('trim', (array)$my['lista_item']))) : [];
+          $has = !empty($items);
+          $skeletonCount = 5;
+        ?>
+        <ul style="font-size: 18px; color: #2c3e50; line-height: 1.8; margin: 0; padding-left: 0; list-style: none; flex: 1 1 320px; text-align: justify; font-family: 'Segoe UI', 'Helvetica Neue', sans-serif; font-weight: 500;">
+            <?php if ($has) { foreach ($items as $txt) { ?>
+              <li style="display: flex; align-items: flex-start; gap: 12px; margin-bottom:6px;">
+                <span style="color: #1a5276; font-weight: 600;">&nbsp;<?php echo htmlspecialchars($txt); ?></span>
+              </li>
+            <?php } } else { for ($i=0; $i<$skeletonCount; $i++) { ?>
+              <li style="display: flex; align-items: flex-start; gap: 12px; margin-bottom:6px;">
+                <span style="display:inline-block;height:14px;width:95%;background:#e8edf3;border-radius:7px;"></span>
+              </li>
+            <?php } } ?>
+        </ul>
+    </div>
+    <!-- BOTON DE AGENDA TU DEMO (B94) -->
+    <div style="width: 100%; text-align: center; margin-top: 20px;">
+        <?php $ag=$this->iot_agenda??[]; $agBtn=$ag['boton'][0]??'AGENDA TU DEMO'; $agLink=($this->iot_agenda_link ?? null) ?: ($ag['link'][0]??null); ?>
+        <?php if ($agLink) { ?>
+        <a href="<?php echo htmlspecialchars($agLink); ?>" target="_blank" rel="noopener noreferrer"
+           style="display:inline-flex; align-items:center; justify-content:center; gap:10px; background:#00c7d9; color:#fff; padding:14px 30px; border-radius:9999px; font-size:18px; font-weight:700; text-decoration:none; box-shadow:0 6px 14px rgba(0,0,0,0.15); transition:all .25s ease;"
+           onmouseover="this.style.background='#00aebf'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 18px rgba(0,0,0,0.22)';"
+           onmouseout="this.style.background='#00c7d9'; this.style.transform='translateY(0)'; this.style.boxShadow='0 6px 14px rgba(0,0,0,0.15)';">
+            <?php echo htmlspecialchars($agBtn); ?> <i class="fa-solid fa-arrow-right" style="font-size:16px;"></i>
+        </a>
+        <?php } else { ?><div style="display:inline-block;height:44px;width:220px;background:#e5ecf6;border-radius:50px;"></div><?php } ?>
+    </div>
+    <?php 
+      $avlh=$this->iot_avl_head??[]; 
+      $allTitles = isset($avlh['titulo']) && is_array($avlh['titulo']) ? $avlh['titulo'] : []; 
+      $prefIdx = 0; 
+      foreach ($allTitles as $idx=>$t) { if (mb_strtolower(trim((string)$t)) === 'avl tracking') { $prefIdx = $idx; break; } }
+      $avlTit = $allTitles[$prefIdx] ?? ($allTitles[0] ?? null);
+      $avlSub1 = isset($avlh['subtitulo'][$prefIdx]) ? $avlh['subtitulo'][$prefIdx] : null;
+      $avlTxt  = isset($avlh['texto'][$prefIdx]) ? $avlh['texto'][$prefIdx] : null;
+    ?>
+    <!-- Encabezado AVL (B96) -->
+    <p style="font-size: 3.2rem; font-weight: 900; color: #1A2A80; text-align: center; margin-bottom: 10px; letter-spacing: 1px; margin-top: 30px;">
+        <?php echo $avlTit ? htmlspecialchars($avlTit) : '<span style="display:inline-block;height:22px;width:40%;background:#e6eaf1;border-radius:8px;"></span>'; ?>
+    </p>
+    <?php if ($avlSub1) { ?>
+      <p style="width: 90%; margin: 10px auto 0 auto; text-align: center; font-size: 20px; color: #000000; line-height: 1.8; font-weight: 500;">
+        <?php echo nl2br(htmlspecialchars($avlSub1)); ?>
+      </p>
+    <?php } ?>
+    <p style="width: 90%; margin: 6px auto 0 auto; text-align: center; font-size: 20px; color: #000000; line-height: 1.8; font-weight: 500;">
+        <?php echo $avlTxt ? nl2br(htmlspecialchars($avlTxt)) : '<span style="display:inline-block;height:16px;width:70%;background:#edf1f5;border-radius:8px;"></span>'; ?>
+    </p>
+    <!-- 3 Tarjetas + separadores (B96) -->
+    <?php 
+      $avlRaw = isset($this->iot_avl_cards) && is_array($this->iot_avl_cards) ? $this->iot_avl_cards : [];
+      // Normalizar: aceptar JSON string y claves en inglés
+      $normalized = [];
+      foreach ($avlRaw as $item) {
+        if (is_string($item)) { $dec = json_decode($item, true); if (is_array($dec)) { $item = $dec; } }
+        if (is_array($item)) {
+          $titulo = (string)($item['titulo'] ?? ($item['title'] ?? ''));
+          $texto  = (string)($item['texto'] ?? ($item['text'] ?? ''));
+          $sub    = (string)($item['subtitulo'] ?? ($item['subtitle'] ?? ''));
+          $normalized[] = ['titulo'=>$titulo,'texto'=>$texto,'subtitulo'=>$sub];
+        }
+      }
+      $avl = !empty($normalized) ? $normalized : $avlRaw;
+      // Orden preferente por título
+      $order = ['conectividad'=>0,'plataforma'=>1,'dispositivos'=>2,'dispositivo'=>2];
+      usort($avl, function($a,$b) use($order){
+        $ta = strtolower(trim((string)($a['titulo']??'')));
+        $tb = strtolower(trim((string)($b['titulo']??'')));
+        $ia = $order[$ta] ?? 99; $ib = $order[$tb] ?? 99;
+        if ($ia === $ib) { return 0; }
+        return $ia <=> $ib;
+      });
+      if (!empty($_GET['debugcms'])) {
+        echo '<pre style="background:#000;color:#0f0;padding:6px;font-size:11px;">';
+        echo "iot_avl_cards="; var_export($this->iot_avl_cards);
+        echo "\nnormalized="; var_export($normalized);
+        echo '</pre>';
+      }
+    ?>
+    <div style="display:flex;gap:26px;align-items:stretch;justify-content:center;flex-wrap:wrap;margin:26px 0 40px 0;font-family:'Segoe UI',Roboto,Arial,sans-serif;">
+      <?php if (!empty($avl)) { $i=0; foreach ($avl as $card) { $i++; $ct=$card['titulo']??''; $ctx=$card['texto']??''; $csub=$card['subtitulo']??''; ?>
+        <div style="width:260px;min-height:420px;border-radius:16px;box-shadow:0 8px 20px rgba(0,0,0,0.15);overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;background:#fff;">
+          <div style="background:linear-gradient(135deg,#0084ff,#00c853);color:white;text-align:center;padding:14px;font-weight:700;letter-spacing:1px;font-size:16px;">
+            <?php echo htmlspecialchars($ct); ?>
+          </div>
+          <div style="flex:1;padding:18px;font-size:14px;color:#333;line-height:1.7;text-align:left;">
+            <?php 
+              $lines = array_values(array_filter(preg_split('/\r?\n/', (string)$ctx), function($l){ return trim($l) !== ''; }));
+              if (!empty($lines)) { echo '<ul style="margin:0;padding-left:18px;">'; foreach ($lines as $ln) { echo '<li>'.htmlspecialchars($ln).'</li>'; } echo '</ul>'; }
+            ?>
+          </div>
+          <?php if (trim($csub) !== '') { ?>
+            <div style="text-align:center;padding:12px;background:linear-gradient(135deg,#0a2d7c,#1565c0);color:#fff;font-weight:700;letter-spacing:.5px;font-size:15px;">
+              <?php echo htmlspecialchars($csub); ?>
+            </div>
+          <?php } ?>
+        </div>
+        <?php if ($i < count($avl)) { ?><div style="align-self:center;color:#00a0a8;font-size:28px;font-weight:900;">+</div><?php } ?>
+      <?php } } else { for($i=0;$i<3;$i++){ ?>
+        <div style="width:260px;min-height:420px;border-radius:16px;box-shadow:0 8px 20px rgba(0,0,0,0.15);overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;background:#fff;">
+          <div style="height:40px;background:#e6eef7;"></div>
+          <div style="flex:1;padding:20px;">
+            <div style="height:12px;background:#edf2f7;border-radius:6px;margin:6px 0;width:90%"></div>
+            <div style="height:12px;background:#edf2f7;border-radius:6px;margin:6px 0;width:80%"></div>
+          </div>
+          <div style="height:40px;background:#e0e8f2;"></div>
+        </div>
+        <?php if ($i < 2) { ?><div style="align-self:center;color:#00a0a8;font-size:28px;font-weight:900;">+</div><?php } ?>
+      <?php } } ?>
+    </div>
+    <!-- TITULO -->
+    <p style="font-size: 3.2rem; font-weight: 900; color: #1A2A80; text-align: center; margin-bottom: 10px; letter-spacing: 1px; margin-top: 30px;">
+        Tarifas IOT</span>
+    </p>
+    <!-- BANNER TARIFAS (B97) -->
+    <div style="position: relative; max-width: 100%; overflow: hidden; margin-top: 10px; display: flex; justify-content: center; background:#ffffff; border-radius:12px;">
+        <div style="width: 100%; max-width: 1200px;">
+            <?php $b97=$this->iot_tarifas ?? null; $b97Href=$this->iot_tarifas_link ?? null; ?>
+            <?php if (!empty($b97['imagen'])) { ?>
+              <?php if ($b97Href) { ?><a href="<?php echo htmlspecialchars($b97Href); ?>"><?php } ?>
+                <img src="<?php echo htmlspecialchars($b97['imagen']); ?>" style="width: 100%; height: auto; display: block;">
+              <?php if ($b97Href) { ?></a><?php } ?>
+            <?php } else { ?>
+              <div style="width:100%;height:240px;background:#eef3f7;border-radius:12px;"></div>
+            <?php } ?>
+        </div>
+    </div>
+    <!-- Notas (texto más grueso) -->
+    <?php $cs=$this->iot_costos??[]; $csTxt=$cs['texto'][0]??null; ?>
+    <div style="max-width:1200px;margin:25px auto;font-family:'Segoe UI',Roboto,Arial,sans-serif;font-size:15px;font-weight:500;color:#333;line-height:1.7;background:linear-gradient(135deg,#fdfbfb,#f1f4ff);padding:20px 24px;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,0.08);border-left:6px solid #6a1b9a;">
+        <?php if ($csTxt) { echo nl2br(htmlspecialchars($csTxt)); } else { ?>
+          <div style="height:14px;background:#e9eef5;border-radius:7px;width:80%;margin:6px 0;"></div>
+          <div style="height:14px;background:#e9eef5;border-radius:7px;width:60%;margin:6px 0;"></div>
+        <?php } ?>
+    </div>
+    
+    <!-- SECCION DE CONTACTO -->
+    <div style="background: linear-gradient(135deg, #739EC9, #5682B1); 
+                color: #fff; 
+                padding: 70px 20px; 
+                border-radius: 20px; 
+                text-align: center; 
+                font-family: 'Arial Black', sans-serif; 
+                box-shadow: 0 10px 30px rgba(0,0,0,0.4); 
+                margin: 40px auto; 
+                position: relative; 
+                overflow: hidden;
+                width: 80%;">
+        <!-- Efecto de luces en el fondo -->
+        <div style="position: absolute; top: -50px; left: -50px; width: 200px; height: 200px; background: rgba(255,255,255,0.15); border-radius: 50%; filter: blur(80px);"></div>
+        <div style="position: absolute; bottom: -50px; right: -50px; width: 250px; height: 250px; background: rgba(255,255,255,0.1); border-radius: 50%; filter: blur(100px);"></div>      
+        <h2 style="font-size: 34px; margin-bottom: 15px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; color:#fff;">
+            ¿Interesado en IOT?
+        </h2>        
+        <p style="font-size: 20px; margin-bottom: 40px; line-height: 1.6; color: #fff; font-weight: 300;">
+            Contáctenos hoy mismo para una consulta personalizada 🚀
+        </p>        
+        <div style="display: flex; justify-content: center; gap: 25px; flex-wrap: wrap;">                   
+            <!-- Botón WhatsApp (B99) -->
+            <?php $wa=$this->iot_whatsapp??[]; 
+                  $waBtn=$wa['boton'][0]??'WhatsApp'; 
+                  $ctrlLink = $this->iot_whatsapp_link ?? null;
+                  $waHref = null;
+                  if (is_string($ctrlLink) && preg_match('#^https?://#i', trim($ctrlLink))) { $waHref = trim($ctrlLink); }
+                  elseif (isset($wa['link'][0]) && is_string($wa['link'][0]) && preg_match('#^https?://#i', trim($wa['link'][0]))) { $waHref = trim($wa['link'][0]); }
+                  $waTel=$wa['telefono'][0]??($wa['wa'][0]??null); 
+                  $waMsg=$wa['texto'][0]??null; 
+                  if (!$waHref && $waTel) { 
+                    $digits=preg_replace('/\D+/','',$waTel); 
+                    if ($digits) { 
+                      $waHref='https://wa.me/'.$digits; 
+                    }
+                  }
+                  // Si el href es de WhatsApp y hay mensaje, añadir ?text= preservando query
+                  if ($waHref && is_string($waMsg) && trim($waMsg)!=='') {
+                    if (preg_match('#(wa\.me|whatsapp\.com)#i', $waHref)) {
+                      $waHref .= (strpos($waHref, '?') === false ? '?' : '&') . 'text=' . rawurlencode($waMsg);
+                    }
+                  }
+            ?>
+            <?php if ($waHref) { ?><a href="<?php echo htmlspecialchars($waHref); ?>"
+                target="_blank"
+                style="background: #25D366; color: #fff; padding: 18px 35px; border-radius: 50px; font-size: 18px; font-weight: bold; text-decoration: none; box-shadow: 0 8px 20px rgba(0,0,0,0.3); transition: all 0.3s; display: inline-flex; align-items: center; gap: 10px;">
+                <!-- Ícono WhatsApp -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.031-.967-.273-.099-.471-.149-.67.15-.198.297-.767.966-.94 1.164-.173.198-.347.223-.644.074-.297-.149-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.372-.025-.521-.075-.149-.669-1.611-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.007-.372-.009-.571-.009-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.029 6.988 2.896a9.825 9.825 0 012.894 6.994c-.002 5.45-4.436 9.884-9.888 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.305-1.654a11.88 11.88 0 005.717 1.459h.005c6.554 0 11.89-5.335 11.893-11.893a11.82 11.82 0 00-3.48-8.413"/>
+                </svg>
+                <?php echo htmlspecialchars($waBtn); ?>
+            </a><?php } else { ?><div style="height:48px;width:220px;background:#d3f5e3;border-radius:50px;"></div><?php } ?>
+        </div>
+    </div>
+</div>

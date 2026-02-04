@@ -1,0 +1,431 @@
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<link rel="stylesheet" href="<?php echo BASE_URL; ?>resources/assets/css/empresas-responsive.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+<div class="empresas-main-content" style="background:#ffffff;">
+    <?php if (isset($_GET['debugcms']) && $_GET['debugcms']=='1') { ?>
+      <?php foreach ([46,47,48,49,50,51,52,53] as $dbg) { $var = 'debug_bloque'.$dbg; if (isset($this->$var)) { ?>
+        <pre style="background:#f8fafc;border:1px solid #e2e8f0;color:#0f172a;font-size:12px;padding:10px;border-radius:6px;margin:10px 0;white-space:pre-wrap;">B<?php echo $dbg; ?>: <?php echo htmlspecialchars(json_encode($this->$var, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES)); ?></pre>
+      <?php } } ?>
+    <?php } ?>
+    <!-- BANNER -->
+    <?php if (!empty($this->emp_ta_banner)) { ?>
+    <div style="position: relative; max-width: 100%; overflow: hidden; margin-top: 0;">
+        <div style="display: block; width: 100%;">
+            <img src="<?php echo htmlspecialchars($this->emp_ta_banner); ?>" style="width: 100%; height: auto; display: block;">
+        </div>
+    </div>
+    <?php } else { ?>
+    <div style="position: relative; max-width: 100%; overflow: hidden; margin-top: 10px; min-height: 280px; border-radius:12px; background:linear-gradient(180deg,#eef5fb 0%,#e6eef7 100%); border:1px solid #d9e5f0; box-shadow:0 6px 18px rgba(15, 23, 42, 0.05);"></div>
+    <?php } ?>
+    <!-- ICONOS (bloque 47) -->
+    <?php 
+      $cards = isset($this->emp_ta_cards) && is_array($this->emp_ta_cards) ? $this->emp_ta_cards : [];
+    ?>
+    <?php if (!empty($cards)) { ?>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:22px;max-width:1100px;margin:24px auto 12px;padding:0 16px;">
+      <?php foreach ($cards as $c) { $img=$c['imagen']??null; $ttl=$c['titulo']??null; $txt=$c['texto']??null; $caption = $ttl ?: $txt; ?>
+      <div style="text-align:center;">
+        <div style="background:linear-gradient(135deg,#7ED957,#45b649);border:0;border-radius:20px;box-shadow:0 8px 18px rgba(0,0,0,0.12);overflow:hidden;padding:18px 12px;min-height:150px;display:flex;align-items:center;justify-content:center;">
+          <div style="width:72px;height:72px;border-radius:20px;background:rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center;box-shadow:inset 0 0 0 1px rgba(255,255,255,0.25);">
+            <?php if ($img) { ?><img src="<?php echo htmlspecialchars($img); ?>" style="width:44px;height:44px;object-fit:contain;filter: drop-shadow(0 1px 0 rgba(0,0,0,.08));"><?php } else { ?>
+              <span style="display:inline-block;width:44px;height:44px;border-radius:12px;background:rgba(255,255,255,.35);"></span>
+            <?php } ?>
+          </div>
+        </div>
+        <?php if ($caption) { ?><div style="margin-top:10px;color:#4b5563;font-weight:500;font-size:14px;line-height:1.4;">&nbsp;<?php echo htmlspecialchars($caption); ?></div><?php } else { ?>
+          <div style="height:14px;width:70%;background:#e3e8ee;border-radius:7px;margin:12px auto 0;"></div>
+        <?php } ?>
+      </div>
+      <?php } ?>
+    </div>
+    <?php } else { ?>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;max-width:1100px;margin:20px auto 10px;padding:0 16px;">
+      <?php for($i=0;$i<4;$i++){ ?>
+      <div style="background:#fff;border:1px solid #eaf0f5;border-radius:14px;box-shadow:0 6px 16px rgba(0,0,0,0.06);overflow:hidden;text-align:center;padding:14px;">
+        <div style="width:100%;height:120px;background:#eef3f7;border-radius:10px;"></div>
+        <div style="height:14px;width:60%;background:#e3e8ee;border-radius:7px;margin:12px auto 10px;"></div>
+        <div style="height:36px;width:120px;background:#cfd6dd;border-radius:18px;margin:0 auto;"></div>
+      </div>
+      <?php } ?>
+    </div>
+    <?php } ?>
+    
+    
+
+    <?php 
+      $ctl = isset($this->emp_ta_control) && is_array($this->emp_ta_control) ? $this->emp_ta_control : [];
+      $ctlImg = $ctl['imagen'][0] ?? null;
+      $ctlTit = $ctl['titulo'][0] ?? null;
+      $ctlSub = $ctl['subtitulo'][0] ?? null;
+      $ctlTxt = $ctl['texto'][0] ?? null;
+    ?>
+    <!-- Encabezado dinámico (B48) -->
+    <div style="max-width:1100px;margin:36px auto 18px;padding:22px 26px 20px 26px;text-align:center;border-radius:26px;background:linear-gradient(135deg,#f0fbff 0,#ecfeff 45%,#f9fafb 100%);box-shadow:0 10px 26px rgba(15,23,42,0.06);">
+      <?php if ($ctlTit) { ?>
+        <h3 style="font-size:34px;margin:0 0 10px 0;line-height:1.2;font-weight:800;color:#0099a8;letter-spacing:-0.01em;">&nbsp;<?php echo htmlspecialchars($ctlTit); ?></h3>
+      <?php } else { ?>
+        <div style="height:26px;width:60%;background:#cfd6dd;border-radius:999px;margin:0 auto 10px;"></div>
+      <?php } ?>
+      <?php if (!empty($ctlTxt)) { ?>
+        <div style="max-width:780px;margin:0 auto 4px;color:#4b5563;font-size:17px;line-height:1.9;">
+          &nbsp;<?php echo nl2br(htmlspecialchars($ctlTxt)); ?>
+        </div>
+      <?php } elseif (!empty($ctlSub)) { ?>
+        <div style="color:#06b6d4;font-size:14px;font-weight:700;letter-spacing:.22em;margin-top:2px;margin-bottom:2px;text-transform:uppercase;">&nbsp;<?php echo htmlspecialchars($ctlSub); ?></div>
+      <?php } else { ?>
+        <div style="height:12px;width:70%;max-width:560px;background:#e3e8ee;border-radius:999px;margin:0 auto 6px;"></div>
+        <div style="height:12px;width:60%;max-width:480px;background:#e3e8ee;border-radius:999px;margin:6px auto;"></div>
+      <?php } ?>
+    </div>
+
+    <div style="max-width:1100px;margin:10px auto 20px;display:flex;gap:32px;flex-wrap:wrap;align-items:center;justify-content:center;padding:0 18px;min-height:260px;">
+      <div style="flex:1 1 360px;min-width:280px;display:flex;align-items:center;justify-content:center;">
+        <?php if ($ctlImg) { ?>
+          <img src="<?php echo htmlspecialchars($ctlImg); ?>" style="max-width:520px;width:100%;height:auto;display:block;filter:drop-shadow(0 8px 16px rgba(0,0,0,0.1));">
+        <?php } else { ?>
+          <div style="width:100%;max-width:520px;height:220px;background:#eef3f7;border:1px solid #d9e5f0;border-radius:12px;box-shadow:0 6px 18px rgba(15,23,42,0.05);"></div>
+        <?php } ?>
+      </div>
+      <div style="flex:1 1 360px;min-width:280px;">
+        <!-- Texto se muestra en el encabezado; aquí solo la lista -->
+        <?php $ctlList = isset($ctl['lista_item']) ? array_values(array_filter(array_map('trim', (array)$ctl['lista_item']))) : []; ?>
+        <?php if (!empty($ctlList)) { ?>
+          <ul style="list-style:none;padding-left:0;margin:16px 0 0 0;">
+            <?php foreach ($ctlList as $li) { ?>
+              <li style="display:flex;align-items:flex-start;gap:10px;margin-bottom:12px;padding:6px 0;border-radius:999px;">
+                <span style="display:inline-block;width:10px;height:10px;margin-top:6px;border-radius:999px;background:#22c55e;box-shadow:0 0 0 3px rgba(34,197,94,0.18);"></span>
+                <span style="color:#374151;font-size:15px;line-height:1.7;">&nbsp;<?php echo htmlspecialchars($li); ?></span>
+              </li>
+            <?php } ?>
+          </ul>
+        <?php } else { ?>
+          <div style="height:12px;width:86%;background:#e9edf1;border-radius:999px;margin:8px 0;"></div>
+          <div style="height:12px;width:82%;background:#e9edf1;border-radius:999px;margin:8px 0;"></div>
+          <div style="height:12px;width:78%;background:#e9edf1;border-radius:999px;margin:8px 0;"></div>
+          <div style="height:12px;width:74%;background:#e9edf1;border-radius:999px;margin:8px 0;"></div>
+        <?php } ?>
+      </div>
+    </div>
+    <!-- BOTON DE AGENDA TU DEMO -->
+    <?php 
+      $ag = isset($this->emp_ta_agenda) && is_array($this->emp_ta_agenda) ? $this->emp_ta_agenda : [];
+      $agBtn = $ag['boton'][0] ?? null;
+      $agLink = isset($this->emp_ta_agenda_link) && $this->emp_ta_agenda_link ? $this->emp_ta_agenda_link : ($ag['link'][0] ?? null);
+    ?>
+    <div style="width: 100%; text-align: center; margin-top: 28px; margin-bottom: 28px;">
+      <?php if ($agBtn && $agLink) { ?>
+        <a href="<?php echo htmlspecialchars($agLink); ?>" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            style="display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+                    background: #00c7d9; color: #fff; font-size: 16px; font-weight: 700; text-decoration: none;
+                    padding: 12px 26px; border-radius: 9999px;
+                    box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+                    transition: all 0.25s ease;
+                    cursor: pointer;"
+            onmouseover="this.style.background='#00aebf'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 18px rgba(0,0,0,0.22)';"
+            onmouseout="this.style.background='#00c7d9'; this.style.transform='translateY(0)'; this.style.boxShadow='0 6px 14px rgba(0,0,0,0.15)';">
+            <?php echo htmlspecialchars($agBtn); ?> <i class="fas fa-arrow-right"></i>
+        </a>
+      <?php } else { ?>
+        <div style="display:inline-block; height:44px; min-width:220px; background:#e9edf1; border-radius:50px;"></div>
+      <?php } ?>
+    </div>
+    <!-- Sección de Líneas Corporativas y Personales -->
+    <div style="display: flex; flex-wrap: wrap; justify-content: space-between; margin-top: 40px; width: 100%; max-width: 100%; margin-left: auto; margin-right: auto; padding: 0 15px; gap: 20px;">
+        <div style="flex: 0 0 calc(50% - 10px); position: relative; background: linear-gradient(135deg, #7ED957, #5bbf3a); color: white; padding: 30px; border-radius: 15px; box-shadow: 0 6px 14px rgba(0,0,0,0.15); transition: all 0.3s ease; cursor: default;"
+            onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 10px 20px rgba(0,0,0,0.25)';"
+            onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 6px 14px rgba(0,0,0,0.15)';">
+            <div style="position: absolute; top: -25px; right: -8px; 
+                        background: #fff; color: #5bbf3a; font-weight: bold; 
+                        font-size: 18px; border-radius: 50%; 
+                        width: 140px; height: 140px; 
+                        display: flex; align-items: center; justify-content: center; 
+                        text-align: center; line-height: 1.4;
+                        box-shadow: 0 6px 18px rgba(0,0,0,0.2);">
+                Genera<br>ahorro
+            </div>
+            <div style="display: flex; align-items: center; margin-bottom: 25px; justify-content: center;">
+                <div style="background: rgba(255,255,255,0.2); border-radius: 50%; padding: 12px; margin-right: 15px;">
+                    <i class="fas fa-building" style="font-size: 32px; color: #fff;"></i>
+                </div>
+                <h3 style="font-size: 22px; margin: 0; font-weight: 700; color: #fff; line-height: 1.3; ">
+                    Líneas Corporativas
+                </h3>
+            </div>
+            <ul style="list-style-type: none; padding-left: 10; margin: 0; width: 100%;">
+                <li style="margin-bottom: 16px; display: flex; align-items: flex-start;">
+                    <i class="fas fa-check-circle" style="color: #fff; margin-right: 12px; font-size: 18px; margin-top: 2px;"></i>
+                    <span style="line-height: 1.6;">Ahorra hasta un 50% en Tarifas celulares</span>
+                </li>
+                <li style="margin-bottom: 16px; display: flex; align-items: flex-start;">
+                    <i class="fas fa-check-circle" style="color: #fff; margin-right: 12px; font-size: 18px; margin-top: 2px;"></i>
+                    <span style="line-height: 1.6;">Hasta 4 veces más datos</span>
+                </li>
+                <li style="margin-bottom: 16px; display: flex; align-items: flex-start;">
+                    <i class="fas fa-check-circle" style="color: #fff; margin-right: 12px; font-size: 18px; margin-top: 2px;"></i>
+                    <span style="line-height: 1.6;">Sin Planes Forzosos</span>
+                </li>
+                <li style="display: flex; align-items: flex-start;">
+                    <i class="fas fa-check-circle" style="color: #fff; margin-right: 12px; font-size: 18px; margin-top: 2px;"></i>
+                    <span style="line-height: 1.6;">Financiamiento de Teléfonos</span>
+                </li>
+            </ul>
+        </div>
+        <div style="flex: 0 0 calc(50% - 10px); position: relative; background: linear-gradient(135deg, #0066A1, #004d7a); color: white; padding: 30px; border-radius: 15px; box-shadow: 0 6px 14px rgba(0,0,0,0.15); transition: all 0.3s ease; cursor: default;"
+            onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 10px 20px rgba(0,0,0,0.25)';"
+            onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 6px 14px rgba(0,0,0,0.15)';">
+            <div style="position: absolute; top: -25px; right: -8px; 
+                        background: #fff; color: #004d7a; font-weight: bold; 
+                        font-size: 18px; border-radius: 50%; 
+                        width: 140px; height: 140px; 
+                        display: flex; align-items: center; justify-content: center; 
+                        text-align: center; line-height: 1.4;
+                        box-shadow: 0 6px 18px rgba(0,0,0,0.2);">
+                Más<br>lealtad<br>menos<br>rotacion
+            </div>
+            <div style="display: flex; align-items: center; margin-bottom: 25px; justify-content: center;">
+                <div style="background: rgba(255,255,255,0.2); border-radius: 50%; padding: 12px; margin-right: 15px;">
+                    <i class="fas fa-users" style="font-size: 32px; color: #fff;"></i>
+                </div>
+                <h3 style="font-size: 22px; margin: 0; font-weight: 700; color: #fff; line-height: 1.3;">
+                    Líneas Personales Empresariales
+                </h3>
+            </div>
+            <ul style="list-style-type: none; padding-left: 10; margin: 0; width: 100%;">
+                <li style="margin-bottom: 16px; display: flex; align-items: flex-start;">
+                    <i class="fas fa-check-circle" style="color: #fff; margin-right: 12px; font-size: 18px; margin-top: 2px;"></i>
+                    <span style="line-height: 1.6;">Aumenta el valor percibido de tus prestaciones laborales</span>
+                </li>
+                <li style="margin-bottom: 16px; display: flex; align-items: flex-start;">
+                    <i class="fas fa-check-circle" style="color: #fff; margin-right: 12px; font-size: 18px; margin-top: 2px;"></i>
+                    <span style="line-height: 1.6;">Genera ahorros importantes para tus colaboradores</span>
+                </li>
+                <li style="margin-bottom: 16px; display: flex; align-items: flex-start;">
+                    <i class="fas fa-check-circle" style="color: #fff; margin-right: 12px; font-size: 18px; margin-top: 2px;"></i>
+                    <span style="line-height: 1.6;">Contribuye favorablemente en su economía y comunicación personal</span>
+                </li>
+                <li style="display: flex; align-items: flex-start;">
+                    <i class="fas fa-check-circle" style="color: #fff; margin-right: 12px; font-size: 18px; margin-top: 2px;"></i>
+                    <span style="line-height: 1.6;">Financiamiento de teléfonos</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <!-- TITULO -->
+    <p style="text-align: center; font-size: 30px; color: #1684A7; font-weight: bold; margin-top: 45px;">
+        GESTIÓN DE DISPOSITIVOS MÓVILES
+    </p>
+    <!-- Soluciones MDM con diseño mejorado -->
+    <div style="position: relative; max-width: 1000px; margin: 0 auto; padding: 20px 0 40px;">
+        <!-- Título central con fondo rosa -->
+        <div style="position: relative; text-align: center; margin-bottom: 30px; z-index: 3;">
+            <div style="background-color: #E94D8A; color: white; font-weight: bold; padding: 10px 30px; border-radius: 25px; display: inline-block; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+                <span style="font-size: 18px;">Soluciones MDM</span>
+            </div>
+        </div>
+        <!-- Línea horizontal -->
+        <div style="position: absolute; top: 85px; left: 5%; width: 90%; height: 4px; background-color: #0099CC; z-index: 1;"></div>
+        <!-- Puntos de la línea de tiempo -->
+        <div style="display: flex; justify-content: space-between; position: relative; z-index: 2; margin-top: 10px;">
+            <!-- Punto 1: Control en consumo de datos -->
+            <div style="display: flex; flex-direction: column; align-items: center; width: 12%;">
+                <div style="width: 12px; height: 12px; background-color: #0099CC; border-radius: 50%; margin-bottom: 15px;"></div>
+                <div style="background-color: #00BCD4; border-radius: 10px; padding: 8px; width: 100%; text-align: center; margin-bottom: 10px; box-shadow: 0 3px 6px rgba(0,0,0,0.1);">
+                    <span style="color: white; font-size: 12px; font-weight: bold; display: block; line-height: 1.2;">Control en consumo de datos por Aplicaciones</span>
+                </div>
+                <div style="background-color: #E91E63; width: 50px; height: 50px; border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+                    <i class="fas fa-chart-bar" style="color: white; font-size: 24px;"></i>
+                </div>
+            </div>
+            <!-- Punto 2: Bloqueo del Hot Spot -->
+            <div style="display: flex; flex-direction: column; align-items: center; width: 12%;">
+                <div style="width: 12px; height: 12px; background-color: #0099CC; border-radius: 50%; margin-bottom: 15px;"></div>
+                <div style="background-color: #00BCD4; border-radius: 10px; padding: 8px; width: 100%; text-align: center; margin-bottom: 10px; box-shadow: 0 3px 6px rgba(0,0,0,0.1);">
+                    <span style="color: white; font-size: 12px; font-weight: bold; display: block; line-height: 1.2;">Bloqueo del Hot Spot</span>
+                </div>
+                <div style="background-color: #00BCD4; width: 50px; height: 50px; border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+                    <i class="fas fa-wifi" style="color: white; font-size: 24px;"></i>
+                </div>
+            </div>
+            <!-- Punto 3: Identificar líneas No corporativas -->
+            <div style="display: flex; flex-direction: column; align-items: center; width: 12%;">
+                <div style="width: 12px; height: 12px; background-color: #0099CC; border-radius: 50%; margin-bottom: 15px;"></div>
+                <div style="background-color: #00BCD4; border-radius: 10px; padding: 8px; width: 100%; text-align: center; margin-bottom: 10px; box-shadow: 0 3px 6px rgba(0,0,0,0.1);">
+                    <span style="color: white; font-size: 12px; font-weight: bold; display: block; line-height: 1.2;">Identificar líneas No corporativas</span>
+                </div>
+                <div style="background-color: #9C27B0; width: 50px; height: 50px; border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+                    <i class="fas fa-id-card" style="color: white; font-size: 24px;"></i>
+                </div>
+            </div>
+            <!-- Punto 4: Alerta o Bloqueo automático -->
+            <div style="display: flex; flex-direction: column; align-items: center; width: 12%;">
+                <div style="width: 12px; height: 12px; background-color: #0099CC; border-radius: 50%; margin-bottom: 15px;"></div>
+                <div style="background-color: #00BCD4; border-radius: 10px; padding: 8px; width: 100%; text-align: center; margin-bottom: 10px; box-shadow: 0 3px 6px rgba(0,0,0,0.1);">
+                    <span style="color: white; font-size: 12px; font-weight: bold; display: block; line-height: 1.2;">Alerta o Bloqueo automático Al salir de la Geocerca</span>
+                </div>
+                <div style="background-color: #FF9800; width: 50px; height: 50px; border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+                    <i class="fas fa-exclamation-triangle" style="color: white; font-size: 24px;"></i>
+                </div>
+            </div>
+            <!-- Punto 5: Bloqueo por pérdida de equipos -->
+            <div style="display: flex; flex-direction: column; align-items: center; width: 12%;">
+                <div style="width: 12px; height: 12px; background-color: #0099CC; border-radius: 50%; margin-bottom: 15px;"></div>
+                <div style="background-color: #00BCD4; border-radius: 10px; padding: 8px; width: 100%; text-align: center; margin-bottom: 10px; box-shadow: 0 3px 6px rgba(0,0,0,0.1);">
+                    <span style="color: white; font-size: 12px; font-weight: bold; display: block; line-height: 1.2;">Bloqueo por pérdida de equipos</span>
+                </div>
+                <div style="background-color: #F44336; width: 50px; height: 50px; border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+                    <i class="fas fa-ban" style="color: white; font-size: 24px;"></i>
+                </div>
+            </div>
+            <!-- Punto 6: Mensaje de recuperación -->
+            <div style="display: flex; flex-direction: column; align-items: center; width: 12%;">
+                <div style="width: 12px; height: 12px; background-color: #0099CC; border-radius: 50%; margin-bottom: 15px;"></div>
+                <div style="background-color: #00BCD4; border-radius: 10px; padding: 8px; width: 100%; text-align: center; margin-bottom: 10px; box-shadow: 0 3px 6px rgba(0,0,0,0.1);">
+                    <span style="color: white; font-size: 12px; font-weight: bold; display: block; line-height: 1.2;">Mensaje de recuperación</span>
+                </div>
+                <div style="background-color: #9C27B0; width: 50px; height: 50px; border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+                    <i class="fas fa-comment-dots" style="color: white; font-size: 24px;"></i>
+                </div>
+            </div>
+            <!-- Punto 7: Borrado empresarial -->
+            <div style="display: flex; flex-direction: column; align-items: center; width: 12%;">
+                <div style="width: 12px; height: 12px; background-color: #0099CC; border-radius: 50%; margin-bottom: 15px;"></div>
+                <div style="background-color: #00BCD4; border-radius: 10px; padding: 8px; width: 100%; text-align: center; margin-bottom: 10px; box-shadow: 0 3px 6px rgba(0,0,0,0.1);">
+                    <span style="color: white; font-size: 12px; font-weight: bold; display: block; line-height: 1.2;">Borrado empresarial al dejar de pertenecer a la empresa</span>
+                </div>
+                <div style="background-color: #E91E63; width: 50px; height: 50px; border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+                    <i class="fas fa-trash-alt" style="color: white; font-size: 24px;"></i>
+                </div>
+            </div>
+            <!-- Punto 8: Trazabilidad de puntos -->
+            <div style="display: flex; flex-direction: column; align-items: center; width: 12%;">
+                <div style="width: 12px; height: 12px; background-color: #0099CC; border-radius: 50%; margin-bottom: 15px;"></div>
+                <div style="background-color: #00BCD4; border-radius: 10px; padding: 8px; width: 100%; text-align: center; margin-bottom: 10px; box-shadow: 0 3px 6px rgba(0,0,0,0.1);">
+                    <span style="color: white; font-size: 12px; font-weight: bold; display: block; line-height: 1.2;">Trazabilidad de puntos de movilidad de usuario</span>
+                </div>
+                <div style="background-color: #9C27B0; width: 50px; height: 50px; border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+                    <i class="fas fa-map-marker-alt" style="color: white; font-size: 24px;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- BANNER 2 (LikeCheck) -->
+    <?php if (!empty($this->emp_ta_banner_lc)) { ?>
+    <div style="position: relative; max-width: 100%; overflow: hidden; margin-top: 35px; text-align: center;">
+        <div style="position: relative; display: inline-block; max-width: 98%;">
+            <img src="<?php echo htmlspecialchars($this->emp_ta_banner_lc); ?>" style="width: 100%; height: auto; display:block;">
+            <?php if (!empty($this->emp_ta_banner_lc_link)) { ?>
+              <a href="<?php echo htmlspecialchars($this->emp_ta_banner_lc_link); ?>" aria-label="Abrir banner LikeCheck" style="position:absolute; inset:0; display:block; z-index:5;"></a>
+            <?php } ?>
+        </div>
+    </div>
+    <?php } else { ?>
+    <div style="position: relative; max-width: 100%; overflow: hidden; margin-top: 35px; text-align: center; min-height: 280px; border-radius:12px; background:linear-gradient(180deg,#eef5fb 0%,#e6eef7 100%); border:1px solid #d9e5f0; box-shadow:0 6px 18px rgba(15, 23, 42, 0.05);"></div>
+    <?php } ?>
+    <!-- BOTON DE AGENDA TU DEMO (LikeCheck) -->
+    <?php 
+      $agl = isset($this->emp_ta_agenda_lc) && is_array($this->emp_ta_agenda_lc) ? $this->emp_ta_agenda_lc : [];
+      $aglBtn = $agl['boton'][0] ?? null;
+      $aglLink = isset($this->emp_ta_agenda_lc_link) && $this->emp_ta_agenda_lc_link ? $this->emp_ta_agenda_lc_link : ($agl['link'][0] ?? null);
+    ?>
+    <div style="width: 100%; text-align: center; margin-top: 20px;">
+      <?php if ($aglBtn && $aglLink) { ?>
+        <a href="<?php echo htmlspecialchars($aglLink); ?>"
+           target="_blank"
+           rel="noopener noreferrer"
+           style="display:inline-flex; align-items:center; justify-content:center; gap:10px;
+                  background:#00c7d9; color:#fff; font-size:16px; font-weight:700; text-decoration:none;
+                  padding:12px 26px; border-radius:9999px;
+                  box-shadow:0 6px 14px rgba(0,0,0,0.15); transition:all .25s ease; cursor:pointer;"
+           onmouseover="this.style.background='#00aebf'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 18px rgba(0,0,0,0.22)';"
+           onmouseout="this.style.background='#00c7d9'; this.style.transform='translateY(0)'; this.style.boxShadow='0 6px 14px rgba(0,0,0,0.15)';">
+           <?php echo htmlspecialchars($aglBtn); ?> <i class="fa-solid fa-arrow-right" style="font-size:16px;"></i>
+        </a>
+      <?php } else { ?>
+        <div style="display:inline-block; height:44px; min-width:260px; background:#e9edf1; border-radius:50px;"></div>
+      <?php } ?>
+    </div>
+    <!-- SECCION DE CONTACTO -->
+    <div style="background: linear-gradient(135deg, #739EC9, #5682B1); 
+                color: #fff; 
+                padding: 70px 20px; 
+                border-radius: 20px; 
+                text-align: center; 
+                font-family: 'Arial Black', sans-serif; 
+                box-shadow: 0 10px 30px rgba(0,0,0,0.4); 
+                margin: 40px auto; 
+                position: relative; 
+                overflow: hidden;
+                width: 90%;">
+        <!-- Efecto de luces en el fondo -->
+        <div style="position: absolute; top: -50px; left: -50px; width: 200px; height: 200px; background: rgba(255,255,255,0.15); border-radius: 50%; filter: blur(80px);"></div>
+        <div style="position: absolute; bottom: -50px; right: -50px; width: 250px; height: 250px; background: rgba(255,255,255,0.1); border-radius: 50%; filter: blur(100px);"></div>      
+        <h2 style="font-size: 34px; margin-bottom: 15px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; color:#fff;">
+            ¿Interesado en nuestras tarifas preferenciales?
+        </h2>        
+        <p style="font-size: 20px; margin-bottom: 40px; line-height: 1.6; color: #fff; font-weight: 300;">
+            Contáctenos hoy mismo para una consulta personalizada 🚀
+        </p>        
+        <div style="display: flex; justify-content: center; gap: 25px; flex-wrap: wrap;">  
+            <?php 
+              $btnAd = isset($this->emp_ta_btn_agenda) && is_array($this->emp_ta_btn_agenda) ? $this->emp_ta_btn_agenda : [];
+              $btnAdTxt = $btnAd['boton'][0] ?? null; $btnAdLink = isset($this->emp_ta_btn_agenda_link) && $this->emp_ta_btn_agenda_link ? $this->emp_ta_btn_agenda_link : ($btnAd['link'][0] ?? null);
+              $waData = isset($this->emp_ta_whatsapp) && is_array($this->emp_ta_whatsapp) ? $this->emp_ta_whatsapp : [];
+              $waLink = null;
+              $ctrlLink = $this->emp_ta_whatsapp_link ?? null; 
+              if (is_string($ctrlLink) && preg_match('#^https?://#i', trim($ctrlLink))) { $waLink = trim($ctrlLink); }
+              elseif (isset($waData['link'][0]) && is_string($waData['link'][0]) && preg_match('#^https?://#i', trim($waData['link'][0]))) { $waLink = trim($waData['link'][0]); }
+              $waNum  = $waData['wa'][0] ?? ($waData['telefono'][0] ?? null);
+              $waMsg  = $waData['texto'][0] ?? null;
+              if (!$waLink && $waNum) {
+                $waDigits = preg_replace('/\D+/','', (string)$waNum);
+                if ($waDigits) {
+                  $waLink = 'https://wa.me/'.$waDigits;
+                  if (is_string($waMsg) && trim($waMsg) !== '') {
+                    $waLink .= '?text=' . rawurlencode($waMsg);
+                  }
+                }
+              }
+              // Si el link ya es absoluto de WhatsApp y hay mensaje, agregar ?text= o &text=
+              if ($waLink && is_string($waMsg) && trim($waMsg) !== '') {
+                if (preg_match('#(wa\.me|whatsapp\.com)#i', $waLink)) {
+                  $waLink .= (strpos($waLink, '?') === false ? '?' : '&') . 'text=' . rawurlencode($waMsg);
+                }
+              }
+            ?>        
+            <?php if ($btnAdTxt && $btnAdLink) { ?>
+            <a href="<?php echo htmlspecialchars($btnAdLink); ?>" target="_blank"
+               style="display:inline-flex; align-items:center; justify-content:center; gap:10px;
+                      background:#00c7d9; color:#fff; padding:14px 30px; border-radius:9999px; font-size:18px; font-weight:700; text-decoration:none;
+                      box-shadow:0 6px 14px rgba(0,0,0,0.15); transition:all .25s ease;"
+               onmouseover="this.style.background='#00aebf'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 18px rgba(0,0,0,0.22)';"
+               onmouseout="this.style.background='#00c7d9'; this.style.transform='translateY(0)'; this.style.boxShadow='0 6px 14px rgba(0,0,0,0.15)';">
+              <?php echo htmlspecialchars($btnAdTxt); ?> <i class="fa-solid fa-arrow-right" style="font-size:16px;"></i>
+            </a>
+            <?php } else { ?>
+            <div style="height:52px; width:240px; background:#e9edf1; border-radius:50px;"></div>
+            <?php } ?>
+            <!-- Botón WhatsApp -->
+            <?php if ($waLink) { ?>
+            <a href="<?php echo htmlspecialchars($waLink); ?>" 
+            target="_blank"
+            style="background: #25D366; color: #fff; padding: 18px 35px; border-radius: 50px; font-size: 18px; font-weight: bold; text-decoration: none; box-shadow: 0 8px 20px rgba(0,0,0,0.3); transition: all 0.3s; display: inline-flex; align-items: center; gap: 10px;">
+                
+                <!-- Ícono WhatsApp -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.031-.967-.273-.099-.471-.149-.67.15-.198.297-.767.966-.94 1.164-.173.198-.347.223-.644.074-.297-.149-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.372-.025-.521-.075-.149-.669-1.611-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.007-.372-.009-.571-.009-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.029 6.988 2.896a9.825 9.825 0 012.894 6.994c-.002 5.45-4.436 9.884-9.888 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.305-1.654a11.88 11.88 0 005.717 1.459h.005c6.554 0 11.89-5.335 11.893-11.893a11.82 11.82 0 00-3.48-8.413"/>
+                </svg>
+                WhatsApp
+            </a>
+            <?php } else { ?>
+            <div style="height:52px; width:240px; background:#d8f5e3; border-radius:50px;"></div>
+            <?php } ?>
+        </div>
+    </div>
+</div>

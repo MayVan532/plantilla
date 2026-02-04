@@ -1,0 +1,973 @@
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* Evitar scroll horizontal por el carrusel */
+  .personas-main-content { overflow-x: hidden; }
+  .personas-main-content .carousel-wrapper { position: relative; width: 100%; max-width: 100vw; overflow: hidden; padding: 0; margin: 0; }
+  .personas-main-content #carousel { display: flex; align-items: center; transition: transform 0.5s ease; will-change: transform; width: 100%; max-width: 100vw; }
+  .personas-main-content .carousel-slide { flex: 0 0 100%; min-width: 100%; box-sizing: border-box; margin: 0; }
+  .personas-main-content .carousel-slide img { display:block; width:100%; max-width:100%; height:auto; }
+  .personas-main-content .carousel-nav { position: absolute; top: 50%; transform: translateY(-50%); width: 40px; height: 40px; z-index: 10; }
+  .personas-main-content .carousel-nav.prev { left: 15px; }
+  .personas-main-content .carousel-nav.next { right: 15px; }
+</style>
+<div class="personas-main-content" style="background:#ffffff;">
+    <?php if (isset($_GET['debugcms']) && $_GET['debugcms'] == '1') { ?>
+        <div style="background:#f8fafc;border:1px solid #e2e8f0;color:#0f172a;font-size:12px;padding:10px;border-radius:6px;margin:10px 0;">
+            <?php if (isset($this->debug_bloque1)) { ?>
+                <strong>Bloque 1: CMS/Carousel Debug</strong>
+                <pre style="white-space:pre-wrap;margin:6px 0;">
+            <?php echo htmlspecialchars(json_encode($this->debug_bloque1, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)); ?>
+                            </pre>
+                        <?php } ?>
+
+                        <!-- debug plan activación -->
+                        <?php if (isset($this->debug_bloque2)) { ?>
+                            <strong>Bloque 2: Plan Activación Debug</strong>
+                            <pre style="white-space:pre-wrap;margin:6px 0;">
+            <?php echo htmlspecialchars(json_encode($this->debug_bloque2, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)); ?>
+                            </pre>
+                        <?php } ?>
+
+                        <!-- debug cobertura -->
+                        <?php if (isset($this->debug_bloque3)) { ?>
+                            <strong>Bloque 3: Cobertura Debug</strong>
+                            <pre style="white-space:pre-wrap;margin:6px 0;">
+            <?php echo htmlspecialchars(json_encode($this->debug_bloque3, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)); ?>
+                            </pre>
+                        <?php } ?>
+
+                        <!-- debug beneficios -->
+                        <?php if (isset($this->debug_bloque4)) { ?>
+                            <strong>Bloque 4: Beneficios Debug</strong>
+                            <pre style="white-space:pre-wrap;margin:6px 0;">
+            <?php echo htmlspecialchars(json_encode($this->debug_bloque4, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)); ?>
+                            </pre>
+                        <?php } ?>
+
+                        <!-- debug seccion_esim -->
+                        <?php if (isset($this->debug_bloque5)) { ?>
+                            <strong>Bloque 5: seccion_esim Debug</strong>
+                            <pre style="white-space:pre-wrap;margin:6px 0;">
+            <?php echo htmlspecialchars(json_encode($this->debug_bloque5, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)); ?>
+                            </pre>
+                        <?php } ?>
+
+                        <!-- debug recargaslikes -->
+                        <?php if (isset($this->debug_bloque6)) { ?>
+                            <strong>Bloque 6: Recargas Likes Debug</strong>
+                            <pre style="white-space:pre-wrap;margin:6px 0;">
+            <?php echo htmlspecialchars(json_encode($this->debug_bloque6, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)); ?>
+                            </pre>
+                        <?php } ?>
+        </div>
+    <?php } ?>
+    <?php if (!empty($this->carouselImages) && is_array($this->carouselImages)) { ?>
+    <div class="carousel-wrapper">
+        <div id="carousel">
+            <?php foreach ($this->carouselImages as $imgUrl) { ?>
+                <div class="carousel-slide" style="flex: 0 0 100%; min-width: 100%; margin: 0;">
+                    <img src="<?php echo htmlspecialchars($imgUrl); ?>" style="width: 100%; height: auto; display:block;">
+                </div>
+            <?php } ?>
+        </div>
+        <!-- Botón anterior -->
+        <a id="prevBtn" class="carousel-nav prev" style="cursor: pointer; background-color: rgba(255,255,255,0.9); color: #333;font-size: 24px; border-radius: 50%; 
+            display: flex; justify-content: center; align-items: center;transition: 0.3s ease; box-shadow: 0 2px 6px rgba(0,0,0,0.2);">&#10094;</a>
+        <!-- Botón siguiente -->
+        <a id="nextBtn" class="carousel-nav next" style="cursor: pointer; background-color: rgba(255,255,255,0.9); color: #333;
+            font-size: 24px; border-radius: 50%; display: flex; justify-content: center; align-items: center;transition: 0.3s ease; box-shadow: 0 2px 6px rgba(0,0,0,0.2);">&#10095;</a>
+    </div>
+    <script>
+        (function() {
+            const carousel = document.getElementById("carousel");
+            if (!carousel) return;
+            const slides = carousel.querySelectorAll(".carousel-slide");
+            const prev = document.getElementById("prevBtn");
+            const next = document.getElementById("nextBtn");
+            let index = 0;
+            function getSlideWidth(){
+                return carousel.getBoundingClientRect().width;
+            }
+            function updateCarousel() {
+                carousel.style.transform = `translateX(${-index * getSlideWidth()}px)`;
+            }
+            prev.addEventListener("click", () => {
+                if (index > 0) index--;
+                updateCarousel();
+            });
+            next.addEventListener("click", () => {
+                if (index < slides.length - 1) index++;
+                updateCarousel();
+            });
+            window.addEventListener('resize', updateCarousel);
+        })();
+    </script>
+    <?php } else { ?>
+    <div class="carousel-wrapper" style="min-height:260px; border-radius:12px; overflow:hidden;">
+        <div style="height:260px; background:linear-gradient(180deg,#eef5fb 0%,#e6eef7 100%); border:1px solid #d9e5f0; box-shadow:0 6px 18px rgba(15,23,42,.05);"></div>
+    </div>
+    <?php } ?>
+
+
+
+    <!-- PLAN ACTIVACIÓN (dinámico desde CMS) -->
+    <?php
+        $byType = isset($this->planActivacion) && is_array($this->planActivacion) ? $this->planActivacion : [];
+        $plan = [
+        'img'      => $byType['imagen'][0]    ?? null,
+        'titulo'   => $byType['titulo'][0]    ?? null,
+        'subtitulo'=> $byType['subtitulo'][0] ?? null,
+        'texto'    => $byType['texto'][0]     ?? null,
+        'botones'  => isset($byType['boton']) ? $byType['boton'] : [],
+        ];
+        $showPlan = $plan['img'] || $plan['titulo'] || $plan['subtitulo'] || $plan['texto'] || !empty($plan['botones']);
+    ?>
+    <?php if ($showPlan) { ?>
+    <div class="plan-activacion" style="background:#ffffff; padding:40px 16px;">
+        <div class="plan-card" style="max-width:1200px; margin:0 auto; display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap;">
+            <!-- Imagen -->
+            <?php if (!empty($plan['img'])) { ?>
+            <div class="plan-img" style="flex:1 1 420px; text-align:center;">
+                <img src="<?php echo htmlspecialchars($plan['img']); ?>" alt="Plan Activación"
+                    style="width:100%; max-width:520px; border-radius:10px; box-shadow:0 10px 24px rgba(0,0,0,0.12);">
+            </div>
+            <?php } ?>
+
+            <!-- Texto y botones -->
+            <div class="plan-content" style="flex:1 1 560px; background:#ffffff; border-radius:10px; box-shadow:0 12px 28px rgba(0,0,0,0.12); padding:44px 40px; max-width:700px; margin-left:-28px; position:relative; z-index:1; min-height:460px; display:flex; flex-direction:column; justify-content:center; font-family:'Montserrat', sans-serif;">
+                <h1 style="display:none;">Hola mundo</h1>
+                <?php if ($plan['titulo']) { ?>
+                    <span class="plan-label" style="display:inline-block; font-size:13px; letter-spacing:2px; color:#2ea3a0; text-transform:uppercase; margin-bottom:8px; font-weight:700;">
+                        <?php echo $plan['titulo']; ?>
+                    </span>
+                <?php } ?>
+                <?php if ($plan['subtitulo']) { ?>
+                    <h2 class="plan-title" style="font-size:40px; line-height:1.2; color:#0f172a; font-weight:800; margin:8px 0 10px;">
+                        <?php echo $plan['subtitulo']; ?>
+                    </h2>
+                <?php } ?>
+                <?php if ($plan['texto']) { ?>
+                    <p class="plan-text" style="color:#475569; font-size:16px; line-height:1.8; margin-top:12px;">
+                        <?php echo $plan['texto']; ?>
+                    </p>
+                <?php } ?>
+
+                <div class="plan-actions" style="display:flex; gap:12px; flex-wrap:wrap; margin-top:18px;">
+                    <?php foreach ($plan['botones'] as $i => $btnText) {
+                        $bg = $i === 0
+                            ? 'background: linear-gradient(90deg, #0ea5a6, #0ea5a6);'
+                            : 'background: linear-gradient(90deg, #334155, #334155);';
+                        $href = '#';
+                    ?>
+                        <a href="<?php echo htmlspecialchars($href); ?>" <?php if ($i === 0) { echo 'class="comprar-btn"'; } elseif ($i === 1) { echo 'class="codigo-btn"'; } ?> style="<?php echo $bg; ?> display:inline-block; padding:12px 18px; border-radius:6px; text-decoration:none; color:#fff; font-weight:700; box-shadow:0 6px 14px rgba(0,0,0,0.12); transition:opacity .2s ease, transform .2s ease;" onmouseover="this.style.opacity='0.95'; this.style.transform='translateY(-1px)';" onmouseout="this.style.opacity='1'; this.style.transform='translateY(0)';">
+                            <?php echo $btnText; ?>
+                        </a>
+                    <?php } ?>
+                </div>
+                <!-- Modal Comprar -->
+                <div id="comprarModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:9999; align-items:center; justify-content:center; padding:16px;">
+                    <div class="modal-card" style="background:#ffffff; width:100%; max-width:420px; border-radius:8px; box-shadow:0 12px 28px rgba(0,0,0,0.20); overflow:hidden;">
+                        <div style="padding:16px 18px; font-weight:700; color:#0f172a; border-bottom:1px solid #e5e7eb;">Elige tu forma de pago</div>
+                        <div style="padding:18px; display:flex; flex-direction:column; gap:12px;">
+                            <a href="#" class="pay-card-btn" style="background:#0ea5a6; color:#fff; text-decoration:none; padding:12px 16px; border-radius:6px; font-weight:700; text-align:center; box-shadow:0 6px 14px rgba(14,165,166,0.25);">Pagar con Tarjeta</a>
+                            <a href="#" class="pay-cash-btn" style="background:#0ea5a6; color:#fff; text-decoration:none; padding:12px 16px; border-radius:6px; font-weight:700; text-align:center; box-shadow:0 6px 14px rgba(14,165,166,0.25);">Pagar en Efectivo</a>
+                            <button type="button" class="modal-close" style="background:#e5e7eb; color:#0f172a; padding:10px 16px; border-radius:6px; border:0; font-weight:600; cursor:pointer;">Cerrar</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Modal Tarjeta -->
+                <div id="tarjetaModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:10000; align-items:center; justify-content:center; padding:16px;">
+                    <div class="modal-card" style="background:#ffffff; width:100%; max-width:980px; border-radius:8px; box-shadow:0 12px 28px rgba(0,0,0,0.20); overflow:hidden; max-height:90vh; display:flex; flex-direction:column;">
+                        <div style="background:#0ea5a6; color:#fff; padding:12px 18px; font-weight:700;">En la comprar de tu SIM LikePhone el Envío es Gratis</div>
+                        <div style="padding:20px; display:grid; grid-template-columns: 360px 1fr; gap:20px; align-items:start; overflow:auto;">
+                            <div style="display:none;">
+                                <!-- espacio para imagen si se requiere -->
+                            </div>
+                            <div style="grid-column: 1 / -1; display:grid; gap:16px;">
+                                <div style="font-weight:700; color:#0f172a;">Datos de contacto</div>
+                                <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:12px;">
+                                    <input type="text" placeholder="Nombre" style="padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+                                    <input type="text" placeholder="Apellido Paterno" style="padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+                                    <input type="text" placeholder="Apellido Materno" style="padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+                                    <input type="tel" placeholder="Número de teléfono (10 dígitos)" style="grid-column: span 2; padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+                                    <input type="email" placeholder="Correo Electrónico" style="padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+                                </div>
+
+                                <div style="font-weight:700; color:#0f172a; margin-top:6px;">Datos de envío</div>
+                                <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap:12px;">
+                                    <input type="text" placeholder="Calle" style="padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+                                    <input type="text" placeholder="Colonia" style="padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+                                    <input type="text" placeholder="No. Ext" style="padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+                                    <input type="text" placeholder="No. Int" style="padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+                                    <input type="text" placeholder="Código Postal" style="padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+                                    <input type="text" placeholder="Ciudad" style="padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+                                    <input type="text" placeholder="Estado" style="grid-column: span 2; padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+                                    <input type="text" placeholder="Entre Calles" style="grid-column: span 2; padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+                                </div>
+
+                                <div style="font-weight:700; color:#0f172a; margin-top:6px;">Datos de pago</div>
+                                <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap:12px; align-items:center; margin-bottom:8px;">
+                                    <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+                                        <span style="color:#64748b; font-size:14px; min-width:130px;">Tarjetas de crédito</span>
+                                        <img src="<?php echo BASE_URL; ?>resources/assets/images/personas/cards1.png" alt="Crédito" style="height:22px; width:auto;">
+                                    </div>
+                                    <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+                                        <span style="color:#64748b; font-size:14px; min-width:130px;">Tarjetas de débito</span>
+                                        <img src="<?php echo BASE_URL; ?>resources/assets/images/personas/cards1.png" alt="Débito" style="height:22px; width:auto;">
+                                    </div>
+                                </div>
+                                <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap:12px; align-items:center;">
+                                    <input type="text" placeholder="Nombre del titular" style="padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+                                    <input type="text" placeholder="Número de tarjeta" style="padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+                                    <div style="display:grid; grid-template-columns: 1fr auto 1fr; gap:12px; align-items:center;">
+                                        <input type="text" placeholder="Mes" style="padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+                                        <img src="<?php echo BASE_URL; ?>resources/assets/images/personas/cvv.png" alt="CVV" style="height:28px; width:auto; opacity:0.9;">
+                                        <input type="text" placeholder="Año" style="padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+                                    </div>
+                                    <input type="text" placeholder="Código de seguridad" style="padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+                                </div>
+                                <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; color:#64748b; font-size:12px; padding-top:6px;">
+                                    <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                                        <span>Transacciones realizadas vía</span>
+                                        <img src="<?php echo BASE_URL; ?>resources/assets/images/personas/openpay.png" alt="Openpay" style="height:22px; width:auto;">
+                                    </div>
+                                    <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+                                        <span>Tus pagos se realizan de forma segura con encriptación de 256 bits</span>
+                                    </div>
+                                </div>
+
+                                <div style="display:flex; justify-content:flex-end; gap:10px; padding-top:10px; border-top:1px solid #e5e7eb;">
+                                    <button type="button" class="tarjeta-close" style="background:#e5e7eb; color:#0f172a; padding:10px 16px; border-radius:6px; border:0; font-weight:600; cursor:pointer;">Cerrar</button>
+                                    <button type="button" style="background:#0ea5a6; color:#fff; padding:10px 18px; border-radius:6px; border:0; font-weight:700; cursor:pointer;">Pagar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Modal Efectivo -->
+                <div id="efectivoModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:10000; align-items:center; justify-content:center; padding:16px;">
+                    <div class="modal-card" style="background:#ffffff; width:100%; max-width:980px; border-radius:8px; box-shadow:0 12px 28px rgba(0,0,0,0.20); overflow:hidden; max-height:90vh; display:flex; flex-direction:column;">
+                        <div style="background:#0ea5a6; color:#fff; padding:12px 18px; font-weight:700;">En la comprar de tu SIM LikePhone el Envío es Gratis</div>
+                        <div style="padding:20px; display:grid; grid-template-columns: 1fr; gap:20px; align-items:start; overflow:auto;">
+                            <div style="display:grid; gap:16px;">
+                                <div style="font-weight:700; color:#0f172a;">Datos de contacto</div>
+                                <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:12px;">
+                                    <input type="text" placeholder="Nombre" style="padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+                                    <input type="text" placeholder="Apellido Paterno" style="padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+                                    <input type="text" placeholder="Apellido Materno" style="padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+                                    <input type="tel" placeholder="Número de teléfono (10 dígitos)" style="grid-column: span 2; padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+                                    <input type="email" placeholder="Correo Electrónico" style="padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+                                </div>
+
+                                <div style="font-weight:700; color:#0f172a; margin-top:6px;">Datos de envío</div>
+                                <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap:12px;">
+                                    <input type="text" placeholder="Calle" style="padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+                                    <input type="text" placeholder="Colonia" style="padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+                                    <input type="text" placeholder="No. Ext" style="padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+                                    <input type="text" placeholder="No. Int" style="padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+                                    <input type="text" placeholder="Código Postal" style="padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+                                    <input type="text" placeholder="Ciudad" style="padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+                                    <input type="text" placeholder="Estado" style="grid-column: span 2; padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+                                    <input type="text" placeholder="Entre Calles" style="grid-column: span 2; padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+                                </div>
+
+                                <div style="color:#475569; font-size:14px; margin:10px 0 0;">
+                                    Tiendas en las que podrás realizar tu pago en efectivo
+                                    <a href="#" style="color:#0ea5a6; text-decoration:none; font-weight:600;">Ver lista de tiendas</a>
+                                    /
+                                    <a href="#" style="color:#0ea5a6; text-decoration:none; font-weight:600;">Ver mapa</a>
+                                </div>
+                            </div>
+                            <div style="display:block;">
+                                <img src="<?php echo BASE_URL; ?>resources/assets/images/personas/Horizontal_1.gif" alt="Tiendas en efectivo" style="width:100%; height:auto; border:1px solid #e5e7eb; border-radius:6px;">
+                            </div>
+                            <div style="color:#475569; font-size:14px; margin:10px 0 0;">
+                                Consulta las <a href="#" style="color:#0ea5a6; text-decoration:none; font-weight:600;">Condiciones de Uso</a> del Servicio
+                            </div>
+                            <div style="display:flex; justify-content:flex-end; gap:10px; padding-top:10px; border-top:1px solid #e5e7eb;">
+                                <button type="button" class="efectivo-close" style="background:#e5e7eb; color:#0f172a; padding:10px 16px; border-radius:6px; border:0; font-weight:600; cursor:pointer;">Cerrar</button>
+                                <button type="button" style="background:#0ea5a6; color:#fff; padding:10px 18px; border-radius:6px; border:0; font-weight:700; cursor:pointer;">Generar Recibo de Pago</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Modal Código Promocional -->
+                <div id="codigoModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:10000; align-items:center; justify-content:center; padding:16px;">
+                    <div class="modal-card" style="background:#ffffff; width:100%; max-width:460px; border-radius:8px; box-shadow:0 12px 28px rgba(0,0,0,0.20); overflow:hidden;">
+                        <div style="background:#0ea5a6; color:#fff; padding:12px 18px; font-weight:700;">¿Tienes algún código de promoción?</div>
+                        <div style="padding:20px; display:grid; gap:16px;">
+                            <input type="text" placeholder="Código promocional" style="padding:12px 14px; border:1px solid #e5e7eb; border-radius:6px; font-size:16px;">
+                            <div style="display:flex; justify-content:center; gap:10px;">
+                                <button type="button" class="codigo-close" style="background:#64748b; color:#fff; padding:10px 18px; border-radius:6px; border:0; font-weight:700; cursor:pointer;">Cerrar</button>
+                                <button type="button" style="background:#0ea5a6; color:#fff; padding:10px 18px; border-radius:6px; border:0; font-weight:700; cursor:pointer;">Validar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <script>
+                    (function(){
+                        var modal = document.getElementById('comprarModal');
+                        var tarjeta = document.getElementById('tarjetaModal');
+                        var efectivo = document.getElementById('efectivoModal');
+                        var codigo = document.getElementById('codigoModal');
+                        if (!modal) return;
+                        function openModal(){ modal.style.display = 'flex'; }
+                        function closeModal(){ modal.style.display = 'none'; }
+                        function openTarjeta(){ if (tarjeta){ tarjeta.style.display='flex'; } }
+                        function closeTarjeta(){ if (tarjeta){ tarjeta.style.display='none'; } }
+                        function openEfectivo(){ if (efectivo){ efectivo.style.display='flex'; } }
+                        function closeEfectivo(){ if (efectivo){ efectivo.style.display='none'; } }
+                        function openCodigo(){ if (codigo){ codigo.style.display='flex'; } }
+                        function closeCodigo(){ if (codigo){ codigo.style.display='none'; } }
+                        document.addEventListener('click', function(e){
+                            var comprarBtn = e.target.closest('.comprar-btn');
+                            if (comprarBtn) { e.preventDefault(); openModal(); return; }
+                            if (e.target.classList && e.target.classList.contains('pay-card-btn')) { e.preventDefault(); closeModal(); openTarjeta(); return; }
+                            if (e.target.classList && e.target.classList.contains('pay-cash-btn')) { e.preventDefault(); closeModal(); openEfectivo(); return; }
+                            if (e.target.classList && e.target.classList.contains('codigo-btn')) { e.preventDefault(); openCodigo(); return; }
+                            if (e.target.classList && e.target.classList.contains('modal-close')) { closeModal(); return; }
+                            if (e.target === modal) { closeModal(); }
+                            if (e.target.classList && e.target.classList.contains('tarjeta-close')) { closeTarjeta(); return; }
+                            if (e.target === tarjeta) { closeTarjeta(); }
+                            if (e.target.classList && e.target.classList.contains('efectivo-close')) { closeEfectivo(); return; }
+                            if (e.target === efectivo) { closeEfectivo(); }
+                            if (e.target.classList && e.target.classList.contains('codigo-close')) { closeCodigo(); return; }
+                            if (e.target === codigo) { closeCodigo(); }
+                        });
+                        document.addEventListener('keydown', function(e){ if (e.key === 'Escape'){ closeModal(); closeTarjeta(); closeEfectivo(); closeCodigo(); } });
+                    })();
+                </script>
+            </div>
+        </div>
+    </div>
+    <?php } else { ?>
+    <div class="plan-activacion" style="background:#ffffff; padding:40px 16px;">
+        <div class="plan-card" style="max-width:1200px; margin:0 auto; display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap;">
+            <div class="plan-img" style="flex:1 1 420px; text-align:center;">
+                <div style="width:100%; max-width:520px; height:280px; background:#e9edf1; border-radius:10px;"></div>
+            </div>
+            <div class="plan-content" style="flex:1 1 560px; background:#ffffff; border-radius:10px; box-shadow:0 12px 28px rgba(0,0,0,0.08); padding:44px 40px; max-width:700px; min-height:320px; display:flex; flex-direction:column; justify-content:center;">
+                <div style="height:14px; width:120px; background:#dbe2ea; border-radius:6px; margin-bottom:10px;"></div>
+                <div style="height:28px; width:60%; background:#cfd6dd; border-radius:6px; margin:8px 0 12px;"></div>
+                <div style="height:14px; width:70%; background:#e9edf1; border-radius:6px; margin:8px 0;"></div>
+                <div style="display:flex; gap:12px; margin-top:18px;">
+                    <div style="height:38px; width:140px; background:#e3e8ee; border-radius:8px;"></div>
+                    <div style="height:38px; width:120px; background:#e3e8ee; border-radius:8px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php } ?>
+
+
+    <!-- COBERTURA -->
+    <?php
+        $byType = isset($this->cobertura) && is_array($this->cobertura) ? $this->cobertura : [];
+        $cob = [
+        'titulo'    => $byType['titulo'][0]    ?? null,
+        'subtitulo' => $byType['subtitulo'][0] ?? null,
+        'texto'     => $byType['texto'][0]     ?? null,
+        'btn'       => $byType['boton'][0]     ?? null,
+        'img'       => $byType['imagen'][0]    ?? null,
+        ];
+        $showCob = $cob['titulo'] || $cob['subtitulo'] || $cob['texto'] || $cob['btn'] || $cob['img'];
+    ?>
+    <?php if ($showCob) { ?>
+    <div class="row homeresponsivecob"
+     style="display:flex; flex-wrap:wrap; align-items:center; justify-content:center; background:#ffffff; padding:60px 24px; border-radius:18px; border:1px solid #e5e7eb; box-shadow:0 20px 50px rgba(0,0,0,0.08);">
+
+        <!-- Columna contenido -->
+        <div class="content-column col-lg-5 col-md-12 col-sm-12" style="flex:1; max-width:500px; padding:20px; text-align:left;">
+            <div class="inner-column" style="padding-left:0; margin-top:0;">
+            <div class="sec-title">
+                <?php if ($cob['titulo']) { ?>
+                <span class="title" style="display:block; font-size:13px; letter-spacing:2px; color:#2ea3a0; text-transform:uppercase; margin-bottom:8px; font-weight:700;">
+                    <?php echo $cob['titulo']; ?>
+                </span>
+                <?php } ?>
+                <?php if ($cob['subtitulo']) { ?>
+                <h2 class="h2-title-home2" style="font-size:40px; font-weight:800; color:#0f172a; margin:10px 0;">
+                    <?php echo $cob['subtitulo']; ?>
+                </h2>
+                <?php } ?>
+                <?php if ($cob['texto']) { ?>
+                <div class="text" style="font-size:16px; line-height:1.8; color:#475569; margin-bottom:25px;">
+                    <?php echo $cob['texto']; ?>
+                </div>
+                <?php } ?>
+            </div>
+
+            <?php if ($cob['btn']) { ?>
+            <div class="btn-box">
+                <a href="<?php echo htmlspecialchars(isset($this->cobertura_link) && $this->cobertura_link ? $this->cobertura_link : (BASE_URL.'cobertura')); ?>"
+                class="theme-btn btn-style-one"
+                style="display:inline-block; background:#0ea5a6; color:#fff; padding:14px 35px; border-radius:6px; text-decoration:none; font-weight:700; font-size:16px; letter-spacing:0.5px; transition:all 0.3s ease; box-shadow:0 6px 16px rgba(0, 0, 0, 0.12);"
+                onmouseover="this.style.opacity='0.95'; this.style.transform='translateY(-2px)';"
+                onmouseout="this.style.opacity='1'; this.style.transform='translateY(0)';">
+                <span class="btn-title"><?php echo $cob['btn']; ?></span>
+                </a>
+            </div>
+            <?php } ?>
+            </div>
+        </div>
+
+        <!-- Columna imagen -->
+        <?php if ($cob['img']) { ?>
+        <div class="image-column col-lg-7 col-md-12 col-sm-12" style="flex:1; max-width:800px; text-align:center; margin-top:30px;">
+            <div class="image-box" style="padding-left:0; height:auto; background:none;">
+            <figure class="image-1 wow fadeIn" style="margin:0;">
+                <img src="<?php echo htmlspecialchars($cob['img']); ?>" alt="Mapa de cobertura"
+                    style="width:100%; max-width:700px; background:none; border:none; border-radius:12px; box-shadow:0 14px 36px rgba(0,0,0,0.10); transition:transform 0.4s ease;"
+                    onmouseover="this.style.transform='scale(1.05)';"
+                    onmouseout="this.style.transform='scale(1)';">
+            </figure>
+            </div>
+        </div>
+        <?php } ?>
+    </div>
+    <?php } else { ?>
+    <div class="row homeresponsivecob"
+     style="display:flex; flex-wrap:wrap; align-items:center; justify-content:center; background:#ffffff; padding:60px 24px; border-radius:18px; border:1px solid #e5e7eb; box-shadow:0 20px 50px rgba(0,0,0,0.08);">
+        <div class="content-column col-lg-5 col-md-12 col-sm-12" style="flex:1; max-width:500px; padding:20px; text-align:left;">
+            <div class="inner-column" style="padding-left:0; margin-top:0;">
+                <div class="sec-title">
+                    <div style="height:12px; width:140px; background:#dbe2ea; border-radius:6px; margin-bottom:10px;"></div>
+                    <div style="height:28px; width:70%; background:#cfd6dd; border-radius:6px; margin:8px 0 12px;"></div>
+                    <div style="height:14px; width:85%; background:#e9edf1; border-radius:6px; margin:8px 0 18px;"></div>
+                    <div style="height:42px; width:180px; background:#e3e8ee; border-radius:8px;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="image-column col-lg-7 col-md-12 col-sm-12" style="flex:1; max-width:800px; text-align:center; margin-top:30px;">
+            <div class="image-box" style="padding-left:0; height:auto; background:none;">
+                <div style="width:100%; max-width:700px; height:360px; background:#eef3f7; border-radius:12px;"></div>
+            </div>
+        </div>
+    </div>
+    <?php } ?>
+
+    <!-- Beneficios -->
+    <?php
+        $benef = isset($this->beneficios) && is_array($this->beneficios) ? $this->beneficios : ['items' => []];
+        $cards = isset($benef['items']) && is_array($benef['items']) ? $benef['items'] : [];
+    ?>
+
+    <section class="about-section" style="padding: 80px 0; background:#f8fafc; font-family: 'Montserrat', sans-serif;">
+        <div class="container">
+        <?php if (!empty($cards)) { ?>
+        <div style="display:grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap:28px; align-items:stretch;">
+            <?php foreach ($cards as $c) { ?>
+                <div style="position:relative; background:#ffffff; border:1px solid #eceff3; border-radius:14px; box-shadow:0 8px 20px rgba(2,12,27,0.06); padding:54px 24px 26px; text-align:center; transition:transform .18s ease, box-shadow .18s ease;" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 14px 28px rgba(2,12,27,0.10)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 20px rgba(2,12,27,0.06)';">
+                    <?php if (!empty($c['img'])) { ?>
+                    <img src="<?php echo htmlspecialchars($c['img']); ?>" alt="<?php echo htmlspecialchars($c['title'] ?? ''); ?>"
+                        style="width:72px; height:72px; object-fit:cover; display:block; border-radius:50%; border:4px solid #ffffff; box-shadow:0 8px 18px rgba(2,12,27,0.12); position:absolute; left:50%; transform:translateX(-50%); top:-36px; background:#ffffff;">
+                    <?php } ?>
+                    <?php if (!empty($c['title'])) { ?>
+                    <div style="font-weight:800; font-size:18px; color:#0ea5a6; margin-bottom:8px; letter-spacing:0.2px;"><?php echo $c['title']; ?></div>
+                    <div style="width:38px; height:2px; background:#0ea5a6; opacity:0.25; margin:6px auto 10px; border-radius:2px;"></div>
+                    <?php } ?>
+                    <?php if (!empty($c['text'])) { ?>
+                    <div style="font-size:14px; color:#556070; line-height:1.75; padding:0 6px;"><?php echo $c['text']; ?></div>
+                    <?php } ?>
+                    <?php if (!empty($c['btn'])) { // si más adelante agregas botón por tarjeta ?>
+                    <div style="margin-top:12px;">
+                        <a href="#"
+                        style="display:inline-block; background:#0ea5a6; color:#fff; padding:8px 14px; border-radius:9999px; text-decoration:none; font-weight:700; font-size:12px; letter-spacing:0.2px; box-shadow:0 4px 10px rgba(2,12,27,0.10);" onmouseover="this.style.opacity='0.95'" onmouseout="this.style.opacity='1'">
+                        <?php echo $c['btn']; ?>
+                        </a>
+                    </div>
+                    <?php } ?>
+                </div>
+            <?php } ?>
+            </div>
+            <?php } else { ?>
+            <div style="display:grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap:28px; align-items:stretch;">
+                <?php for($i=0;$i<4;$i++){ ?>
+                <div style="position:relative; background:#ffffff; border:1px solid #eceff3; border-radius:14px; box-shadow:0 8px 20px rgba(2,12,27,0.06); padding:54px 24px 26px; text-align:center;">
+                    <div style="width:72px; height:72px; border-radius:50%; background:#e9edf1; position:absolute; left:50%; transform:translateX(-50%); top:-36px; border:4px solid #ffffff;"></div>
+                    <div style="height:16px; width:60%; background:#cfd6dd; border-radius:8px; margin:26px auto 12px;"></div>
+                    <div style="height:10px; width:70%; background:#e9edf1; border-radius:6px; margin:0 auto 18px;"></div>
+                    <div style="height:30px; width:120px; background:#e3e8ee; border-radius:9999px; margin:0 auto;"></div>
+                </div>
+                <?php } ?>
+            </div>
+            <?php } ?>
+        </div>
+    </section>
+
+    <!-- SECCION ESIM -->
+    <?php
+        $byType = isset($this->seccion_esim) && is_array($this->seccion_esim) ? $this->seccion_esim : [];
+        $esim = [
+        'img'      => $byType['imagen'][0]    ?? null,                   // dinámica con fallback opcional
+        'titulo'   => $byType['titulo'][0]    ?? null,
+        'subtitulo'=> $byType['subtitulo'][0] ?? null,
+        'texto'    => $byType['texto'][0]     ?? null,
+        'botones'  => isset($byType['boton']) ? $byType['boton'] : [],   // sin fallback: respeta visible
+        ];
+    ?>
+    <?php $showEsim = !empty($esim['img']); ?>
+    <?php if ($showEsim) { ?>
+    <section class="fluid-section-one homeresponsive2">
+        <div class="outer-box clearfix"
+            style="height:480px; border-radius:18px; overflow:hidden; position:relative; background-repeat:no-repeat; background-size:cover; background-position:center; background-image:url(<?php echo htmlspecialchars($esim['img']); ?>); display:flex; align-items:flex-end; justify-content:center; text-align:center; border:0;">
+            <div style="position:absolute; inset:0; display:none;"></div>
+            <div class="inner-column" style="position:relative; z-index:1; color:#fff; max-width:760px; padding:28px 22px 26px;">
+                <?php if (!empty($esim['titulo'])) { ?>
+                <div style="font-family:'Montserrat', sans-serif; font-weight:800; font-size:34px; line-height:1.15; letter-spacing:0.2px; margin:0 0 10px; text-shadow:0 10px 24px rgba(2,12,27,0.35);">
+                    <?php echo $esim['titulo']; ?>
+                </div>
+                <?php } ?>
+                <?php if (!empty($esim['subtitulo'])) { ?>
+                <div style="font-family:'Montserrat', sans-serif; font-weight:600; font-size:16px; line-height:1.6; opacity:0.95; max-width:680px; margin:0 auto 10px;">
+                    <?php echo $esim['subtitulo']; ?>
+                </div>
+                <?php } ?>
+                <?php if (!empty($esim['texto'])) { ?>
+                <div style="font-family:'Montserrat', sans-serif; font-weight:500; font-size:14px; line-height:1.75; opacity:0.92; max-width:700px; margin:0 auto;">
+                    <?php echo $esim['texto']; ?>
+                </div>
+                <?php } ?>
+            </div>
+        </div>
+    </section>
+    <?php } else { ?>
+    <section class="fluid-section-one homeresponsive2">
+        <div class="outer-box clearfix" style="height:480px; border-radius:18px; background:#ffffff; border:0; box-shadow:none; display:flex; align-items:flex-end; justify-content:center; overflow:hidden; position:relative;">
+            <div style="position:absolute; inset:0; display:none;"></div>
+            <div style="position:relative; z-index:1; width:100%; max-width:760px; padding:28px 22px 26px; text-align:center;">
+                <div style="height:18px; width:54%; background:rgba(148,163,184,0.35); border-radius:10px; margin:0 auto 12px;"></div>
+                <div style="height:10px; width:70%; background:rgba(148,163,184,0.25); border-radius:8px; margin:0 auto 10px;"></div>
+                <div style="height:10px; width:62%; background:rgba(148,163,184,0.22); border-radius:8px; margin:0 auto 0;"></div>
+            </div>
+        </div>
+    </section>
+    <?php } ?>
+    <!-- Sección de Botones (debajo de la imagen) -->
+    <?php if (!empty($esim['botones']) && is_array($esim['botones'])) { ?>
+    <div class="btn-box" style="margin:26px auto 0; width:100%; max-width:980px; padding:18px 16px; display:flex; justify-content:center; align-items:center; column-gap:26px; row-gap:16px; flex-wrap:wrap; font-family:'Montserrat', sans-serif; text-align:center; background:#ffffff; border:1px solid rgba(15, 23, 42, 0.10); border-radius:14px; box-shadow:0 16px 40px rgba(2, 12, 27, 0.10);">
+        <?php foreach ($esim['botones'] as $i => $btext) {
+            $href = '#';
+            if (isset($this->seccion_esim_links[$i]) && is_string($this->seccion_esim_links[$i]) && trim($this->seccion_esim_links[$i]) !== '') {
+                $href = $this->seccion_esim_links[$i];
+            }
+        ?>
+            <a href="<?php echo htmlspecialchars($href); ?>" class="boton-v1 pronto"
+               style="background:linear-gradient(180deg,#17a2b8 0%,#1094a8 100%); color:#fff; text-decoration:none; padding:13px 26px; border-radius:6px; font-weight:800; font-size:12px; letter-spacing:0.6px; text-transform:uppercase; transition:background 0.25s ease, transform 0.15s ease, box-shadow 0.25s ease, filter 0.25s ease; min-width:230px; text-align:center; display:inline-flex; align-items:center; justify-content:center; border:1px solid rgba(2, 12, 27, 0.10); box-shadow:0 10px 22px rgba(16,148,168,0.18);" onmouseover="this.style.background='linear-gradient(180deg,#128a99 0%,#0c7f92 100%)'; this.style.transform='translateY(-1px)'; this.style.boxShadow='0 14px 28px rgba(16,148,168,0.22)'; this.style.filter='saturate(1.05)';" onmouseout="this.style.background='linear-gradient(180deg,#17a2b8 0%,#1094a8 100%)'; this.style.transform='translateY(0)'; this.style.boxShadow='0 10px 22px rgba(16,148,168,0.18)'; this.style.filter='none';">
+                <?php echo $btext; ?>
+            </a>
+        <?php } ?>
+    </div>
+    <?php } else { ?>
+    <div class="btn-box" style="margin:26px auto 0; width:100%; max-width:980px; padding:18px 16px; display:flex; justify-content:center; align-items:center; column-gap:26px; row-gap:16px; flex-wrap:wrap; text-align:center; background:#ffffff; border:1px solid rgba(15, 23, 42, 0.10); border-radius:14px; box-shadow:0 16px 40px rgba(2, 12, 27, 0.10);">
+        <div style="height:44px; width:230px; background:#e7eef6; border-radius:6px; border:1px solid #d9e5f0;"></div>
+        <div style="height:44px; width:230px; background:#e7eef6; border-radius:6px; border:1px solid #d9e5f0;"></div>
+    </div>
+    <?php } ?>
+
+
+
+    <?php
+        $byType = isset($this->Recargalikes) && is_array($this->Recargalikes) ? $this->Recargalikes : [];
+
+        $recarga = [
+        'titulo'    => $byType['titulo'][0]    ?? null,
+        'subtitulo' => $byType['subtitulo'][0] ?? null,
+        'texto'     => $byType['texto'][0]     ?? null,
+        'btn'       => $byType['boton'][0]     ?? null,
+        'img'       => $byType['imagen'][0]    ?? null,
+        ];
+    ?>
+
+    <?php
+        // Debug ligero de la API de planes (no afecta el diseño, solo se muestra si se pide por querystring)
+        if (isset($_GET['debugcms']) && $_GET['debugcms'] == '1') {
+            $planesDebug = isset($this->planesSocioDebug) ? $this->planesSocioDebug : null;
+            $planesData  = isset($this->planesSocio) && is_array($this->planesSocio) ? $this->planesSocio : [];
+    ?>
+        <div style="max-width:1200px; margin:20px auto; padding:14px 18px; background:#f8fafc; color:#0f172a; font-size:12px; font-family:monospace; border-radius:8px; border:1px solid #e2e8f0; box-shadow:0 8px 20px rgba(15,23,42,0.08);">
+            <div style="font-weight:bold; margin-bottom:4px; color:#16a34a;">DEBUG API PLANES (solo visible con ?debugcms=1)</div>
+            <div style="margin-bottom:6px;">planesSocio count: <?php echo count($planesData); ?></div>
+
+            <div style="font-weight:bold; margin-top:4px; margin-bottom:2px;">LOG interno (planesSocioDebug):</div>
+            <pre style="margin-top:2px; padding:10px 12px; background:#ffffff; color:#111827; border-radius:6px; white-space:pre-wrap; max-height:180px; overflow:auto; font-size:11px; line-height:1.5;">
+<?php echo htmlspecialchars(json_encode($planesDebug, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)); ?>
+            </pre>
+
+            <div style="font-weight:bold; margin-top:10px; margin-bottom:2px;">Datos de planes (planesSocio usados en las cards):</div>
+            <pre style="margin-top:2px; padding:10px 12px; background:#ffffff; color:#111827; border-radius:6px; white-space:pre-wrap; max-height:260px; overflow:auto; font-size:11px; line-height:1.5;">
+<?php echo htmlspecialchars(json_encode($planesData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)); ?>
+            </pre>
+        </div>
+    <?php
+        }
+    ?>
+
+    <section class="about-section homeresponsive" style="padding: 60px 20px; background-color: #f9f9f9;">
+        <div class="auto-container" style="max-width: 1200px; margin: auto;">
+            <div class="row text-center">
+                <div class="content-column col-lg-12 col-md-12 col-sm-12">
+    <section class="pricing-section alternate" style="padding: 30px 0 0px; background: none; border: none;">
+        <div class="auto-container">
+            <style>
+                /* Cards layout like the provided design */
+                .about-section .pricing-section { 
+                font-family: "Segoe UI", Helvetica, Arial, sans-serif; 
+                }
+                .about-section .auto-container {
+                    max-width: 100% !important; /* Use full width */
+                    padding: 0 30px !important; /* Add side padding */
+                    margin: 0 auto;
+                }
+                .about-section .pricing-section .row {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr); /* 3 columns on desktop */
+                gap: 20px; /* un poco menos de espacio entre cards */
+                margin-left: 0;
+                margin-right: 0;
+                }
+                .about-section .pricing-block {
+                padding-left: 0 !important;
+                padding-right: 0 !important;
+                }
+                .about-section .pricing-block .inner-box {
+                    display: flex;
+                    flex-direction: column;
+                    background: #ffffff;
+                    border-radius: 12px;
+                    border: 1px solid #f1f5f9;
+                    box-shadow: 0 8px 22px rgba(15,23,42,0.10);
+                    overflow: hidden;
+                    transition: box-shadow .22s ease, transform .22s ease;
+                    position: relative;
+                }
+                .about-section .pricing-block .inner-box:hover {
+                    transform: translateY(-4px);
+                    box-shadow: 0 16px 34px rgba(15,23,42,0.18);
+                }
+                .about-section .pricing-block .upper-box {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center; /* Centrar contenido del header */
+                    justify-content: center;
+                    gap: 2px;
+                    padding: 10px 18px 8px 18px;
+                    background: #ffffff;
+                    border-bottom: 1px solid #f1f5f9;
+                    order: 1; /* Header primero */
+                    font-size: 12px;
+                    font-weight: 500;
+                    color: #556270; /* Muted gray for meta */
+                }
+                .about-section .pricing-block .upper-box .title {
+                    display: flex !important;
+                    align-items: center;
+                    gap: 8px;
+                    font-size: 11px !important;
+                    font-weight: 500 !important;
+                    color: #64748b !important;
+                    text-transform: uppercase;
+                    letter-spacing: 0.08em;
+                }
+                .about-section .pricing-block .upper-box .price {
+                    display: none; /* Hide original price from top */
+                }
+                .about-section .pricing-block .upper-box p {
+                    display: flex;
+                    align-items: center;
+                    gap: 4px;
+                    margin: 0 !important;
+                    font-size: 12px !important;
+                    color: #0f172a !important;
+                    font-weight: 500 !important;
+                }
+                .about-section .pricing-block center {
+                    line-height: 0;
+                    order: 2; /* Imagen debajo del header */
+                }
+                .about-section .pricing-block center img {
+                    width: 100% !important;
+                    height: 160px !important; /* antes 210 */
+                    object-fit: cover;
+                    display: block;
+                }
+                .about-section .pricing-block .lower-content {
+                padding: 0 18px 14px 18px !important;
+                background: #fff;
+                order: 3;
+                }
+                .about-section .pricing-block .lower-content .text {
+                    margin: 8px 0 12px 0; /* un poco menos de espacio */
+                    font-size: 13px;
+                    color: #1e293b; /* Slate */
+                    line-height: 1.6;
+                    font-weight: 500;
+                    min-height: 80px; /* reduce altura mínima */
+                    text-align: justify;
+                }
+                .about-section .pricing-block .btn-box {
+                position: relative;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 6px;
+                padding: 12px 0 0 0;
+                margin-top: 12px;
+                border-top: 1px solid #f0f2f5; /* Separator line */
+                }
+                .about-section .pricing-block .btn-box .price-footer {
+                    font-size: 22px;
+                    font-weight: 700;
+                    color: #005A6A; /* Dark Teal color */
+                }
+                .about-section .pricing-block .btn-box .theme-btn {
+                    display: inline-block;
+                    padding: 10px 26px;
+                    border-radius: 10px;
+                    font-size: 15px;
+                    font-weight: 600;
+                    box-shadow: 0 8px 18px rgba(0,180,196,0.40);
+                    border: none;
+                    cursor: pointer;
+                    transition: transform .22s ease, box-shadow .22s ease, opacity .22s ease;
+                }
+                .about-section .pricing-block .btn-box .theme-btn:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 12px 26px rgba(0,180,196,0.50);
+                    opacity: 0.96;
+                }
+                .about-section .pricing-block .btn-box .btn-naranja {
+                    background: #00C8D7; /* Turquesa principal */
+                    color: #fff;
+                }
+                .about-section .pricing-block .btn-box .btn-rosa {
+                    background: #00B4C4; /* Turquesa ligeramente más oscuro/variación */
+                    color: #fff;
+                }
+                @media (max-width: 991px) { /* Tablet */
+                .about-section .row.cards-row {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+                }
+                @media (max-width: 767px) { /* Mobile: horizontal scroll */
+                /* Pricing cards scroller */
+                .about-section .pricing-section .row.cards-row {
+                    display: flex !important;
+                    flex-wrap: nowrap !important;
+                    overflow: hidden !important; /* hide native scroll */
+                    gap: 16px !important;
+                    padding: 6px 10px 12px !important;
+                    scroll-snap-type: x mandatory;
+                    -webkit-overflow-scrolling: auto;
+                    scroll-behavior: smooth;
+                    -ms-overflow-style: none; /* IE/Edge */
+                    scrollbar-width: none;     /* Firefox */
+                    touch-action: none;        /* disable swipe */
+                }
+                .about-section .pricing-section .row.cards-row::-webkit-scrollbar { height: 0; width: 0; }
+                .about-section .pricing-section .row.cards-row::-webkit-scrollbar-thumb { background: transparent; }
+                .about-section .pricing-section .row.cards-row > .pricing-block {
+                    flex: 0 0 95% !important;
+                    min-width: 300px !important;
+                    max-width: 480px !important;
+                    scroll-snap-align: start;
+                }
+                .about-section .pricing-block center img { height: 160px !important; }
+                .about-section .pricing-block .lower-content .text { min-height: 0; font-size: 16px; }
+
+                /* Mobile arrow controls */
+                .pricing-section { position: relative; }
+                .pricing-section .mobile-cards-nav {
+                    position: absolute; inset: 0; pointer-events: none;
+                }
+                .pricing-section .mobile-cards-btn {
+                    position: absolute; top: 25%; transform: translateY(-50%);
+                    width: 38px; height: 38px; border-radius: 50%;
+                    background: rgba(15,23,42,0.75); color:#fff; border:0;
+                    display:flex; align-items:center; justify-content:center;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+                    cursor: pointer; pointer-events: all; z-index: 5;
+                }
+                .pricing-section .mobile-cards-btn.prev { left: -8px; }
+                .pricing-section .mobile-cards-btn.next { right: -8px; }
+
+                /* Beneficios: forzar 1 columna en móvil (override inline grid) */
+                .about-section .container > div[style*="grid-template-columns"] {
+                    grid-template-columns: 1fr !important;
+                }
+                }
+            </style>
+    
+        <?php
+            $cardsPlanes = isset($this->planesSocio) && is_array($this->planesSocio) ? $this->planesSocio : [];
+        ?>
+        <div class="row cards-row">
+            <?php if (!empty($cardsPlanes)) { ?>
+                <?php foreach ($cardsPlanes as $idx => $p) {
+                    $nombre = isset($p['nombre_comercial']) ? trim($p['nombre_comercial']) : '';
+                    $vig    = isset($p['vigencia']) ? trim($p['vigencia']) : '';
+                    $datos  = isset($p['datos']) ? trim($p['datos']) : '';
+                    $monto  = isset($p['monto']) ? trim($p['monto']) : '';
+                    $ticket = isset($p['ticket']) ? trim($p['ticket']) : '';
+                    $offId  = isset($p['offeringId']) ? trim($p['offeringId']) : '';
+                    // Imagen: preferir imagen_web2 y fallback a imagen_web1
+                    $imgRel = '';
+                    if (!empty($p['imagen_web2'])) { $imgRel = trim($p['imagen_web2']); }
+                    elseif (!empty($p['imagen_web1'])) { $imgRel = trim($p['imagen_web1']); }
+                    $imgUrl = $imgRel !== '' ? 'https://crm.likephone.mx/public/img/'.rawurlencode($imgRel) : '';
+                    // Alternar estilos de bloque y botón
+                    $blockClass = ($idx % 2 === 1) ? 'pricing-block style-two wow fadeInRight' : 'pricing-block wow fadeInLeft';
+                    $btnClass   = ($idx % 2 === 1) ? 'btn-rosa' : 'btn-naranja';
+                ?>
+                <div class="<?php echo $blockClass; ?>">
+                    <div class="inner-box">
+                        <center>
+                            <?php if ($imgUrl !== '') { ?>
+                                <img src="<?php echo htmlspecialchars($imgUrl); ?>" alt="<?php echo htmlspecialchars($nombre); ?>" alt="centered image">
+                            <?php } ?>
+                        </center>
+                        <div class="upper-box">
+                            <div class="title">📱
+                            <?php if ($nombre !== '') { ?>
+                                <div style="width:100%; text-align:center; font-size: 20px; font-weight: 800; margin-top: 2px; color: #00C8D7;">
+                                    <?php echo htmlspecialchars($nombre); ?>
+                                </div>
+                            <?php } ?>
+                            </div>
+                            <p>
+                                <?php if ($vig !== '') { ?>🗓️ Vigencia <?php echo htmlspecialchars($vig); ?> días<?php } ?>
+                            </p>
+                        </div>
+
+                        <div class="lower-content">
+                            <div class="text">
+                                <?php
+                                    if ($ticket !== '') {
+                                        echo htmlspecialchars($ticket);
+                                    } elseif ($datos !== '' || $vig !== '') {
+                                        $parts = [];
+                                        if ($vig !== '') { $parts[] = 'Vigencia '.$vig.' días'; }
+                                        if ($datos !== '') { $parts[] = $datos.' MB de datos'; }
+                                        echo htmlspecialchars(implode(', ', $parts));
+                                    } else {
+                                        echo htmlspecialchars($nombre);
+                                    }
+                                ?>
+                            </div>
+
+                            <div class="btn-box tooltip-container">
+                                <div class="price-footer">
+                                    <?php if ($monto !== '') { ?>
+                                        $<?php echo htmlspecialchars(number_format((float)$monto, 2, '.', '')); ?>
+                                    <?php } ?>
+                                </div>
+                                <a href="javascript:void(0)"
+                                   class="<?php echo $btnClass; ?> extend-new-recurso theme-btn btn-style-two"
+                                   data-toggle="modal" data-target=".nuevo"
+                                   data-oferta="<?php echo htmlspecialchars($offId); ?>"
+                                   data-costo="<?php echo htmlspecialchars($monto); ?>"
+                                   data-titulo="<?php echo htmlspecialchars($nombre.' $'.$monto.' '.$vig.' días'); ?>">
+                                    <span class="btn-title">Recargar</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <?php } ?>
+            <?php } ?>
+        </div>
+                <script>
+                    document.addEventListener('DOMContentLoaded', function(){
+                    var mm = window.matchMedia('(max-width: 767px)');
+                    var scroller, items, timer;
+                    var prevBtn = document.querySelector('.pricing-section .mobile-cards-btn.prev');
+                    var nextBtn = document.querySelector('.pricing-section .mobile-cards-btn.next');
+                    function cards(){ return scroller ? Array.prototype.slice.call(scroller.children) : []; }
+                    function currentIndex(){
+                        var c = cards(); if (!c.length) return 0;
+                        var sl = scroller.scrollLeft; var idx = 0;
+                        for (var i=0;i<c.length;i++){ if (c[i].offsetLeft - sl > 2) { idx = i; break; } if (i===c.length-1) idx = 0; }
+                        return idx;
+                    }
+                    function go(i){
+                        var c = cards(); if (!c.length) return;
+                        var n = c.length; var idx = ((i % n) + n) % n;
+                        var target = c[idx]; if (!target) return;
+                        scroller.scrollTo({ left: target.offsetLeft, behavior: 'smooth' });
+                    }
+                    function next(){ go(currentIndex() + 1); }
+                    function prev(){ go(currentIndex() - 1); }
+                    function start(){
+                        stop();
+                        if (!mm.matches) return;
+                        scroller = document.querySelector('.about-section .pricing-section .row.cards-row');
+                        if (!scroller) return;
+                        items = cards();
+                        if (!items.length) return;
+                        timer = setInterval(next, 3000);
+                        if (prevBtn) prevBtn.onclick = function(){ stop(); prev(); timer = setInterval(next, 3000); };
+                        if (nextBtn) nextBtn.onclick = function(){ stop(); next(); timer = setInterval(next, 3000); };
+                    }
+                    function stop(){ if (timer) { clearInterval(timer); timer = null; } }
+                    start();
+                    if (mm.addEventListener) mm.addEventListener('change', function(){ stop(); start(); });
+                    window.addEventListener('resize', function(){ stop(); start(); });
+                    });
+                </script>
+
+                    <?php $recargaEmpty = empty($recarga['titulo']) && empty($recarga['texto']) && empty($recarga['btn']); ?>
+                    <?php if ($recargaEmpty) { ?>
+                    <div style="max-width: 900px; margin: 40px auto 0;">
+                        <div style="height:260px; border-radius:12px; background:linear-gradient(180deg,#eef5fb 0%,#e6eef7 100%); border:1px solid #d9e5f0; box-shadow:0 6px 18px rgba(15, 23, 42, 0.05);"></div>
+                        <div class="btn-box" style="margin-top: 25px; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+                            <div style="height:38px; width:180px; background:#e3e8ee; border-radius:8px;"></div>
+                        </div>
+                    </div>
+                    <?php } else { ?>
+
+                    <!-- Imagen opcional -->
+                    <?php if (!empty($recarga['img'])) { ?>
+                    <div style="max-width: 980px; margin: 28px auto 0; padding: 0 10px; text-align:center;">
+                        <img src="<?php echo htmlspecialchars($recarga['img']); ?>" alt="Recargar Likes"
+                            style="width:100%; max-width: 420px; height:auto; display:inline-block; filter: drop-shadow(0 18px 40px rgba(2, 12, 27, 0.14));">
+                    </div>
+                    <?php } ?>
+
+                    <!-- Título, subtítulo y texto -->
+                    <div class="sec-title" style="max-width: 980px; margin: 26px auto 0; padding: 28px 22px; font-family:'Montserrat', sans-serif; text-align:center; background:#ffffff; border:1px solid rgba(15, 23, 42, 0.10); border-radius:16px; box-shadow:0 18px 50px rgba(2, 12, 27, 0.10);">
+                        <?php if ($recarga['titulo']) { ?>
+                        <h2 class="h2-title-home2" style="margin: 0 0 10px; font-size: 36px; font-weight: 900; letter-spacing: 0.2px; color: #0ea5a6; line-height:1.15;">
+                            <?php echo $recarga['titulo']; ?>
+                        </h2>
+                        <?php } ?>
+
+                        <?php if (!empty($recarga['subtitulo'])) { ?>
+                        <div class="subtitle" style="font-size: 17px; line-height: 1.6; color: #0f172a; font-weight: 600; margin: 4px auto 10px; max-width: 760px;">
+                            <?php echo $recarga['subtitulo']; ?>
+                        </div>
+                        <?php } ?>
+
+                        <?php if ($recarga['texto']) { ?>
+                        <div class="text" style="font-size: 15px; line-height: 1.85; color: #526170; font-weight: 500; max-width: 760px; margin: 0 auto;">
+                            <?php echo $recarga['texto']; ?>
+                        </div>
+                        <?php } ?>
+                    </div>
+                    <!-- Botón destacado -->
+                    <?php if ($recarga['btn']) { ?>
+                    <div style="margin-top: 16px; text-align:center;">
+                        <a href="<?php echo BASE_URL . 'recargas'; ?>"
+                            class="boton-v1"
+                            style="background:linear-gradient(180deg,#17a2b8 0%,#1094a8 100%); color:#fff; text-decoration:none; padding:14px 30px; border-radius:10px; font-weight:800; font-size:13px; letter-spacing:0.8px; text-transform:uppercase; display:inline-flex; align-items:center; justify-content:center; min-width:220px; transition:background 0.25s ease, transform 0.15s ease, box-shadow 0.25s ease; border:1px solid rgba(2, 12, 27, 0.10); box-shadow:0 14px 30px rgba(16,148,168,0.20);"
+                            onmouseover="this.style.background='linear-gradient(180deg,#128a99 0%,#0c7f92 100%)'; this.style.transform='translateY(-1px)'; this.style.boxShadow='0 18px 36px rgba(16,148,168,0.24)';"
+                            onmouseout="this.style.background='linear-gradient(180deg,#17a2b8 0%,#1094a8 100%)'; this.style.transform='translateY(0)'; this.style.boxShadow='0 14px 30px rgba(16,148,168,0.20)';">
+                            <?php echo $recarga['btn']; ?>
+                        </a>
+                    </div>
+                    <?php } ?>
+                    <?php } ?>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

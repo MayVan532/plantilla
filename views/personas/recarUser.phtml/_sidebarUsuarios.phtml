@@ -1,0 +1,119 @@
+<?php
+  $activeMenu    = isset($activeMenu) ? $activeMenu : 'inicio';
+  $baseItemStyle = 'display:flex; align-items:center; gap:10px; padding:9px 10px; border-radius:999px; text-decoration:none;';
+  $activeSuffix  = ' background:#00bcd4; color:#ffffff; font-weight:600; box-shadow:0 10px 25px rgba(0,188,212,.45);';
+  $normalSuffix  = ' color:#374151;';
+
+  if (!function_exists('lp_sidebar_style')) {
+    function lp_sidebar_style($key, $activeMenu, $base, $active, $normal) {
+      return $base . ($key === $activeMenu ? $active : $normal);
+    }
+  }
+
+  $sidebarLogo = null;
+  try {
+    if (class_exists('Illuminate\\Database\\Capsule\\Manager')) {
+      $capsule = Illuminate\Database\Capsule\Manager::connection('cms');
+      $cmsPageId = defined('CMS_PAGE_ID') ? (int)CMS_PAGE_ID : 0;
+      $logoBlockId = 0;
+
+      if ($cmsPageId > 0) {
+        // 1) Buscar sección Personas para esta página
+        $secRows = $capsule->table('secciones_cms')
+          ->select(['id_seccion','nombre'])
+          ->where('id_pagina', $cmsPageId)
+          ->where('visible', 1)
+          ->get();
+
+        $secId = 0;
+        foreach ($secRows as $r) {
+          $name = strtolower(trim((string)($r->nombre ?? '')));
+          if ($name === 'personas') {
+            $secId = (int)($r->id_seccion ?? 0);
+            break;
+          }
+        }
+
+        if ($secId > 0) {
+          $blockRow = $capsule->table('bloques_cms')
+            ->select(['id_bloque'])
+            ->where('id_pagina', $cmsPageId)
+            ->where('id_seccion', $secId)
+            ->where('visible', 1)
+            ->where('tipo_bloque', 'banner')
+            ->where('titulo', 'Logotipo')
+            ->orderBy('orden', 'asc')
+            ->first();
+
+          if ($blockRow && isset($blockRow->id_bloque)) {
+            $logoBlockId = (int)$blockRow->id_bloque;
+          }
+        }
+      }
+
+      if ($logoBlockId > 0) {
+        $row = $capsule->table('elementos_bloques')
+          ->select(['contenido'])
+          ->where('id_bloque', $logoBlockId)
+          ->where('tipo', 'imagen')
+          ->where(function($q){ $q->where('visible', 1)->orWhereNull('visible'); })
+          ->orderBy('id_elemento', 'asc')
+          ->first();
+
+        if ($row && is_string($row->contenido ?? null)) {
+          $cont = trim((string)$row->contenido);
+          if ($cont !== '') {
+            $sidebarLogo = $cont;
+          }
+        }
+      }
+    }
+  } catch (\Throwable $e) {
+    $sidebarLogo = null;
+  }
+?>
+
+<div class="col-12 col-lg-2" style="max-width:260px;">
+  <div style="background:#ffffff; color:#0f172a; height:100vh; padding:20px 16px; box-shadow:0 18px 40px rgba(15,23,42,.12); border-radius:0; position:sticky; top:0; border-right:3px solid #00bcd4;">
+    <div style="margin-bottom:24px;">
+      <div style="display:flex; flex-direction:column; align-items:center; gap:2px; text-align:center;">
+        <span style="font-size:13px; letter-spacing:.05em; text-transform:uppercase; color:#6b7280;">Menú</span>
+        <span style="font-size:14px; font-weight:700; color:#111827;">LIKEPHONE</span>
+        <?php if (!empty($sidebarLogo)) { ?>
+          <img src="<?php echo htmlspecialchars($sidebarLogo, ENT_QUOTES, 'UTF-8'); ?>" alt="LikePhone" style="margin-top:8px; max-width:140px; height:auto; display:block;">
+        <?php } ?>
+      </div>
+    </div>
+    <nav style="display:flex; flex-direction:column; gap:6px; font-size:14px;">
+      <a href="<?php echo BASE_URL; ?>personas/usuarios" style="<?php echo lp_sidebar_style('inicio', $activeMenu, $baseItemStyle, $activeSuffix, $normalSuffix); ?>">
+        <i class="fas fa-home" style="width:16px;"></i>
+        <span>Inicio</span>
+      </a>
+      <a href="<?php echo BASE_URL; ?>personas/usuarios/Recargar" style="<?php echo lp_sidebar_style('recargar', $activeMenu, $baseItemStyle, $activeSuffix, $normalSuffix); ?>">
+        <i class="fas fa-bolt" style="width:16px;"></i>
+        <span>Recargar</span>
+      </a>
+      <a href="<?php echo BASE_URL; ?>personas/usuarios/Portabilidad" style="<?php echo lp_sidebar_style('portabilidad', $activeMenu, $baseItemStyle, $activeSuffix, $normalSuffix); ?>">
+        <i class="fas fa-exchange-alt" style="width:16px;"></i>
+        <span>Portabilidad</span>
+      </a>
+      <a href="<?php echo BASE_URL; ?>personas/usuarios/Misnumeros" style="<?php echo lp_sidebar_style('misnumeros', $activeMenu, $baseItemStyle, $activeSuffix, $normalSuffix); ?>">
+        <i class="fas fa-hashtag" style="width:16px;"></i>
+        <span>Mis números</span>
+      </a>
+      <a href="<?php echo BASE_URL; ?>personas/usuarios/Miscompras" style="<?php echo lp_sidebar_style('miscompras', $activeMenu, $baseItemStyle, $activeSuffix, $normalSuffix); ?>">
+        <i class="fas fa-shopping-bag" style="width:16px;"></i>
+        <span>Mis compras</span>
+      </a>
+      <a href="<?php echo BASE_URL; ?>personas/usuarios/Miperfil" style="<?php echo lp_sidebar_style('miperfil', $activeMenu, $baseItemStyle, $activeSuffix, $normalSuffix); ?>">
+        <i class="fas fa-user-circle" style="width:16px;"></i>
+        <span>Mi perfil</span>
+      </a>
+      <div style="margin-top:12px; padding-top:10px; border-top:1px solid rgba(148,163,184,.35);"></div>
+      <a href="<?php echo BASE_URL; ?>index/cerrar" style="display:flex; align-items:center; gap:10px; padding:9px 10px; border-radius:999px; text-decoration:none; color:#b91c1c; font-weight:600; margin-top:4px;">
+        <i class="fas fa-sign-out-alt" style="width:16px;"></i>
+        <span>Cerrar sesión</span>
+      </a>
+    </nav>
+  </div>
+</div>

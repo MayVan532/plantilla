@@ -1,0 +1,126 @@
+<div class="personas-main-content" style="background:#f3f4f6; min-height:100vh; padding:0;">
+
+  <div class="container-fluid">
+    <div class="row no-gutters">
+      <?php $activeMenu = 'miscompras'; require __DIR__ . '/_sidebarUsuarios.phtml'; ?>
+      <div class="col-12 col-lg-10" style="padding-left:0; padding-right:0;">
+        <?php require __DIR__ . '/_headerUsuarios.phtml'; ?>
+        <div style="padding:16px 24px 24px 24px;">
+          <div style="font-size:18px; font-weight:600; color:#111827; margin-bottom:14px; text-align:left;">Mis Compras</div>
+
+          <div style="background:#ffffff; border-radius:18px; padding:18px 20px 20px 20px; box-shadow:0 18px 40px rgba(15,23,42,.08);">
+
+            <div style="border-bottom:1px solid #e5e7eb; margin:-8px -20px 14px -20px; padding:8px 20px 0 20px;">
+              <div style="display:inline-flex; border-bottom:0;">
+                <button type="button" id="tabPlanes" style="border:none; background:#ffffff; padding:8px 16px; font-size:13px; display:flex; align-items:center; gap:6px; border-radius:6px 6px 0 0; border:1px solid transparent; border-bottom:none; color:#111827; font-weight:600; box-shadow:0 1px 0 #ffffff;">
+                  <i class="fas fa-shopping-cart"></i>
+                  <span>Planes de Activación</span>
+                </button>
+                <button type="button" id="tabRecargas" style="border:none; background:#f9fafb; padding:8px 16px; font-size:13px; display:flex; align-items:center; gap:6px; border-radius:6px 6px 0 0; border:1px solid transparent; border-bottom:none; color:#4b5563; font-weight:500; margin-left:4px;">
+                  <i class="fas fa-mobile-alt"></i>
+                  <span>Recargas</span>
+                </button>
+              </div>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+              <div></div>
+              <div style="display:flex; gap:10px; align-items:center;">
+                <label style="font-size:13px; color:#4b5563; margin:0;">Buscar:</label>
+                <input type="text" style="border:1px solid #d1d5db; border-radius:4px; padding:4px 8px; font-size:13px; min-width:160px;" />
+              </div>
+            </div>
+
+            <div id="tablaPlanes" style="border:1px solid #e5e7eb; border-radius:4px; overflow:hidden;">
+              <table style="width:100%; border-collapse:collapse; font-size:13px;">
+                <thead style="background:#f9fafb; color:#4b5563;">
+                  <tr>
+                    <th style="padding:8px 10px; border-bottom:1px solid #e5e7eb; text-align:left;">Folio Compra</th>
+                    <th style="padding:8px 10px; border-bottom:1px solid #e5e7eb; text-align:left;">Cantidad</th>
+                    <th style="padding:8px 10px; border-bottom:1px solid #e5e7eb; text-align:left;">Fecha</th>
+                    <th style="padding:8px 10px; border-bottom:1px solid #e5e7eb; text-align:left;">Total</th>
+                    <th style="padding:8px 10px; border-bottom:1px solid #e5e7eb; text-align:left;">Método de Pago</th>
+                    <th style="padding:8px 10px; border-bottom:1px solid #e5e7eb; text-align:left;">Estatus</th>
+                    <th style="padding:8px 10px; border-bottom:1px solid #e5e7eb; text-align:left;">Detalles</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td colspan="7" style="padding:16px 10px; text-align:center; color:#9ca3af;">Ningún dato disponible en esta tabla</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div id="tablaRecargas" style="display:none; border:1px solid #e5e7eb; border-radius:4px; overflow:hidden;">
+              <table style="width:100%; border-collapse:collapse; font-size:13px;">
+                <thead style="background:#f9fafb; color:#4b5563;">
+                  <tr>
+                    <th style="padding:8px 10px; border-bottom:1px solid #e5e7eb; text-align:left;">Folio Recarga</th>
+                    <th style="padding:8px 10px; border-bottom:1px solid #e5e7eb; text-align:left;">Número de teléfono</th>
+                    <th style="padding:8px 10px; border-bottom:1px solid #e5e7eb; text-align:left;">Plan</th>
+                    <th style="padding:8px 10px; border-bottom:1px solid #e5e7eb; text-align:left;">Fecha</th>
+                    <th style="padding:8px 10px; border-bottom:1px solid #e5e7eb; text-align:left;">Total</th>
+                    <th style="padding:8px 10px; border-bottom:1px solid #e5e7eb; text-align:left;">Método de pago</th>
+                    <th style="padding:8px 10px; border-bottom:1px solid #e5e7eb; text-align:left;">Estatus</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td colspan="7" style="padding:16px 10px; text-align:center; color:#9ca3af;">Ningún dato disponible en esta tabla</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px; font-size:12px; color:#6b7280;">
+              <div>Mostrando registros del 0 al 0 de un total de 0 registros</div>
+              <div style="display:flex; gap:6px;">
+                <button type="button" style="border:1px solid #00bcd4; background:#00bcd4; color:#f9fafb; font-size:12px; padding:4px 10px; border-radius:4px;">Anterior</button>
+                <button type="button" style="border:1px solid #00bcd4; background:#00bcd4; color:#f9fafb; font-size:12px; padding:4px 10px; border-radius:4px;">Siguiente</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    var tabPlanes   = document.getElementById('tabPlanes');
+    var tabRecargas = document.getElementById('tabRecargas');
+    var tablaPlanes = document.getElementById('tablaPlanes');
+    var tablaRec    = document.getElementById('tablaRecargas');
+    if (!tabPlanes || !tabRecargas) return;
+
+    function activarPlanes() {
+      tablaPlanes.style.display = 'block';
+      tablaRec.style.display    = 'none';
+      tabPlanes.style.background  = '#ffffff';
+      tabPlanes.style.color       = '#111827';
+      tabPlanes.style.fontWeight  = '600';
+      tabRecargas.style.background = '#f9fafb';
+      tabRecargas.style.color      = '#4b5563';
+      tabRecargas.style.fontWeight = '500';
+    }
+
+    function activarRecargas() {
+      tablaPlanes.style.display = 'none';
+      tablaRec.style.display    = 'block';
+      tabPlanes.style.background   = '#f9fafb';
+      tabPlanes.style.color        = '#4b5563';
+      tabPlanes.style.fontWeight   = '500';
+      tabRecargas.style.background = '#ffffff';
+      tabRecargas.style.color      = '#111827';
+      tabRecargas.style.fontWeight = '600';
+    }
+
+    tabPlanes.addEventListener('click', function(e) { e.preventDefault(); activarPlanes(); });
+    tabRecargas.addEventListener('click', function(e) { e.preventDefault(); activarRecargas(); });
+
+    activarPlanes();
+  })();
+</script>

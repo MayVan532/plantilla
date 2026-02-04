@@ -1,0 +1,90 @@
+<div class="personas-main-content" style="background:#f3f4f6; min-height:100vh; padding:0;">
+
+  <div class="container-fluid">
+    <div class="row no-gutters">
+      <?php $activeMenu = 'misnumeros'; require __DIR__ . '/_sidebarUsuarios.phtml'; ?>
+      <div class="col-12 col-lg-10" style="padding-left:0; padding-right:0;">
+        <?php require __DIR__ . '/_headerUsuarios.phtml'; ?>
+        <div style="padding:16px 24px 24px 24px;">
+          <div style="font-size:18px; font-weight:600; color:#111827; margin-bottom:14px; text-align:left;">Mis Números</div>
+
+          <div style="background:#ffffff; border-radius:18px; padding:18px 20px 20px 20px; box-shadow:0 18px 40px rgba(15,23,42,.08);">
+
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+              <div></div>
+              <div style="display:flex; gap:10px; align-items:center;">
+                <label style="font-size:13px; color:#4b5563; margin:0;">Buscar:</label>
+                <input type="text" style="border:1px solid #d1d5db; border-radius:4px; padding:4px 8px; font-size:13px; min-width:160px;" />
+                <a href="#" id="btnAgregarNumero" style="display:inline-flex; align-items:center; justify-content:center; padding:7px 14px; border-radius:4px; background:#00bcd4; border:1px solid #00bcd4; color:#f9fafb; font-size:13px; font-weight:600; text-decoration:none;">Agregar Nuevo Número</a>
+              </div>
+            </div>
+
+            <div style="border:1px solid #e5e7eb; border-radius:4px; overflow:hidden;">
+              <table style="width:100%; border-collapse:collapse; font-size:13px;">
+                <thead style="background:#f9fafb; color:#4b5563;">
+                  <tr>
+                    <th style="padding:8px 10px; border-bottom:1px solid #e5e7eb; text-align:left;">Número Teléfono</th>
+                    <th style="padding:8px 10px; border-bottom:1px solid #e5e7eb; text-align:left;">Alias</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td colspan="2" style="padding:16px 10px; text-align:center; color:#9ca3af;">Ningún dato disponible en esta tabla</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px; font-size:12px; color:#6b7280;">
+              <div>Mostrando registros del 0 al 0 de un total de 0 registros</div>
+              <div style="display:flex; gap:6px;">
+                <button type="button" style="border:1px solid #d1d5db; background:#ffffff; color:#4b5563; font-size:12px; padding:4px 10px; border-radius:4px;">Anterior</button>
+                <button type="button" style="border:1px solid #d1d5db; background:#ffffff; color:#4b5563; font-size:12px; padding:4px 10px; border-radius:4px;">Siguiente</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="modalNumero" style="display:none; position:fixed; inset:0; background:rgba(15,23,42,.45); z-index:1050; align-items:center; justify-content:center;">
+  <div style="background:#ffffff; border-radius:10px; max-width:520px; width:100%; margin:0 16px; box-shadow:0 20px 45px rgba(15,23,42,.45);">
+    <div style="padding:14px 18px; border-bottom:1px solid #e5e7eb; display:flex; justify-content:space-between; align-items:center;">
+      <span style="font-size:16px; font-weight:600; color:#111827;">Nuevo</span>
+      <button type="button" id="btnCerrarNumeroX" style="border:none; background:transparent; font-size:18px; line-height:1; color:#9ca3af; cursor:pointer;">&times;</button>
+    </div>
+    <div style="padding:16px 18px 10px 18px;">
+      <div style="margin-bottom:10px;">
+        <input type="text" placeholder="Número teléfono" style="width:100%; border:1px solid #d1d5db; border-radius:4px; padding:8px 10px; font-size:14px;" />
+      </div>
+      <div>
+        <input type="text" placeholder="Alias" style="width:100%; border:1px solid #d1d5db; border-radius:4px; padding:8px 10px; font-size:14px;" />
+      </div>
+    </div>
+    <div style="padding:10px 18px 14px 18px; border-top:1px solid #e5e7eb; display:flex; justify-content:flex-end; gap:8px;">
+      <button type="button" id="btnCerrarNumero" style="border:1px solid #6b7280; background:#6b7280; color:#f9fafb; font-size:13px; padding:7px 14px; border-radius:4px;">Cerrar</button>
+      <button type="button" style="border:1px solid #00bcd4; background:#00bcd4; color:#f9fafb; font-size:13px; padding:7px 14px; border-radius:4px;">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    var btnAgregar = document.getElementById('btnAgregarNumero');
+    var modal      = document.getElementById('modalNumero');
+    var btnCerrar  = document.getElementById('btnCerrarNumero');
+    var btnCerrarX = document.getElementById('btnCerrarNumeroX');
+    if (!btnAgregar || !modal) return;
+    function abrir()  { modal.style.display = 'flex'; }
+    function cerrar() { modal.style.display = 'none'; }
+    btnAgregar.addEventListener('click', function(e) { e.preventDefault(); abrir(); });
+    if (btnCerrar)  btnCerrar.addEventListener('click', function(e) { e.preventDefault(); cerrar(); });
+    if (btnCerrarX) btnCerrarX.addEventListener('click', function(e) { e.preventDefault(); cerrar(); });
+    modal.addEventListener('click', function(e) {
+      if (e.target === modal) { cerrar(); }
+    });
+  })();
+</script>

@@ -1,0 +1,289 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<div class="personas-main-content" style="background:#ffffff; font-family:'Montserrat', sans-serif; overflow-x:hidden;">
+  <style>
+    /* FAQ responsive spacing */
+    @media (max-width: 576px) {
+      .auto-container { padding-left: 16px !important; padding-right: 16px !important; }
+      .sidebar-column .inner-column { padding: 14px !important; border-radius: 14px; }
+      .social-widget { padding-left: 6px !important; padding-right: 6px !important; }
+      .social-widget ul { justify-content: flex-start !important; gap: 12px !important; }
+    }
+    @media (min-width: 577px) and (max-width: 992px) {
+      .auto-container { padding-left: 24px !important; padding-right: 24px !important; }
+    }
+  </style>
+  <?php if (isset($_GET['debugcms']) && $_GET['debugcms'] == '1') { ?>
+    <?php if (isset($this->debug_bloque17)) { ?>
+      <pre style="background:#f8fafc;border:1px solid #e2e8f0;color:#0f172a;font-size:12px;padding:10px;border-radius:6px;margin:10px 0;white-space:pre-wrap;">
+<?php echo htmlspecialchars(json_encode($this->debug_bloque17, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)); ?>
+      </pre>
+    <?php } ?>
+    <?php if (isset($this->debug_bloque18)) { ?>
+      <pre style="background:#f8fafc;border:1px solid #e2e8f0;color:#0f172a;font-size:12px;padding:10px;border-radius:6px;margin:10px 0;white-space:pre-wrap;">
+<?php echo htmlspecialchars(json_encode($this->debug_bloque18, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)); ?>
+      </pre>
+    <?php } ?>
+  <?php } ?>
+  <!-- BANNER -->
+  <?php if (!empty($this->banner_preguntas)) { ?>
+  <div style="position: relative; max-width: 100%; overflow: hidden; margin-top: 0;">
+      <div style="display: block; width: 100%;">
+          <?php $href = isset($this->banner_preguntas_link) ? trim((string)$this->banner_preguntas_link) : ''; ?>
+          <?php if ($href) { ?><a href="<?php echo htmlspecialchars($href); ?>" style="display:block;"><?php } ?>
+          <img src="<?php echo htmlspecialchars($this->banner_preguntas); ?>" 
+              style="width: 100%; height: 300px; object-fit: cover; display: block;">
+          <?php if ($href) { ?></a><?php } ?>
+      </div>
+  </div>
+  <?php } else { ?>
+  <div style="position: relative; max-width: 100%; overflow: hidden; margin-top: 0; min-height: 300px; border-radius:12px; background:linear-gradient(180deg,#eef5fb 0%,#e6eef7 100%); border:1px solid #d9e5f0; box-shadow:0 6px 18px rgba(15, 23, 42, 0.05);"></div>
+  <?php } ?>
+  <section class="faq-section" style="padding: 56px 0; background:#ffffff;">
+    <div class="auto-container">
+      <div class="row">
+        <div class="accordion-column col-lg-8 col-md-12 col-sm-12">
+          <div class="inner-column" style="background:#ffffff; border:1px solid #eceff3; border-radius:14px; box-shadow:0 8px 20px rgba(2,12,27,0.06); padding:16px;">
+            <ul class="accordion-box">
+              <?php 
+                $items = isset($this->faq_items) && is_array($this->faq_items) ? $this->faq_items : [];
+                $n = count($items);
+              ?>
+              <?php if ($n > 0) { foreach ($items as $idx => $item) { 
+                $q = isset($item['pregunta']) ? (string)$item['pregunta'] : '';
+                $answers = isset($item['respuestas']) && is_array($item['respuestas']) ? $item['respuestas'] : [];
+              ?>
+              <li class="accordion block" style="list-style:none; margin:0 0 12px;">
+                <div class="acc-btn" style="position:relative; background:#ffffff; border:1px solid #e5e7eb; border-radius:10px; padding:16px 48px 16px 16px; font-weight:700; color:#0f172a; box-shadow:0 2px 6px rgba(2,12,27,0.04); cursor:pointer;">
+                  <?php echo htmlspecialchars($q); ?>
+                  <div class="faq-toggle-icon" style="position:absolute; right: 14px; top:50%; transform:translateY(-50%); color:#0ea5a6; font-size:18px;">
+                    <i class="fas fa-eye faq-icon-eye"></i>
+                    <i class="fas fa-eye-slash faq-icon-eye-off" style="display:none;"></i>
+                  </div>
+                </div>
+                <div class="acc-content" style="display:none; border-left:1px solid #e5e7eb; border-right:1px solid #e5e7eb; border-bottom:1px solid #e5e7eb; border-radius:0 0 10px 10px; margin-top:-10px; padding:14px 16px; background:#ffffff; box-shadow:0 6px 16px rgba(2,12,27,0.06);">
+                  <div class="content">
+                    <?php if (!empty($answers)) { foreach ($answers as $ans) { 
+                      $a = isset($ans['texto']) ? (string)$ans['texto'] : '';
+                      $href = isset($ans['link']) ? trim((string)$ans['link']) : '';
+                    ?>
+                      <?php if ($a !== '') { ?>
+                      <div class="text" style="color:#556070; line-height:1.8; font-weight:500; margin-bottom:<?php echo $href ? '10px' : '8px'; ?>;">
+                        <?php echo nl2br(htmlspecialchars($a)); ?>
+                      </div>
+                      <?php } ?>
+                      <?php if ($href) { 
+                        $url = $href;
+                        if (stripos($url,'http') !== 0) { $url = 'https://' . ltrim($url, '/'); }
+                      ?>
+                      <div class="faq-link" style="margin-top:0; margin-bottom:8px;">
+                        <a href="<?php echo htmlspecialchars($url); ?>" target="_blank" style="display:inline-flex; align-items:center; gap:8px; font-size:14px; font-weight:600; color:#0ea5a6; text-decoration:none;">
+                          (Consulta aqui)
+                           <i class="fas fa-arrow-right" style="font-size:12px;"></i>
+                        </a>
+                      </div>
+                      <?php } ?>
+                    <?php } } ?>
+                  </div>
+                </div>
+              </li>
+              <?php } } ?>
+              <?php if ($n == 0) { ?>
+              <?php for ($k=0;$k<3;$k++) { ?>
+              <li class="accordion block" style="list-style:none; margin:0 0 12px;">
+                <div class="acc-btn" style="position:relative; background:#ffffff; border:1px solid #e5e7eb; border-radius:10px; padding:16px 48px 16px 16px; cursor:default;">
+                  <div style="height:16px; width:60%; background:#cfd6dd; border-radius:8px;"></div>
+                </div>
+                <div class="acc-content" style="display:none; border-left:1px solid #e5e7eb; border-right:1px solid #e5e7eb; border-bottom:1px solid #e5e7eb; border-radius:0 0 10px 10px; margin-top:-10px; padding:14px 16px; background:#ffffff;">
+                  <div class="content">
+                    <div class="text">
+                      <div style="height:10px; width:90%; background:#e9edf1; border-radius:6px; margin:6px 0;"></div>
+                      <div style="height:10px; width:80%; background:#e9edf1; border-radius:6px; margin:6px 0;"></div>
+                    </div>
+                  </div>
+                </div>
+              </li>
+              <?php } ?>
+              <?php } ?>
+            </ul>
+          </div>
+        </div>
+
+
+        
+        <div class="sidebar-column col-lg-4 col-md-12 col-sm-12">
+          <div class="inner-column" style="text-align:left; background:#ffffff; border:1px solid #e5edf7; border-radius:22px; box-shadow:0 12px 30px rgba(15,23,42,0.09); padding:22px 22px 20px;">
+
+            <!-- Redes sociales -->
+            <div class="social-widget" style="margin-bottom: 22px; padding:18px 22px 18px; border-radius:18px; background:linear-gradient(135deg,#e0f7ff 0%,#e3f2fd 40%,#f5fbff 100%); border:1px solid #dbeafe; display:flex; flex-direction:column; align-items:center; gap:18px;">
+              <h2 class="subtitulo-seccion-black" style="margin:0; font-size:15px; font-weight:800; color:#0ea5a6; text-align:center; letter-spacing:2px; text-transform:uppercase;">
+                Síguenos en
+              </h2>
+              <?php 
+                // Recolectar enlaces de posibles fuentes
+                $raw = [];
+                if (!empty($this->faq_social_links) && is_array($this->faq_social_links)) { $raw = array_merge($raw, $this->faq_social_links); }
+                if (isset($this->faq_byType['link'])) { $raw = array_merge($raw, (array)$this->faq_byType['link']); }
+                if (isset($this->faq_byType['social'])) { $raw = array_merge($raw, (array)$this->faq_byType['social']); }
+                $raw = array_values(array_filter(array_map('trim', $raw)));
+                // Filtrar solo redes sociales conocidas (excluir mailto:, tel:, whatsapp)
+                $social = [];
+                foreach ($raw as $u) {
+                  $lu = strtolower(trim($u));
+                  if (strpos($lu,'mailto:')===0 || strpos($lu,'tel:')===0 || strpos($lu,'wa.me/')!==false || strpos($lu,'whatsapp')!==false) { continue; }
+                  $platform = null; $style = ''; $icon = '';
+                  if (strpos($lu,'facebook')!==false) { $platform='facebook'; $style='background:#1877f2;'; $icon='fab fa-facebook-f'; }
+                  elseif (strpos($lu,'instagram')!==false) { $platform='instagram'; $style='background:linear-gradient(45deg,#feda75,#d62976,#962fbf,#4f5bd5);'; $icon='fab fa-instagram'; }
+                  elseif (strpos($lu,'tiktok')!==false) { $platform='tiktok'; $style='background:#000;'; $icon='fab fa-tiktok'; }
+                  elseif (strpos($lu,'youtube')!==false || strpos($lu,'youtu.be')!==false) { $platform='youtube'; $style='background:#FF0000;'; $icon='fab fa-youtube'; }
+                  if ($platform) { 
+                    $url = trim($u);
+                    if (stripos($url,'http') !== 0) { $url = 'https://' . ltrim($url,'/'); }
+                    $social[] = ['url'=>$url,'style'=>$style,'icon'=>$icon]; 
+                  }
+                }
+              ?>
+              <?php if (!empty($social)) { ?>
+              <ul style="list-style:none; padding:0; margin:0; display:flex; justify-content:center; align-items:center; gap:18px;">
+                <?php foreach ($social as $s) { ?>
+                <li style="display:flex;">
+                  <a href="<?php echo htmlspecialchars($s['url']); ?>" target="_blank"
+                    style="display:flex;align-items:center;justify-content:center;width:46px;height:46px;<?php echo $s['style']; ?> color:#fff;border-radius:9999px;font-size:22px;text-decoration:none;box-shadow:0 8px 20px rgba(15,23,42,0.18);transition:transform .22s ease, box-shadow .22s ease;"
+                    onmouseover="this.style.transform='translateY(-3px) scale(1.06)';this.style.boxShadow='0 14px 26px rgba(15,23,42,0.30)'" onmouseout="this.style.transform='translateY(0) scale(1)';this.style.boxShadow='0 8px 20px rgba(15,23,42,0.18)';">
+                    <i class="<?php echo $s['icon']; ?>" style="line-height:1;"></i>
+                  </a>
+                </li>
+                <?php } ?>
+              </ul>
+              <?php } else { ?>
+              <ul style="list-style:none; padding:0; margin:0; display:flex; justify-content:center; align-items:center; gap:18px;">
+                <?php for($i=0;$i<4;$i++){ ?>
+                <li><span style="display:inline-block;width:46px;height:46px;background:#e5edf7;border:1px solid #d1d9e8;border-radius:9999px;box-shadow:0 6px 14px rgba(15,23,42,0.12);"></span></li>
+                <?php } ?>
+              </ul>
+              <?php } ?>
+            </div>
+
+            <!-- Soporte (dinámico desde links CMS) -->
+            <?php 
+              // Unir posibles fuentes para soporte
+              $supLinks = [];
+              if (isset($this->faq_byType['link'])) { $supLinks = array_merge($supLinks, (array)$this->faq_byType['link']); }
+              if (isset($this->faq_byType['social'])) { $supLinks = array_merge($supLinks, (array)$this->faq_byType['social']); }
+              if (!empty($this->faq_social_links)) { $supLinks = array_merge($supLinks, (array)$this->faq_social_links); }
+              $supLinks = array_values(array_filter(array_map('trim', $supLinks)));
+              $tel=''; $mail=''; $wa=''; $waUrl='';
+              foreach ($supLinks as $u) {
+                $uTrim = trim($u);
+                if (!$mail) {
+                  if (stripos($uTrim,'mailto:')===0) { $mail = substr($uTrim,7); }
+                  elseif (preg_match('/^[\w.+-]+@[^\s@]+\.[^\s@]+$/', $uTrim)) { $mail = $uTrim; }
+                }
+                if (!$tel) {
+                  if (stripos($uTrim,'tel:')===0) { $tel = substr($uTrim,4); }
+                  elseif (preg_match('/^\+?\d[\d\s-]{5,}$/', $uTrim)) { $tel = $uTrim; }
+                }
+                if ((stripos($uTrim,'wa.me/')!==false || stripos($uTrim,'whatsapp')!==false)) {
+                  if (!$wa) { $wa = preg_replace('/\D+/','', $uTrim); }
+                  if (!$waUrl) {
+                    $waUrl = $uTrim;
+                    if (stripos($waUrl,'http') !== 0) { $waUrl = 'https://' . ltrim($waUrl,'/'); }
+                    if (!$wa && preg_match('/(\d{8,})/', $waUrl, $m)) { $wa = $m[1]; }
+                    if (!$waUrl && $wa) { $waUrl = 'https://wa.me/'.$wa; }
+                  }
+                }
+              }
+              $hasSup = $tel || $mail || $wa;
+            ?>
+            <?php if ($hasSup) { ?>
+            <div class="support-widget" style="margin-top:20px; text-align:left; padding:8px 2px 0;">
+              <span class="subtitulo-seccion-rosa" style="display:block; margin-bottom:10px; font-size:11px; letter-spacing:2px; color:#0ea5a6; font-weight:800; text-transform:uppercase;">
+                SOPORTE TECNICO Y ATENCIÓN A CLIENTES
+              </span>
+              <h2 class="subtitulo-seccion-black" style="margin:0 0 16px; font-size:24px; font-weight:800; color:#0f172a;">
+                Llámanos
+              </h2>
+
+              <div style="display:flex; flex-direction:column; gap:14px; margin-bottom:18px;">
+                <?php if ($mail) { ?>
+                <div class="info" style="display:flex; align-items:center; font-size:16px; color:#0f172a;">
+                  <span style="flex-shrink:0; width:44px; height:44px; border-radius:50%; background:linear-gradient(135deg,#0f3c8f,#102a6b); display:flex; align-items:center; justify-content:center; margin-right:14px; box-shadow:0 6px 14px rgba(15,23,42,0.25);">
+                    <i class="fas fa-envelope" style="font-size:18px; color:#ffffff;"></i>
+                  </span>
+                  <a href="<?php echo 'mailto:'.htmlspecialchars($mail); ?>" style="color:#0f172a; font-weight:700; text-decoration:none;">
+                    <?php echo htmlspecialchars($mail); ?>
+                  </a>
+                </div>
+                <?php } ?>
+
+                <?php if ($tel) { ?>
+                <div class="info" style="display:flex; align-items:center; font-size:16px; color:#0f172a;">
+                  <span style="flex-shrink:0; width:44px; height:44px; border-radius:50%; background:linear-gradient(135deg,#00bcd4,#00acc1); display:flex; align-items:center; justify-content:center; margin-right:14px; box-shadow:0 6px 14px rgba(0,172,193,0.35);">
+                    <i class="fas fa-phone-alt" style="font-size:18px; color:#ffffff;"></i>
+                  </span>
+                  <a href="<?php echo 'tel:'.htmlspecialchars($tel); ?>" style="color:#0f172a; font-weight:700; text-decoration:none;">
+                    <?php echo htmlspecialchars($tel); ?>
+                  </a>
+                </div>
+                <?php } ?>
+              </div>
+
+              <?php if ($wa) { ?>
+              <a href="<?php echo htmlspecialchars($waUrl ?: ('https://wa.me/'.$wa)); ?>" target="_blank" rel="noopener"
+                 style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;background:linear-gradient(90deg,#00c853,#00e676);color:#fff;padding:11px 18px;border-radius:9999px;text-decoration:none;font-weight:800;font-size:15px;box-shadow:0 10px 22px rgba(0,200,83,0.45);transition:transform .2s ease, box-shadow .2s ease;">
+                <i class="fab fa-whatsapp" style="font-size:18px;color:#fff;"></i>
+                Contáctanos Ahora
+              </a>
+              <?php } ?>
+            </div>
+            <?php } else { ?>
+            <div class="support-widget" style="margin-top: 20px; text-align:left; padding:6px 2px 0;">
+              <span class="subtitulo-seccion-rosa" style="display:block; margin-bottom:8px; font-size:11px; letter-spacing:2px; color:#0ea5a6; font-weight:800; text-transform:uppercase;">SOPORTE TECNICO Y ATENCIÓN A CLIENTES</span>
+              <div class="info" style="height:16px; width:180px; background:#e9edf1; border-radius:6px; margin-bottom:10px;"></div>
+              <div class="info" style="height:16px; width:220px; background:#e9edf1; border-radius:6px; margin-bottom:10px;"></div>
+              <div class="info" style="height:16px; width:200px; background:#e9edf1; border-radius:6px;"></div>
+            </div>
+            <?php } ?>
+          </div>
+        </div>
+
+
+
+        
+
+      </div>
+    </div>
+  </section>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var accordions = document.querySelectorAll('.accordion-box .accordion');
+      if (!accordions.length) return;
+      accordions.forEach(function(item, index) {
+        var btn = item.querySelector('.acc-btn');
+        var content = item.querySelector('.acc-content');
+        var eye = item.querySelector('.faq-icon-eye');
+        var eyeOff = item.querySelector('.faq-icon-eye-off');
+        if (!btn || !content) return;
+        // Abrir solo la primera por defecto
+        if (index === 0) {
+          content.style.display = 'block';
+          if (eye && eyeOff) { eye.style.display = 'none'; eyeOff.style.display = 'inline'; }
+        }
+        btn.addEventListener('click', function() {
+          var isOpen = content.style.display === 'block';
+          content.style.display = isOpen ? 'none' : 'block';
+          if (eye && eyeOff) {
+            if (isOpen) {
+              eye.style.display = 'inline';
+              eyeOff.style.display = 'none';
+            } else {
+              eye.style.display = 'none';
+              eyeOff.style.display = 'inline';
+            }
+          }
+        });
+      });
+    });
+  </script>
+</div>

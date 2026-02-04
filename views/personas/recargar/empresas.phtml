@@ -1,0 +1,103 @@
+ <link rel="preconnect" href="https://fonts.googleapis.com">
+ <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+ <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+ <div class="personas-main-content" style="background:#ffffff;font-family:'Poppins',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;color:#0b2238;">
+  <?php if (isset($_GET['debugcms']) && $_GET['debugcms']=='1') { ?>
+    <?php if (isset($this->debug_bloque67)) { ?>
+      <pre style="background:#f8fafc;border:1px solid #e2e8f0;color:#0f172a;font-size:12px;padding:10px;border-radius:6px;margin:10px 0;white-space:pre-wrap;">B67: <?php echo htmlspecialchars(json_encode($this->debug_bloque67, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES)); ?></pre>
+    <?php } ?>
+    <?php if (isset($this->debug_bloque69)) { ?>
+      <pre style="background:#f8fafc;border:1px solid #e2e8f0;color:#0f172a;font-size:12px;padding:10px;border-radius:6px;margin:10px 0;white-space:pre-wrap;">B69: <?php echo htmlspecialchars(json_encode($this->debug_bloque69, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES)); ?></pre>
+    <?php } ?>
+  <?php } ?>
+  <!-- BANNER -->
+  <?php if (!empty($this->rec_emp_banner)) { ?>
+  <div style="position: relative; max-width: 100%; overflow: hidden; margin-top: 0;">
+    <div style="display: block; width: 100%;">
+      <?php $href = isset($this->rec_emp_banner_link) ? trim((string)$this->rec_emp_banner_link) : ''; ?>
+      <?php if ($href) { ?><a href="<?php echo htmlspecialchars($href); ?>" style="display:block;"><?php } ?>
+      <img src="<?php echo htmlspecialchars($this->rec_emp_banner); ?>" style="width: 100%; height: 300px; object-fit: cover; display: block;">
+      <?php if ($href) { ?></a><?php } ?>
+    </div>
+  </div>
+  <?php } else { ?>
+  <div style="position: relative; max-width: 100%; overflow: hidden; margin-top: 0; min-height: 300px; border-radius:12px; background:linear-gradient(180deg,#eef5fb 0%,#e6eef7 100%); border:1px solid #d9e5f0; box-shadow:0 6px 18px rgba(15, 23, 42, 0.05);"></div>
+  <?php } ?>
+  <!-- formularo -->
+  <div style="background:#ffffff;border:1px solid rgba(30,198,227,0.08);padding:36px 40px;border-radius:20px;box-shadow:0 18px 46px rgba(6,25,41,0.08);max-width:460px;margin:34px auto;text-align:center;font-family:'Poppins',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;transition:box-shadow .25s ease, transform .25s ease;" onmouseover="this.style.boxShadow='0 26px 60px rgba(6,25,41,0.14)';this.style.transform='translateY(-3px)';" onmouseout="this.style.boxShadow='0 18px 46px rgba(6,25,41,0.08)';this.style.transform='none';">
+    <h2 style="color:#1ec6e3;font-size:26px;margin:0 0 18px 0;font-weight:700;line-height:1.25;">
+      Introduce tu Número<br>Telefónico
+    </h2>
+    <form>
+
+      <label for="telefono" style="display:block;text-align:left;color:#0b2238;font-weight:700;margin-bottom:8px;font-size:12px;letter-spacing:1px;text-transform:uppercase;">
+        Número Telefónico
+      </label>
+
+      <input type="text" id="telefono" name="telefono" placeholder="Ej: 1234567890"
+        style="width:100%;padding:16px 16px;border:1px solid #d9e2ea;border-radius:14px;font-size:16px;margin-bottom:22px;outline:none;transition:box-shadow 0.25s,border-color 0.25s,transform 0.15s;background:#fff;box-shadow:inset 0 1px 0 rgba(11,34,56,0.04);"
+        onfocus="this.style.borderColor='#1ec6e3';this.style.boxShadow='0 0 0 4px rgba(30,198,227,0.18)';"
+        onblur="this.style.borderColor='#d9e2ea';this.style.boxShadow='inset 0 1px 0 rgba(11,34,56,0.04)';">
+      <button type="submit"
+        style="background:linear-gradient(90deg,#1ec6e3 0%,#12a9c1 100%);color:#fff;border:none;padding:14px 40px;border-radius:999px;font-size:16px;font-weight:700;letter-spacing:.2px;cursor:pointer;transition:transform .2s ease,box-shadow .2s ease;box-shadow:0 12px 26px rgba(30,198,227,0.35);"
+        onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 14px 30px rgba(30,198,227,0.45)';"
+        onmouseout="this.style.transform='none';this.style.boxShadow='0 10px 24px rgba(30,198,227,0.35)';">
+        Enviar
+      </button>
+
+    </form>
+  </div>
+  <?php 
+    $gif = isset($this->rec_emp_gif_textos) && is_array($this->rec_emp_gif_textos) ? $this->rec_emp_gif_textos : [];
+    $cmsImg = $gif['imagen'][0] ?? null;
+    $cmsTitulo = $gif['titulo'][0] ?? null;
+    $cmsSubtitulo = $gif['subtitulo'][0] ?? null;
+    $cmsTexto = $gif['texto'][0] ?? null;
+    $cmsHas = $cmsImg || $cmsTitulo || $cmsSubtitulo || $cmsTexto;
+  ?>
+  <?php if ($cmsHas) { ?>
+  <div style="display:flex;align-items:center;justify-content:center;gap:40px;max-width:1100px;margin:auto;padding:40px;flex-wrap:wrap;">
+    <div style="background:#ffffff;border:1px solid #eaf3f7;border-radius:22px;padding:40px 28px;display:flex;align-items:center;justify-content:center;gap:44px;flex-wrap:wrap;max-width:1100px;box-shadow:0 16px 40px rgba(6,25,41,0.07);transition:box-shadow .25s, transform .25s;" onmouseover="this.style.boxShadow='0 22px 56px rgba(6,25,41,0.12)';this.style.transform='translateY(-2px)';" onmouseout="this.style.boxShadow='0 16px 40px rgba(6,25,41,0.07)';this.style.transform='none';">
+      <div style="flex:1;display:flex;justify-content:center;align-items:center;position:relative;min-width:300px;">
+
+        <?php if (!empty($cmsImg)) { ?>
+        <img src="<?php echo htmlspecialchars($cmsImg); ?>" alt="" style="max-width:480px;width:100%;height:auto;display:block;filter:drop-shadow(0 12px 24px rgba(0,0,0,0.12));" />
+        <?php } ?>
+        
+      </div>
+      <div style="flex:1;min-width:300px;padding:8px 24px;">
+        <?php if (!empty($cmsTitulo)) { ?>
+        <div style="color:#1ec6e3;font-size:12px;font-weight:700;letter-spacing:2px;margin-bottom:12px;text-transform:uppercase;">
+          <?php echo htmlspecialchars($cmsTitulo); ?>
+        </div>
+        <?php } ?>
+        <?php if (!empty($cmsSubtitulo)) { ?>
+        <h1 style="font-size:40px;margin:0 0 12px 0;line-height:1.08;font-weight:800;color:#1ec6e3;">
+          <?php echo htmlspecialchars($cmsSubtitulo); ?>
+        </h1>
+        <?php } ?>
+        <div style="height:1px;background:#eaf3f7;margin:14px 0 8px 0;"></div>
+        <?php if (!empty($cmsTexto)) { ?>
+          <div style="color:#2e3e4c;font-size:17px;line-height:1.9;">
+            <?php echo nl2br(htmlspecialchars($cmsTexto)); ?>
+          </div>
+        <?php } ?>
+      </div>
+    </div>
+  </div>
+  <?php } else { ?>
+  <div style="display:flex;align-items:center;justify-content:center;gap:40px;max-width:1100px;margin:auto;padding:40px;flex-wrap:wrap;">
+    <div style="flex:1;display:flex;justify-content:center;align-items:center;position:relative;min-width:300px;">
+      <div style="width:100%; height:260px; border-radius:12px; background:#eef3f7; border:1px solid #d9e5f0; box-shadow:0 6px 18px rgba(15, 23, 42, 0.05);"></div>
+    </div>
+    <div style="flex:1;min-width:300px;padding:8px 24px;">
+      <div style="height:12px; width:140px; background:#e3e8ee; border-radius:6px; margin-bottom:12px;"></div>
+      <div style="height:28px; width:60%; background:#cfd6dd; border-radius:8px; margin:0 0 12px 0;"></div>
+      <div style="height:1px;background:#eaf3f7;margin:14px 0 8px 0;"></div>
+      <div style="height:12px; width:90%; background:#e9edf1; border-radius:6px; margin:6px 0;"></div>
+      <div style="height:12px; width:80%; background:#e9edf1; border-radius:6px; margin:6px 0;"></div>
+    </div>
+  </div>
+  <?php } ?>
+</div>  
+

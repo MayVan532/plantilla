@@ -1,0 +1,348 @@
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<link rel="stylesheet" href="<?php echo BASE_URL; ?>resources/assets/css/empresas-responsive.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+<div class="empresas-main-content" style="background:#ffffff;">
+    <!-- BANNER (B82) -->
+    <div style="position: relative; max-width: 100%; overflow: hidden; margin-top: 0; background:#ffffff; border-radius:0px;">
+        <div style="display: block; width: 100%;">
+            <?php $b1 = $this->dist_banner1 ?? null; $b1Href = $this->dist_banner1_link ?? null; ?>
+            <?php if (!empty($b1['imagen'])) { ?>
+              <?php if ($b1Href) { ?><a href="<?php echo htmlspecialchars($b1Href); ?>"><?php } ?>
+                <img src="<?php echo htmlspecialchars($b1['imagen']); ?>" style="width: 100%; height: auto; display: block;">
+              <?php if ($b1Href) { ?></a><?php } ?>
+            <?php } else { ?>
+              <div style="width:100%;height:260px;background:#eef3f7;border-radius:12px;"></div>
+            <?php } ?>
+        </div>
+    </div>
+    <!-- INTRO (B83) -->
+    <?php $di=$this->dist_intro??[]; $diTxt=$di['texto'][0]??null; ?>
+    <p style="width: 80%; margin: 35px auto 0 auto; text-align: justify; font-size: 20px; color: #161179; line-height: 1.6; font-family: 'Poppins', sans-serif; font-weight: 600; letter-spacing: 0.02em;">
+        <?php if ($diTxt) { echo nl2br(htmlspecialchars($diTxt)); } else { ?><span style="display:block;height:16px;background:#e9eef5;border-radius:8px;width:90%;margin:6px 0;"></span><span style="display:block;height:16px;background:#e9eef5;border-radius:8px;width:70%;margin:6px 0;"></span><?php } ?>
+    </p>
+    <!-- Patrón de puntos a la izquierda -->
+    <div style="background-color:#00AEEF; padding: 40px 20px; position: relative; overflow: hidden; margin-top: 35px;">
+        <div style="position:absolute; top: 0; left: 0; width: 200px; height: 100%; background-image: radial-gradient(circle, rgba(255,255,255,0.15) 1px, transparent 1px); background-size: 15px 15px; z-index: 1;"></div>
+        <div style="max-width: 1100px; margin: auto; position: relative; z-index: 2;">
+            <?php $df=$this->dist_facil??[]; $dfTit=$df['titulo'][0]??'¿POR QUÉ LIKEPHONE ES FÁCIL DE VENDER?'; ?>
+            <h2 style="font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 24px; color: #fff; margin-bottom: 20px; text-align: left;">
+                <?php echo htmlspecialchars($dfTit); ?>
+            </h2>
+            <div style="background-color: #fff; border-radius: 12px; padding: 30px; display: flex; flex-wrap: wrap; align-items: center; gap: 20px;">
+                <!-- Columna izquierda (items dinámicos B84) -->
+                <?php 
+                  $dfBy = $this->dist_facil ?? []; 
+                  $titulos = isset($dfBy['titulo']) && is_array($dfBy['titulo']) ? $dfBy['titulo'] : [];
+                  $textos  = isset($dfBy['texto']) && is_array($dfBy['texto']) ? $dfBy['texto']  : [];
+                  $n = max(count($titulos), count($textos));
+                  if ($n === 0) { $n = 4; }
+                ?>
+                <div style="flex: 1 1 300px; min-width: 280px; padding-right: 20px; box-sizing: border-box;">
+                  <?php for ($i=0; $i<$n; $i++) { $num=$i+1; $t=trim($titulos[$i] ?? ''); $tx=trim($textos[$i] ?? ''); ?>
+                    <div style="display: flex; align-items: flex-start; margin-bottom: 20px;">
+                      <div style="background-color: #D91C5C; color: #fff; font-weight: 700; border-radius: 50%; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; font-size: 18px; margin-right: 15px; flex-shrink: 0;"><?php echo $num; ?></div>
+                      <div>
+                        <?php if ($t !== '') { ?>
+                          <div style="background-color: #2C82C9; color: #fff; font-family: 'Poppins', sans-serif; font-weight: 600; padding: 8px 15px; border-radius: 20px; display: inline-block; margin-bottom: 8px; font-size: 16px;">
+                            <?php echo htmlspecialchars($t); ?>
+                          </div>
+                        <?php } else { ?>
+                          <div style="height:16px;width:220px;background:#e6e9ef;border-radius:8px; margin-bottom:8px;"></div>
+                        <?php } ?>
+                        <?php if ($tx !== '') { ?>
+                          <p style="margin: 0; font-family: 'Poppins', sans-serif; font-size: 14px; color: #333;"><?php echo htmlspecialchars($tx); ?></p>
+                        <?php } else { ?>
+                          <div style="height:12px;width:95%;background:#edf1f5;border-radius:6px;"></div>
+                        <?php } ?>
+                      </div>
+                    </div>
+                  <?php } ?>
+                </div>
+                <!-- Columna derecha (imagen estática) -->
+                <div style="flex: 1 1 300px; min-width: 280px; text-align: center;">
+                    <img src="<?php echo BASE_URL; ?>resources/assets/images/empresas/Movil LikePhone.png" alt="Teléfono LikePhone" style="max-width: 100%; height: auto;">
+                    <?php 
+                      $dc=$this->dist_contacto??[]; 
+                      $dcMsg = $dc['texto'][0]??null;
+                      $href = null;
+                      $ctrl = $this->dist_contacto_link ?? null;
+                      if (is_string($ctrl) && preg_match('#^https?://#i', trim($ctrl))) { $href = trim($ctrl); }
+                      elseif (isset($dc['link'][0]) && is_string($dc['link'][0]) && preg_match('#^https?://#i', trim($dc['link'][0]))) { $href = trim($dc['link'][0]); }
+                      if (!$href) {
+                        $tel = $dc['telefono'][0]??($dc['wa'][0]??null);
+                        if ($tel) {
+                          $digits=preg_replace('/\D+/','',$tel);
+                          if ($digits) { $href = 'https://wa.me/'.$digits; }
+                        }
+                      }
+                      if ($href && is_string($dcMsg) && trim($dcMsg)!=='') {
+                        if (preg_match('#(wa\.me|whatsapp\.com)#i', $href)) {
+                          $href .= (strpos($href,'?')===false?'?':'&').'text='.rawurlencode($dcMsg);
+                        }
+                      }
+                    ?>
+                    <?php if ($href) { ?>
+                      <a href="<?php echo htmlspecialchars($href); ?>" target="_blank" style="display:inline-flex; align-items:center; gap:8px; background-color:#25D366; color:#fff; font-weight:bold; padding:10px 20px; border-radius:25px; text-decoration:none; font-size:16px; margin-top:15px; box-shadow:0 2px 6px rgba(0,0,0,0.2);">
+                          <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" style="width:20px; height:20px;">
+                          Contáctanos Ahora
+                      </a>
+                    <?php } else { ?>
+                      <div style="display:inline-flex; align-items:center; gap:8px; background-color:#e5e8ee; color:#98a1af; font-weight:bold; padding:10px 20px; border-radius:25px; font-size:16px; margin-top:15px;">
+                        <span style="display:inline-block;width:20px;height:20px;background:#d8dde6;border-radius:50%;"></span>
+                        <span style="display:inline-block;width:140px;height:14px;background:#dfe3ea;border-radius:7px;"></span>
+                      </div>
+                    <?php } ?>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- CONSEPTUAL -->
+    <div style="text-align: center; font-family: 'Poppins', sans-serif; margin: 40px 0; padding: 0 10px; position: relative;">
+        <!-- Texto central -->
+        <div style="font-weight: 700; font-size: 18px; color: #00AEEF; margin-bottom: 20px;">
+            EL ESQUEMA DE PAGO<br>SORPRENDENTE:
+        </div>
+        <!-- Flecha izquierda -->
+        <svg style="position: absolute; left: 35%; top: 35px; width: 80px; height: 50px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 80 50" stroke="#00AEEF" stroke-width="3">
+            <path d="M75 5 C 35 30, 25 35, 5 45 M5 45 L 12 37 M5 45 L 17 43"/>
+        </svg>
+        <!-- Flecha derecha -->
+        <svg style="position: absolute; right: 35%; top: 35px; width: 80px; height: 50px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 80 50" stroke="#00AEEF" stroke-width="3">
+            <path d="M5 5 C 45 30, 55 35, 75 45 M75 45 L 68 37 M75 45 L 63 43"/>
+        </svg>
+        <!-- Textos de abajo -->
+        <div style="display: flex; justify-content: space-around; flex-wrap: wrap; margin-top: 40px;">
+            <div style="color: #6EDB3E; font-weight: 700; font-size: 16px; text-align: center; line-height: 1.2;">
+                GANANCIAS COMPARTIDAS<br>AL ACTIVAR
+            </div>
+            <div style="color: #D91C5C; font-weight: 700; font-size: 16px; text-align: center; line-height: 1.2;">
+                GANANCIAS VITALICIAS DE<br>CADA RECARGA
+            </div>
+        </div>
+    </div>
+    <!-- TEXTO VENTA (B86) -->
+    <?php $dv=$this->dist_venta??[]; $dvTxt=$dv['texto'][0]??null; ?>
+    <p style="width: 80%; margin: 35px auto 0 auto; text-align: justify; font-size: 20px; color: #161179; line-height: 1.6; font-family: 'Poppins', sans-serif; font-weight: 600; letter-spacing: 0.02em;">
+        <?php if ($dvTxt) { echo nl2br(htmlspecialchars($dvTxt)); } else { ?><span style="display:block;height:16px;background:#e9eef5;border-radius:8px;width:85%;margin:6px 0;"></span><span style="display:block;height:16px;background:#e9eef5;border-radius:8px;width:60%;margin:6px 0;"></span><?php } ?>
+    </p>
+    <!-- BANNER INTERMEDIO (B87) -->
+    <div style="position: center; max-width: 100%; overflow: hidden; margin-top: 35px; background:#ffffff; border-radius:12px;">
+        <div style="display: block; width: 100%;">
+            <?php $b2 = $this->dist_banner2 ?? null; $b2Href = $this->dist_banner2_link ?? null; ?>
+            <?php if (!empty($b2['imagen'])) { ?>
+              <?php if ($b2Href) { ?><a href="<?php echo htmlspecialchars($b2Href); ?>"><?php } ?>
+                <img src="<?php echo htmlspecialchars($b2['imagen']); ?>" style="width: 100%; height: auto; display: block;">
+              <?php if ($b2Href) { ?></a><?php } ?>
+            <?php } else { ?>
+              <div style="width:100%;height:220px;background:#eef3f7;border-radius:12px;"></div>
+            <?php } ?>
+        </div>
+    </div>
+    
+    
+    <!-- CRM & WHITPHONE -->
+    <?php $crm = $this->dist_crm ?? []; $crmTit = $crm['titulo'][0] ?? null; $crmTxt = $crm['texto'][0] ?? null; ?>
+    <?php if ($crmTit || $crmTxt) { ?>
+      <div style="width: 80%; margin: 40px auto 0 auto; text-align: center; color: #161179; line-height: 1.5;">
+        <?php if ($crmTit) { ?>
+          <p style="margin: 0 0 10px; font-weight: 800; font-size: 26px; letter-spacing: 0.5px; text-transform: uppercase; color: #00AEEF;">
+            <?php echo htmlspecialchars($crmTit); ?>
+          </p>
+        <?php } ?>
+        <?php if ($crmTxt) { ?>
+          <p style="margin: 0; font-size: 18px; max-width: 900px; margin-left: auto; margin-right: auto; color: #444;">
+            <?php echo nl2br(htmlspecialchars($crmTxt)); ?>
+          </p>
+        <?php } ?>
+      </div>
+    <?php } ?>
+    
+    <div style="font-family: Arial, sans-serif; background: url('fondo.png') no-repeat center/cover; padding: 20px;">
+        <!-- Primera fila -->
+        <div style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 20px; margin-bottom: 30px;">
+            <!-- Laptop + CRM -->
+            <div style="flex: 1; min-width: 300px; max-width: 500px; position: relative; text-align: center; background:#ffffff; border-radius:12px; padding:10px;">
+                <div style="position: absolute; top: 20; left: 83%; transform: translateX(-50%); background-color: #00AEEF; color: white; font-weight: bold; padding: 15px 30px; border-radius: 10px; z-index: 2; margin-top: 15px;">
+                  CRM
+                </div>
+                <?php $crm=$this->dist_crm??[]; $crmImg=$crm['imagen'][0]??null; ?>
+                <?php if ($crmImg) { ?><img src="<?php echo htmlspecialchars($crmImg); ?>" alt="Laptop" style="max-width: 150%; height: auto; margin-top: 40px;"><?php } else { ?><div style="width:100%;height:260px;background:#eef3f7;border-radius:12px;"></div><?php } ?>
+            </div>
+            <!-- Lista derecha (desde lista_item) -->
+            <div style="flex: 1; min-width: 300px; max-width: 500px; background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.08);">
+                <?php 
+                  $items = isset($crm['lista_item']) ? array_values(array_filter(array_map('trim', (array)$crm['lista_item']))) : [];
+                  if (!empty($items)) { foreach ($items as $line) { ?>
+                    <div style="display: flex; align-items: center; background: #f9f9f9; border-radius: 8px; padding: 8px 12px; margin-bottom: 10px;">
+                      <div style="background: linear-gradient(135deg, #6EDB3E, #4CAF50); color: white; border-radius: 50%; width: 28px; height: 28px; text-align: center; line-height: 28px; font-weight: bold; margin-right: 10px; flex-shrink: 0;">&nbsp;</div>
+                      <span style="font-size: 15px; line-height: 1.4;"><?php echo htmlspecialchars($line); ?></span>
+                    </div>
+                  <?php } } else { for ($i=0;$i<6;$i++){ ?>
+                    <div style="display: flex; align-items: center; background: #f9f9f9; border-radius: 8px; padding: 8px 12px; margin-bottom: 10px;">
+                      <div style="background: linear-gradient(135deg, #6EDB3E, #4CAF50); color: white; border-radius: 50%; width: 28px; height: 28px; text-align: center; line-height: 28px; font-weight: bold; margin-right: 10px; flex-shrink: 0;">&nbsp;</div>
+                      <span style="display:inline-block;height:12px;width:85%;background:#e9edf3;border-radius:6px;"></span>
+                    </div>
+                  <?php } } ?>
+            </div>
+        </div>
+        <!-- Segunda fila -->
+        <?php 
+          $app = $this->dist_app_white ?? []; 
+          $appTit = $app['titulo'][0] ?? null; 
+          $appSub = $app['subtitulo'][0] ?? null; 
+          $appTxt = $app['texto'][0] ?? null; 
+        ?>
+        <?php if ($appTit || $appSub || $appTxt) { ?>
+          <div style="width: 80%; margin: 40px auto 20px auto; text-align: center; color: #161179; line-height: 1.5;">
+            <?php if ($appTit) { ?>
+              <p style="margin: 0 0 8px; font-weight: 800; font-size: 24px; letter-spacing: 0.5px; text-transform: uppercase; color: #00AEEF;">
+                <?php echo htmlspecialchars($appTit); ?>
+              </p>
+            <?php } ?>
+            <?php if ($appSub) { ?>
+              <p style="margin: 0 0 6px; font-weight: 600; font-size: 18px; color: #161179;">
+                <?php echo nl2br(htmlspecialchars($appSub)); ?>
+              </p>
+            <?php } ?>
+            <?php if ($appTxt) { ?>
+              <p style="margin: 0; font-size: 16px; max-width: 900px; margin-left: auto; margin-right: auto; color: #444;">
+                <?php echo nl2br(htmlspecialchars($appTxt)); ?>
+              </p>
+            <?php } ?>
+          </div>
+        <?php } ?>
+
+        <div style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 20px;">
+            <!-- Lista izquierda (desde lista_item) -->
+            <div style="flex: 1; min-width: 300px; max-width: 500px; background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.08);">
+                <?php 
+                  $app=$this->dist_app_white??[]; 
+                  $items = isset($app['lista_item']) ? array_values(array_filter(array_map('trim', (array)$app['lista_item']))) : [];
+                  if (!empty($items)) { foreach ($items as $line) { ?>
+                    <div style="display: flex; align-items: center; background: #f9f9f9; border-radius: 8px; padding: 8px 12px; margin-bottom: 10px;">
+                      <div style="background: linear-gradient(135deg, #6EDB3E, #4CAF50); color: white; border-radius: 50%; width: 28px; height: 28px; text-align: center; line-height: 28px; font-weight: bold; margin-right: 10px; flex-shrink: 0;">&nbsp;</div>
+                      <span style="font-size: 15px; line-height: 1.4;"><?php echo htmlspecialchars($line); ?></span>
+                    </div>
+                  <?php } } else { for ($i=0;$i<6;$i++){ ?>
+                    <div style="display: flex; align-items: center; background: #f9f9f9; border-radius: 8px; padding: 8px 12px; margin-bottom: 10px;">
+                      <div style="background: linear-gradient(135deg, #6EDB3E, #4CAF50); color: white; border-radius: 50%; width: 28px; height: 28px; text-align: center; line-height: 28px; font-weight: bold; margin-right: 10px; flex-shrink: 0;">&nbsp;</div>
+                      <span style="display:inline-block;height:12px;width:85%;background:#e9edf3;border-radius:6px;"></span>
+                    </div>
+                  <?php } } ?>
+            </div>
+            <!-- Celular -->
+            <div style="flex: 1; min-width: 250px; max-width: 500px; text-align: center; background:#ffffff; border-radius:12px; padding:10px;">
+              <div style="position: relative;">
+                <?php $app=$this->dist_app_white??[]; $appImg=$app['imagen'][0]??null; ?>
+                <?php if ($appImg) { ?><img src="<?php echo htmlspecialchars($appImg); ?>" alt="App Whitephone" style="max-width: 300px; height: auto; margin-top: 20px;"><?php } else { ?><div style="width:300px;height:360px;background:#eef3f7;border-radius:20px;margin:20px auto 0;"></div><?php } ?>
+              </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ICONO TEXTO -->
+    <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 30px; max-width: 1100px; margin: auto; padding: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); border-radius: 16px; background: #fff; margin-top: 35px;">
+        <!-- Bloque 1 -->
+        <div style="display: flex; align-items: flex-start; flex: 1; min-width: 280px; max-width: 320px; gap: 15px; background: #fafafa; padding: 15px; border-radius: 12px; transition: all 0.3s ease; cursor: default; box-sizing: border-box;"
+            onmouseover="this.style.boxShadow='0 4px 15px rgba(0,0,0,0.12)'; this.style.transform='translateY(-3px)';"
+            onmouseout="this.style.boxShadow='none'; this.style.transform='none';">
+            <div style="flex-shrink: 0; width: 70px; height: 70px; background: linear-gradient(135deg, #a5007d, #d800a6); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 3px 6px rgba(0,0,0,0.15);">
+                <img src="<?php echo BASE_URL; ?>resources/assets/images/empresas/e.png" alt="APP WHITEPHONE" style="width: 35px; height: 35px; filter: brightness(0) invert(1);">
+            </div>
+            <div>
+                <h4 style="color: #161179; margin: 0 0 5px; font-family: Arial, sans-serif; font-size: 16px;"><em>APP WHITEPHONE</em></h4>
+                <p style="font-size: 14px; color: #444; text-align: justify; line-height: 1.5; font-family: Arial, sans-serif; margin: 0;">
+                    Solución móvil 
+                </p>
+            </div>
+        </div>
+        <!-- Bloque 2 -->
+        <div style="display: flex; align-items: flex-start; flex: 1; min-width: 280px; max-width: 320px; gap: 15px; background: #fafafa; padding: 15px; border-radius: 12px; transition: all 0.3s ease; cursor: default; box-sizing: border-box;"
+            onmouseover="this.style.boxShadow='0 4px 15px rgba(0,0,0,0.12)'; this.style.transform='translateY(-3px)';"
+            onmouseout="this.style.boxShadow='none'; this.style.transform='none';">
+            <div style="flex-shrink: 0; width: 70px; height: 70px; background: linear-gradient(135deg, #a5007d, #d800a6); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 3px 6px rgba(0,0,0,0.15);">
+                <img src="<?php echo BASE_URL; ?>resources/assets/images/empresas/f.png" alt="Lealtad" style="width: 35px; height: 35px; filter: brightness(0) invert(1);">
+            </div>
+            <div>
+                <p style="font-size: 14px; color: #444; text-align: justify; line-height: 1.5; font-family: Arial, sans-serif; margin: 0;">
+                    SOLUCIONES
+                </p>
+                <h4 style="color: #161179; margin: 0 0 5px; font-family: Arial, sans-serif; font-size: 16px;"><em>OUT OF PHONE</em></h4>
+                <p style="font-size: 14px; color: #444; text-align: justify; line-height: 1.5; font-family: Arial, sans-serif; margin: 0;">
+                    LANDING PAGE 
+                </p>
+            </div>
+        </div>
+        <!-- Bloque 3 -->
+        <div style="display: flex; align-items: flex-start; flex: 1; min-width: 280px; max-width: 320px; gap: 15px; background: #fafafa; padding: 15px; border-radius: 12px; transition: all 0.3s ease; cursor: default; box-sizing: border-box;"
+            onmouseover="this.style.boxShadow='0 4px 15px rgba(0,0,0,0.12)'; this.style.transform='translateY(-3px)';"
+            onmouseout="this.style.boxShadow='none'; this.style.transform='none';">
+            <div style="flex-shrink: 0; width: 70px; height: 70px; background: linear-gradient(135deg, #a5007d, #d800a6); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 3px 6px rgba(0,0,0,0.15);">
+                <img src="<?php echo BASE_URL; ?>resources/assets/images/empresas/g.png" alt="Generación de data" style="width: 35px; height: 35px; filter: brightness(0) invert(1);">
+            </div>
+            <div>
+                <h4 style="color: #161179; margin: 0 0 5px; font-family: Arial, sans-serif; font-size: 16px;">CRM</h4>
+                <p style="font-size: 14px; color: #444; text-align: justify; line-height: 1.5; font-family: Arial, sans-serif; margin: 0;">
+                    Socio Comercial (administrador)
+                    Agente o Gerente
+                    Promotor o vendedor
+                </p>
+            </div>
+        </div>
+    </div>
+    <!-- SECCION DE CONTACTO -->
+    <div style="background: linear-gradient(135deg, #739EC9, #5682B1); color: #fff; padding: 70px 20px; 
+                border-radius: 20px; 
+                text-align: center; 
+                font-family: 'Arial Black', sans-serif; 
+                box-shadow: 0 10px 30px rgba(0,0,0,0.4); 
+                margin: 40px auto; 
+                position: relative; 
+                overflow: hidden;
+                width: 80%;">
+        <!-- Efecto de luces en el fondo -->
+        <div style="position: absolute; top: -50px; left: -50px; width: 200px; height: 200px; background: rgba(255,255,255,0.15); border-radius: 50%; filter: blur(80px);"></div>
+        <div style="position: absolute; bottom: -50px; right: -50px; width: 250px; height: 250px; background: rgba(255,255,255,0.1); border-radius: 50%; filter: blur(100px);"></div>      
+        <?php $fa=$this->dist_facil??[]; $ctaTit=$fa['subtitulo'][0]??'¿Interesado en ser distribuidor Likephone?'; ?>
+        <h2 style="font-size: 34px; margin-bottom: 15px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; color:#fff;">
+            <?php echo htmlspecialchars($ctaTit); ?>
+        </h2>        
+        <p style="font-size: 20px; margin-bottom: 40px; line-height: 1.6; color: #fff; font-weight: 300;">
+            Contáctenos hoy mismo para una consulta personalizada 🚀
+        </p>        
+        <div style="display: flex; justify-content: center; gap: 25px; flex-wrap: wrap;">          
+            <!-- Botón Agenda (B90) -->
+            <?php $ag=$this->dist_agenda??[]; $agBtn=$ag['boton'][0]??'📅 Agendar Consulta'; $agLink=($this->dist_agenda_link ?? null) ?: ($ag['link'][0]??null); ?>
+            <?php if ($agLink) { ?><a href="<?php echo htmlspecialchars($agLink); ?>" target="_blank" style="display:inline-flex; align-items:center; justify-content:center; gap:10px; background:#00c7d9; color:#fff; padding:14px 30px; border-radius:9999px; font-size:18px; font-weight:700; text-decoration:none; box-shadow:0 6px 14px rgba(0,0,0,0.15); transition:all .25s ease;" onmouseover="this.style.background='#00aebf'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 18px rgba(0,0,0,0.22)';" onmouseout="this.style.background='#00c7d9'; this.style.transform='translateY(0)'; this.style.boxShadow='0 6px 14px rgba(0,0,0,0.15)';"><?php echo htmlspecialchars($agBtn); ?> <i class="fa-solid fa-arrow-right" style="font-size:16px;"></i></a><?php } else { ?><div style="height:48px;width:220px;background:#e8eef6;border-radius:50px;"></div><?php } ?>
+            <!-- Botón WhatsApp (B91) -->
+            <?php $dw=$this->dist_whatsapp??[]; 
+                  $wBtn=$dw['boton'][0]??'WhatsApp'; 
+                  $ctrlLink = $this->dist_whatsapp_link ?? null;
+                  $wLink = null;
+                  if (is_string($ctrlLink) && preg_match('#^https?://#i', trim($ctrlLink))) { $wLink = trim($ctrlLink); }
+                  elseif (isset($dw['link'][0]) && is_string($dw['link'][0]) && preg_match('#^https?://#i', trim($dw['link'][0]))) { $wLink = trim($dw['link'][0]); }
+                  $wTel=$dw['telefono'][0]??($dw['wa'][0]??null); 
+                  $wMsg=$dw['texto'][0]??null; 
+                  $wHref=$wLink; 
+                  if (!$wHref && $wTel) { 
+                    $digits=preg_replace('/\D+/','',$wTel); 
+                    if ($digits) { 
+                      $wHref='https://wa.me/'.$digits; 
+                      if (is_string($wMsg) && trim($wMsg)!=='') { $wHref .= '?text=' . rawurlencode($wMsg); }
+                    }
+                  }
+                  if ($wHref && is_string($wMsg) && trim($wMsg)!=='') {
+                    if (preg_match('#(wa\.me|whatsapp\.com)#i', $wHref)) {
+                      $wHref .= (strpos($wHref, '?') === false ? '?' : '&') . 'text=' . rawurlencode($wMsg);
+                    }
+                  }
+            ?>
+            <?php if ($wHref) { ?><a href="<?php echo htmlspecialchars($wHref); ?>" target="_blank" style="background: #25D366; color: #fff; padding: 18px 35px; border-radius: 50px; font-size: 18px; font-weight: bold; text-decoration: none; box-shadow: 0 8px 20px rgba(0,0,0,0.3); transition: all 0.3s; display: inline-flex; align-items: center; gap: 10px;"><?php echo htmlspecialchars($wBtn); ?></a><?php } else { ?><div style="height:48px;width:220px;background:#d3f5e3;border-radius:50px;"></div><?php } ?>
+        </div>
+    </div>
+</div>

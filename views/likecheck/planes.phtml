@@ -1,0 +1,183 @@
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
+
+<?php
+  // Bloque 105: Planes LikeCheck v2
+  $planes = $this->lc_planes_titulo ?? [];
+  $tituloText = $planes['titulov2'][0] ?? 'PLANES LIKECHECK';
+  $subv2  = isset($planes['subtitulov2']) ? array_values($planes['subtitulov2']) : [];
+  $textv2 = isset($planes['textov2'])     ? array_values($planes['textov2'])     : [];
+
+  // Construir arreglo de 3 planes a partir de subtitulov2/textov2
+  $defaultLabels = ['Plan Mensual','Plan Semestral','Plan Anual'];
+  $planCards = [];
+  for ($i=0; $i<3; $i++) {
+    $label = trim($subv2[$i] ?? '');
+    $txt   = trim($textv2[$i] ?? '');
+    $num   = null;
+    $equiv = '';
+    if ($txt !== '') {
+      // El CMS guarda cada parte en una línea: precio, MXN, +IVA, Equivalente...
+      $lines = preg_split('/\r\n|\r|\n/', $txt);
+      // Precio: tomar el número de la primera línea
+      if (!empty($lines[0]) && preg_match('/([0-9]+)/', $lines[0], $m)) {
+        $num = $m[1];
+      } elseif (preg_match('/\$\s*([0-9]+)/', $txt, $m2)) {
+        $num = $m2[1];
+      }
+      // Equivalente: normalmente viene en la 4ª línea (index 3)
+      if (isset($lines[3]) && trim($lines[3]) !== '') {
+        $equiv = trim($lines[3]);
+      }
+    }
+    $planCards[$i] = [
+      'label' => $label !== '' ? $label : $defaultLabels[$i],
+      'num'   => $num,
+      'raw'   => $txt,
+      'equiv' => $equiv,
+    ];
+  }
+
+  // Bloque 107: Beneficios sin cargo
+  $benef = $this->lc_planes_beneficios ?? [];
+  $benefTitulo = $benef['titulo'][0]['titulo'] ?? ($benef['titulo'][0] ?? 'Beneficios sin cargos:');
+  // Texto principal y primera imagen del bloque 107
+  $benefTexto = $benef['texto'][0]['texto'] ?? ($benef['texto'][0] ?? null);
+  $benefImgItem = $benef['imagen'][0] ?? null;
+  $benefImgSrc = is_array($benefImgItem) ? ($benefImgItem['imagen'] ?? null) : $benefImgItem;
+  // Preferir lista_item proveniente del controlador
+  $benefItems = [];
+  if (!empty($this->lc_planes_beneficios_list) && is_array($this->lc_planes_beneficios_list)) {
+    foreach ($this->lc_planes_beneficios_list as $it) {
+      $txt = is_array($it) ? ($it['lista_item'] ?? $it['texto'] ?? '') : $it;
+      $txt = trim((string)$txt);
+      if ($txt !== '') { $benefItems[] = $txt; }
+    }
+  } elseif (!empty($benef['lista_item']) && is_array($benef['lista_item'])) {
+    foreach ($benef['lista_item'] as $it) {
+      $txt = is_array($it) ? ($it['lista_item'] ?? $it['texto'] ?? '') : $it;
+      $txt = trim((string)$txt);
+      if ($txt !== '') { $benefItems[] = $txt; }
+    }
+  } elseif (!empty($benef['texto']) && is_array($benef['texto'])) {
+    // Fallback a textos si no hay lista_item
+    foreach ($benef['texto'] as $row) {
+      $txt = is_array($row) ? ($row['texto'] ?? '') : $row;
+      $txt = trim((string)$txt);
+      if ($txt !== '') { $benefItems[] = $txt; }
+    }
+  }
+?>
+<div class="likecheck-main-content" style="overflow-x:hidden;">
+    <!-- TITULO -->
+    <p style="font-size: 3.2rem; font-weight: 900; color: #1A2A80; text-align: center; letter-spacing: 1px; margin-top: 30px; font-family: 'Poppins', sans-serif;">
+        <?php echo htmlspecialchars((string)$tituloText); ?>
+    </p>
+    <!-- PLANES -->
+    <div class="row justify-content-center" style="margin-bottom: 70px; font-family: 'Rubik', sans-serif; gap: 20px; flex-wrap: wrap; display: flex;">
+        <!-- Plan Mensual -->
+        <div class="col-md-4 mb-4" style="display:flex;justify-content:center;flex:1 1 300px;max-width:310px;">
+            <div class="plan-card" style="border:2px solid #182c83;border-radius:18px;padding:35px 20px;text-align:center;background:white;box-shadow:0 5px 20px rgba(0,0,0,0.08);transition:transform 0.3s ease,box-shadow 0.3s ease;width:100%;max-width:300px;">
+            <div style="margin-bottom:14px;color:#182c83;"><i class="fas fa-calendar-alt" style="font-size:1.6rem;"></i></div>
+            <div style="background:linear-gradient(90deg,#153ebc 0%,#325de6 100%);color:white;font-weight:700;font-size:1.3rem;padding:14px 0;border-radius:6px;margin-bottom:28px;">
+                <?php echo htmlspecialchars($planCards[0]['label']); ?>
+            </div>
+            <div style="display:flex;justify-content:center;align-items:flex-start;gap:4px;margin-bottom:4px;">
+                <span style="font-size:4rem;font-weight:800;color:#153ebc;">
+                    <?php echo $planCards[0]['num'] !== null ? '$'.htmlspecialchars($planCards[0]['num']) : '$--'; ?>
+                </span>
+                <span style="color:#153ebc;font-weight:600;align-self:flex-end;">MXN<br><span style="color:#6073a6;font-weight:600;">+IVA</span></span>
+            </div>
+            </div>
+        </div>
+        <!-- Plan Semestral -->
+        <div class="col-md-4 mb-4" style="display:flex;justify-content:center;flex:1 1 300px;max-width:310px;">
+            <div class="plan-card" style="border:2px solid #182c83;border-radius:18px;padding:35px 20px;text-align:center;background:white;box-shadow:0 5px 20px rgba(0,0,0,0.08);transition:transform 0.3s ease,box-shadow 0.3s ease;width:100%;max-width:300px;">
+            <div style="margin-bottom:14px;color:#182c83;"><i class="fas fa-calendar-check" style="font-size:1.6rem;"></i></div>
+            <div style="background:linear-gradient(90deg,#153ebc 0%,#325de6 100%);color:white;font-weight:700;font-size:1.3rem;padding:14px 0;border-radius:6px;margin-bottom:28px;">
+                <?php echo htmlspecialchars($planCards[1]['label']); ?>
+            </div>
+            <div style="display:flex;justify-content:center;align-items:flex-start;gap:4px;margin-bottom:4px;">
+                <span style="font-size:4rem;font-weight:800;color:#153ebc;">
+                    <?php echo $planCards[1]['num'] !== null ? '$'.htmlspecialchars($planCards[1]['num']) : '$--'; ?>
+                </span>
+                <span style="color:#153ebc;font-weight:600;align-self:flex-end;">MXN<br><span style="color:#6073a6;font-weight:600;">+IVA</span></span>
+            </div>
+            <div style="color:#455a64;font-weight:500;margin-top:12px;">
+                <?php echo htmlspecialchars($planCards[1]['equiv'] ?: ''); ?>
+            </div>
+            </div>
+        </div>
+        <!-- Plan Anual -->
+        <div class="col-md-4 mb-4" style="display:flex;justify-content:center;flex:1 1 300px;max-width:310px;">
+            <div class="plan-card" style="border:2px solid #182c83;border-radius:18px;padding:35px 20px;text-align:center;background:white;box-shadow:0 5px 20px rgba(0,0,0,0.08);transition:transform 0.3s ease,box-shadow 0.3s ease;position:relative;overflow:hidden;width:100%;max-width:300px;">
+            <!-- Cinta amarilla -->
+            <div style="position:absolute;top:18px;right:-55px;background:#FFCA28;color:white;font-weight:700;font-size:0.85rem;padding:6px 60px;transform:rotate(45deg);box-shadow:0 3px 6px rgba(0,0,0,0.15);letter-spacing:0.5px;z-index:2;">
+                MEJOR PLAN
+            </div>
+            <div style="margin-bottom:14px;color:#182c83;"><i class="fas fa-calendar" style="font-size:1.6rem;"></i></div>
+            <div style="background:linear-gradient(90deg,#153ebc 0%,#325de6 100%);color:white;font-weight:700;font-size:1.3rem;padding:14px 0;border-radius:6px;margin-bottom:28px;">
+                <?php echo htmlspecialchars($planCards[2]['label']); ?>
+            </div>
+            <div style="display:flex;justify-content:center;align-items:flex-start;gap:4px;margin-bottom:4px;">
+                <span style="font-size:4rem;font-weight:800;color:#153ebc;">
+                    <?php echo $planCards[2]['num'] !== null ? '$'.htmlspecialchars($planCards[2]['num']) : '$--'; ?>
+                </span>
+                <span style="color:#153ebc;font-weight:600;align-self:flex-end;">MXN<br><span style="color:#6073a6;font-weight:600;">+IVA</span></span>
+            </div>
+            <div style="color:#455a64;font-weight:500;margin-top:12px;">
+                <?php echo htmlspecialchars($planCards[2]['equiv'] ?: ''); ?>
+            </div>
+            </div>
+        </div>
+    </div>
+    <!-- Sección de Promoción e Imagen -->
+    <div style="display: flex; flex-wrap: wrap; justify-content: center; align-items: stretch; gap: 40px; padding: 70px 20px; text-align: center; margin: 0 auto 40px auto; max-width: 1280px;">
+        <!-- Columna Izquierda -->
+        <div style="flex: 1 1 360px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px;">
+            <!-- Pastilla de título -->
+            <div style="display: inline-flex; align-items: center; justify-content: center; background: #f4f9ff; border-radius: 999px; padding: 10px 26px; box-shadow: 0 8px 20px rgba(30,136,229,0.25);">
+            <i class="fas fa-bullhorn" style="color: #1e88e5; font-size: 1.05rem; margin-right: 8px;"></i>
+            <span style="font-size: 0.95rem; font-weight: 700; color: #1e88e5; letter-spacing: 0.8px; text-transform: uppercase; white-space: nowrap;">
+              <?php echo htmlspecialchars((string)$benefTitulo); ?>
+            </span>
+            </div>
+
+            <!-- Imagen del sello desde CMS (bloque 107: imagen) -->
+            <div style="margin-top: 10px;">
+            <?php if (!empty($benefImgSrc)) { ?>
+              <img src="<?php echo htmlspecialchars((string)$benefImgSrc); ?>" alt="Beneficios sin cargo" style="width: 420px; max-width: 100%; filter: drop-shadow(0 16px 32px rgba(0,0,0,0.28));">
+            <?php } ?>
+            </div>
+        </div>
+
+        <!-- Columna Derecha -->
+        <div style="flex: 1 1 420px; display: flex; justify-content: center;">
+            <div style="background: #ffffff; padding: 46px 60px; border-radius: 26px; box-shadow: 0 16px 40px rgba(15, 35, 80, 0.20); text-align: left; max-width: 720px; width: 100%; border: 1px solid rgba(230,238,255,0.9);">
+
+            <?php if (!empty($benefTexto)) { ?>
+              <p style="margin: 0 0 28px 0; font-size: 1.8rem; color: #14287B; font-weight: 800; font-family: 'Poppins', sans-serif; text-align: center; letter-spacing: 0.6px;">
+                <?php echo nl2br(htmlspecialchars((string)$benefTexto)); ?>
+              </p>
+            <?php } ?>
+
+            <!-- Lista de beneficios -->
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+              <?php if (!empty($benefItems)) { foreach ($benefItems as $txt) { ?>
+                <div style="display: flex; align-items: center; max-width: 100%; padding: 4px 0;">
+                  <i class="fas fa-check-circle" style="color: #2ecc71; font-size: 1.25rem; margin-right: 10px;"></i>
+                  <span style="color: #14287B; font-size: 1.02rem; font-weight: 500;">
+                    <?php echo htmlspecialchars((string)$txt); ?>
+                  </span>
+                </div>
+              <?php } } else { ?>
+                <div style="height:14px; width:90%; background:#e9edf1; border-radius:6px; margin:6px 0;"></div>
+                <div style="height:14px; width:85%; background:#e9edf1; border-radius:6px; margin:6px 0;"></div>
+              <?php } ?>
+            </div>
+
+            </div>
+        </div>
+    </div>
+    
+</div>

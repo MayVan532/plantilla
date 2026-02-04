@@ -1,0 +1,348 @@
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<link rel="stylesheet" href="<?php echo BASE_URL; ?>resources/assets/css/empresas-responsive.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<div class="empresas-main-content" style="background:#ffffff;">
+    <!-- BANNER (B68) -->
+    <?php $mb68img = $this->mb_banner1 ?? null; $mb68link = $this->mb_banner1_link ?? null; ?>
+    <div style="position: relative; max-width: 100%; overflow: hidden; margin-top: 0; text-align:center;">
+        <div style="position: relative; display:inline-block; width:100%;">
+            <?php if (!empty($mb68img)) { ?><img src="<?php echo htmlspecialchars($mb68img); ?>" style="width: 100%; height: auto; display: block;"><?php } else { ?><div style="width:100%;height:300px;background:#eef3f7;border-radius:12px;"></div><?php } ?>
+            <?php if (!empty($mb68link)) { ?><a href="<?php echo htmlspecialchars($mb68link); ?>" aria-label="Abrir banner" style="position:absolute; inset:0; display:block;"></a><?php } ?>
+        </div>
+    </div>
+    <!-- TITULO/SUBTITULO (B69) -->
+    <?php $ay=$this->mb_ayuda ?? []; $ayTit=$ay['titulo'][0]??null; $ayTxt=$ay['texto'][0]??null; ?>
+    <p style="text-align: center; font-size: 30px; color: #1A2A80; font-weight: bold; margin-top: 45px;">
+        <?php if ($ayTit) { echo htmlspecialchars($ayTit); } else { echo '&nbsp;'; } ?>
+    </p>
+    <p style="width: 90%; margin: 40px auto 0 auto; text-align: center; font-size: 22px; color: #000000; line-height: 1.8; font-weight: 500; letter-spacing: 0.5px; text-shadow: 1px 1px 2px rgba(0,0,0,0.1);">
+        <?php if ($ayTxt) { echo nl2br(htmlspecialchars($ayTxt)); } else { ?><span style="display:block;height:18px;background:#e9eef5;border-radius:9px;width:80%;margin:0 auto 8px;"></span><span style="display:block;height:18px;background:#e9eef5;border-radius:9px;width:70%;margin:0 auto 8px;"></span><?php } ?>
+    </p>
+    <!-- BANNER intermedio (B70) -->
+    <?php $mb70img = $this->mb_banner2 ?? null; $mb70link = $this->mb_banner2_link ?? null; ?>
+    <div style="position: relative; max-width: 100%; overflow: hidden; margin-top: 35px; text-align:center;">
+        <div style="position: relative; display:inline-block; width:100%;">
+            <?php if (!empty($mb70img)) { ?><img src="<?php echo htmlspecialchars($mb70img); ?>" style="width: 100%; height: auto; display: block;"><?php } else { ?><div style="width:100%;height:240px;background:#eef3f7;border-radius:12px;"></div><?php } ?>
+            <?php if (!empty($mb70link)) { ?><a href="<?php echo htmlspecialchars($mb70link); ?>" aria-label="Abrir banner" style="position:absolute; inset:0; display:block;"></a><?php } ?>
+        </div>
+    </div>
+    <div style="display: flex; justify-content: center; align-items: center; gap: 20px; font-family: Arial, sans-serif; font-size: 18px; text-align: center; margin-top: 30px;">
+        <span style="color: #F72C5B; font-weight: bold; font-size: 20px;">
+           TARIFAS PROPIAS
+        </span>
+        <div style="width: 4px; height: 50px; background-color: #0033A0;"></div>
+        <div style="text-align: left;">
+            <div style="color: #F72C5B; font-weight: bold; font-size: 15px;">
+                En Likephone te damos acceso a planes con precio mayorista.
+            </div>
+            <div style="color: #1679AB; font-weight: bold; font-size: 15px;">
+                ¿Quieres competir con mejores precios? ¿O aumentar tu margen de ganancia? ¡Tú decides! 
+            </div>
+            <div style="color: #000000; font-size: 13px; line-height: 1.4;">
+                Nosotros te damos el soporte y la infraestructura, tú defines tu estrategia con motor de pago propio. 
+            </div>
+        </div>
+    </div>
+    <!-- ICONO TEXTO -->
+    <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 30px; max-width: 1100px; margin: auto; padding: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); border-radius: 16px; background: #fff; margin-top: 35px;">
+        <!-- Bloque 1 -->
+        <div style="display: flex; align-items: flex-start; flex: 1; min-width: 280px; max-width: 320px; gap: 15px; background: #fafafa; padding: 15px; border-radius: 12px; transition: all 0.3s ease; cursor: default; box-sizing: border-box;"
+            onmouseover="this.style.boxShadow='0 4px 15px rgba(0,0,0,0.12)'; this.style.transform='translateY(-3px)';"
+            onmouseout="this.style.boxShadow='none'; this.style.transform='none';">
+            <div style="flex-shrink: 0; width: 70px; height: 70px; background: linear-gradient(135deg, #a5007d, #d800a6); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 3px 6px rgba(0,0,0,0.15);">
+                <img src="<?php echo BASE_URL; ?>resources/assets/images/empresas/a.png" alt="Top of mind" style="width: 35px; height: 35px; filter: brightness(0) invert(1);">
+            </div>
+            <div>
+                <h4 style="color: #161179; margin: 0 0 5px; font-family: Arial, sans-serif; font-size: 16px;"><em>“Top of mind”</em></h4>
+                <p style="font-size: 14px; color: #444; text-align: justify; line-height: 1.5; font-family: Arial, sans-serif; margin: 0;">
+                    Posiciona tu marca en la mente de tus clientes a través de un servicio masivo, de consumo de alta recurrencia.
+                </p>
+            </div>
+        </div>
+        <!-- Bloque 2 -->
+        <div style="display: flex; align-items: flex-start; flex: 1; min-width: 280px; max-width: 320px; gap: 15px; background: #fafafa; padding: 15px; border-radius: 12px; transition: all 0.3s ease; cursor: default; box-sizing: border-box;"
+            onmouseover="this.style.boxShadow='0 4px 15px rgba(0,0,0,0.12)'; this.style.transform='translateY(-3px)';"
+            onmouseout="this.style.boxShadow='none'; this.style.transform='none';">
+            <div style="flex-shrink: 0; width: 70px; height: 70px; background: linear-gradient(135deg, #a5007d, #d800a6); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 3px 6px rgba(0,0,0,0.15);">
+                <img src="<?php echo BASE_URL; ?>resources/assets/images/empresas/b.png" alt="Lealtad" style="width: 35px; height: 35px; filter: brightness(0) invert(1);">
+            </div>
+            <div>
+                <h4 style="color: #161179; margin: 0 0 5px; font-family: Arial, sans-serif; font-size: 16px;">Programas de Lealtad para fidelizar Clientes.</h4>
+                <p style="font-size: 14px; color: #444; text-align: justify; line-height: 1.5; font-family: Arial, sans-serif; margin: 0;">
+                    Recompensas de tiempo aire, bonos, obsequios y más.
+                </p>
+            </div>
+        </div>
+        <!-- Bloque 3 -->
+        <div style="display: flex; align-items: flex-start; flex: 1; min-width: 280px; max-width: 320px; gap: 15px; background: #fafafa; padding: 15px; border-radius: 12px; transition: all 0.3s ease; cursor: default; box-sizing: border-box;"
+            onmouseover="this.style.boxShadow='0 4px 15px rgba(0,0,0,0.12)'; this.style.transform='translateY(-3px)';"
+            onmouseout="this.style.boxShadow='none'; this.style.transform='none';">
+            <div style="flex-shrink: 0; width: 70px; height: 70px; background: linear-gradient(135deg, #a5007d, #d800a6); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 3px 6px rgba(0,0,0,0.15);">
+                <img src="<?php echo BASE_URL; ?>resources/assets/images/empresas/c.png" alt="Generación de data" style="width: 35px; height: 35px; filter: brightness(0) invert(1);">
+            </div>
+            <div>
+                <h4 style="color: #161179; margin: 0 0 5px; font-family: Arial, sans-serif; font-size: 16px;">Generación de Data</h4>
+                <p style="font-size: 14px; color: #444; text-align: justify; line-height: 1.5; font-family: Arial, sans-serif; margin: 0;">
+                    Patrones de consumo de datos que le permiten crear promociones y publicidad a usuarios finales.
+                </p>
+            </div>
+        </div>
+    </div>
+    <!-- TITULO/SUBTITULO (B71) -->
+    <?php $ec=$this->mb_ecos_titulo ?? []; $ecTit=$ec['titulo'][0]??null; $ecTxt=$ec['texto'][0]??null; ?>
+    <p style="text-align: center; font-size: 30px; color: #1A2A80; font-weight: bold; margin-top: 45px;">
+        <?php echo $ecTit ? htmlspecialchars($ecTit) : '&nbsp;'; ?>
+    </p>
+    <p style="width: 80%; margin: 35px auto 0 auto; text-align: justify; font-size: 20px; color: #161179; line-height: 1.5;">
+        <?php if ($ecTxt) { echo nl2br(htmlspecialchars($ecTxt)); } else { ?><span style="display:block;height:14px;background:#e9eef5;border-radius:8px;width:90%;margin:6px 0;"></span><span style="display:block;height:14px;background:#e9eef5;border-radius:8px;width:80%;margin:6px 0;"></span><?php } ?>
+    </p>
+    <!-- TARJETAS (B72) -->
+    <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 15px; font-family: Arial, sans-serif; margin-top: 30px;">
+        <?php if (!empty($this->mb_ecos_cards)) { foreach ($this->mb_ecos_cards as $card) { ?>
+        <div style="flex: 1 1 180px; max-width: 200px; background: linear-gradient(180deg, #ffffff, #f9f9f9); box-shadow: 0 6px 15px rgba(0,0,0,0.08); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; align-items: center; text-align: center;">
+            <div style="background-color: #F7F7F7; width: 100%; display: flex; align-items: center; justify-content: center; padding: 15px;">
+                <?php if (!empty($card['imagen'])) { ?><img src="<?php echo htmlspecialchars($card['imagen']); ?>" style="max-width: 100%; height: auto;"><?php } else { ?><div style="width:100%;height:90px;background:#eef3f7;border-radius:8px;"></div><?php } ?>
+            </div>
+            <div style="padding: 12px;">
+                <div style="font-weight: bold; color: #1a237e; font-size: 14px;">
+                    <?php echo !empty($card['titulo']) ? htmlspecialchars($card['titulo']) : '&nbsp;'; ?>
+                </div>
+                <div style="font-size: 12px; color: #555; margin-top: 6px;">
+                    <?php echo !empty($card['texto']) ? nl2br(htmlspecialchars($card['texto'])) : ''; ?>
+                </div>
+            </div>
+        </div>
+        <?php } } else { for($i=0;$i<5;$i++){ ?>
+        <div style="flex: 1 1 180px; max-width: 200px; background:#f5f7fb; border-radius:12px; height:220px;"></div>
+        <?php } } ?>
+    </div>
+    <!-- Banner API (B73) -->
+    <?php $mb73img = $this->mb_apis ?? null; $mb73link = $this->mb_apis_link ?? null; ?>
+    <div style="position: relative; max-width: 100%; overflow: hidden; margin-top: 35px; text-align:center;">
+        <div style="position: relative; display:inline-block; width:100%;">
+            <?php if (!empty($mb73img)) { ?><img src="<?php echo htmlspecialchars($mb73img); ?>" style="width: 100%; height: auto; display: block;"><?php } else { ?><div style="width:100%;height:220px;background:#eef3f7;border-radius:12px;"></div><?php } ?>
+            <?php if (!empty($mb73link)) { ?><a href="<?php echo htmlspecialchars($mb73link); ?>" aria-label="Abrir banner" style="position:absolute; inset:0; display:block;"></a><?php } ?>
+        </div>
+    </div>
+    <!-- Whitephone (B74) -->
+    <?php $mb74img = $this->mb_whitephone ?? null; $mb74link = $this->mb_whitephone_link ?? null; ?>
+    <div style="position: relative; max-width: 100%; overflow: hidden; margin-top: 35px; text-align:center;">
+        <div style="position: relative; display:inline-block; width:100%;">
+            <?php if (!empty($mb74img)) { ?><img src="<?php echo htmlspecialchars($mb74img); ?>" style="width: 100%; height: auto; display: block;"><?php } else { ?><div style="width:100%;height:260px;background:#eef3f7;border-radius:12px;"></div><?php } ?>
+            <?php if (!empty($mb74link)) { ?><a href="<?php echo htmlspecialchars($mb74link); ?>" aria-label="Abrir banner" style="position:absolute; inset:0; display:block;"></a><?php } ?>
+        </div>
+    </div>
+    <!-- MEDIOS DE RECARGA (B75) -->
+    <div style="display: flex; flex-wrap: wrap; align-items: flex-start; gap: 12px; padding: 15px; background-color: #ffffff; font-family: Arial, sans-serif; margin-top: 35px;">
+        <div style="background-color: #0073a6; color: white; font-weight: bold; font-size: 22px; text-align: center; padding: 0 20px; border-radius: 12px; flex: 1 1 180px; display: flex; align-items: center; justify-content: center; min-width: 180px; height: 170px; box-shadow: 0 4px 10px rgba(0,0,0,.06);">MEDIOS DE <br> RECARGA</div>
+        <?php if (!empty($this->mb_recarga)) { foreach ($this->mb_recarga as $rc) { ?>
+        <div style="background:#ffffff;border:none;border-radius:12px;text-align:center;flex:1 1 160px;min-width:160px;height:170px;overflow:hidden; box-shadow:0 4px 10px rgba(0,0,0,.06); display:flex; flex-direction:column;">
+            <div style="background-color:#f9f9f9;padding:20px;">
+                <?php if (!empty($rc['imagen'])) { ?><img src="<?php echo htmlspecialchars($rc['imagen']); ?>" style="width:70px;height:auto;"><?php } else { ?><div style="width:70px;height:70px;background:#e5eef6;border-radius:8px;margin:0 auto;"></div><?php } ?>
+            </div>
+            <!-- Franja azul con altura fija y contenido centrado -->
+            <div style="background:#0073a6; color:#ffffff; text-align:center; height:58px; padding:0 10px; margin-top:auto; display:flex; align-items:center; justify-content:center;">
+                <?php if (!empty($rc['titulo'])) { ?>
+                  <div style="font-weight:800; font-size:14px; letter-spacing:.2px; line-height:1.2; color:#ffffff;">
+                    <?php echo nl2br(htmlspecialchars($rc['titulo'])); ?>
+                  </div>
+                <?php } ?>
+                <?php if (!empty($rc['texto'])) { ?>
+                  <div style="font-size:12px; font-weight:600; margin-left:8px; line-height:1.25; color:#ffffff;">
+                    <?php echo nl2br(htmlspecialchars($rc['texto'])); ?>
+                  </div>
+                <?php } ?>
+            </div>
+        </div>
+        <?php } } else { for($i=0;$i<4;$i++){ ?>
+        <div style="background:#e7f0f8;border-radius:12px;flex:1 1 160px;min-width:160px;height:170px;"></div>
+        <?php } } ?>
+    </div>
+    <!-- MODULARES (B76) -->
+    <?php $md=$this->mb_modulares ?? []; $mdTit=$md['titulo'][0]??null; $mdTxt=$md['texto'][0]??null; ?>
+    <p style="text-align: center; font-size: 30px; color: #00AEEF; font-weight: bold; margin-top: 45px;">
+        <?php echo $mdTit ? htmlspecialchars($mdTit) : '&nbsp;'; ?>
+    </p>
+    <p style="width: 80%; margin: 35px auto 0 auto; text-align: justify; font-size: 20px; color: #161179; line-height: 1.6; font-family: 'Poppins', sans-serif; font-weight: 600; letter-spacing: 0.02em;">
+        <?php if ($mdTxt) { echo nl2br(htmlspecialchars($mdTxt)); } else { ?><span style="display:block;height:14px;background:#e9eef5;border-radius:8px;width:85%;margin:6px 0;"></span><span style="display:block;height:14px;background:#e9eef5;border-radius:8px;width:70%;margin:6px 0;"></span><?php } ?>
+    </p>
+    <!-- LINEA DEL TIEMPO -->
+    <style>
+      @media (min-width: 1024px) {
+        #diagrama { display: grid !important; grid-template-columns: 1fr 320px; gap: 32px; align-items: start; }
+        #diagrama > div:last-child { width: 320px; }
+      }
+    </style>
+    <div id="diagrama" style="display: flex; align-items: flex-start; justify-content: center; gap: 32px; flex-wrap: wrap; max-width: 1200px; margin: 0 auto; padding: 20px 10px; font-family: Arial, sans-serif; margin-top: 45px;">
+        <!-- Diagrama -->
+        <div style="position: relative; flex: 1 1 760px; min-width: 300px; max-width: 820px; padding: 10px; background: transparent;">
+            <?php 
+              $nc = isset($this->mb_nicho_com) && is_array($this->mb_nicho_com) ? $this->mb_nicho_com : []; 
+              $ncTitle = null; $ncCards = [];
+              foreach ($nc as $it) {
+                $hasImg = !empty($it['imagen']);
+                $hasTxt = !empty($it['texto']) || !empty($it['textov2']);
+                $titSec = $it['titulov2'] ?? ($it['titulo'] ?? null);
+                if (!$hasImg && !$hasTxt && $titSec !== null && $ncTitle === null) { $ncTitle = $titSec; continue; }
+                $ncCards[] = $it;
+              }
+              if ($ncTitle === null) {
+                foreach ($nc as $it) { if (!empty($it['titulov2']) || !empty($it['titulo'])) { $ncTitle = $it['titulov2'] ?? $it['titulo']; break; } }
+              }
+            ?>
+            <div style="text-align: center; margin-bottom: 44px;">
+                <?php if (!empty($ncTitle)) { ?>
+                  <div style="background: linear-gradient(135deg,#00d6e6,#00b3c3); color: #fff; font-weight: 800; letter-spacing:.3px; padding: 12px 38px; border-radius: 12px; display: inline-block; box-shadow: 0 10px 22px rgba(16,24,40,.12); border: 1px solid rgba(255,255,255,.28);">
+                    <?php echo htmlspecialchars($ncTitle); ?>
+                  </div>
+                <?php } else { ?>
+                  <div style="display:inline-block; width:200px; height:14px; background:#e6eaf0; border-radius:999px;"></div>
+                <?php } ?>
+            </div>
+            <!-- Fila 1: Nicho Comercial (B77) -->
+            <!-- Línea conectora hacia Fila 1 -->
+            <div style="width:2px;height:26px;background:linear-gradient(to bottom,#00cfe1,#00b3c3);margin:0 auto 0 auto;border-radius:999px;"></div>
+            <!-- Barra horizontal principal Fila 1 -->
+            <div style="max-width:900px;margin:0 auto; border-top:2px solid rgba(0,179,195,.7);"></div>
+            <!-- Ramas hacia cada tarjeta Fila 1 -->
+            <div style="max-width:900px;margin:0 auto; display:flex; justify-content:space-between; gap:10px;">
+              <div style="width:21%;min-width:170px; display:flex; justify-content:center;">
+                <div style="width:2px;height:18px;background:linear-gradient(to bottom,#00cfe1,#00b3c3); border-radius:999px;"></div>
+              </div>
+              <div style="width:21%;min-width:170px; display:flex; justify-content:center;">
+                <div style="width:2px;height:18px;background:linear-gradient(to bottom,#00cfe1,#00b3c3); border-radius:999px;"></div>
+              </div>
+              <div style="width:21%;min-width:170px; display:flex; justify-content:center;">
+                <div style="width:2px;height:18px;background:linear-gradient(to bottom,#00cfe1,#00b3c3); border-radius:999px;"></div>
+              </div>
+              <div style="width:21%;min-width:170px; display:flex; justify-content:center;">
+                <div style="width:2px;height:18px;background:linear-gradient(to bottom,#00cfe1,#00b3c3); border-radius:999px;"></div>
+              </div>
+            </div>
+            <div id="fila1" style="display:flex; justify-content:space-between; gap:10px; flex-wrap:nowrap; margin-top:4px; max-width:900px; margin-left:auto; margin-right:auto;">
+              <?php if (!empty($ncCards)) { foreach ($ncCards as $it) { $t = $it['subtitulov2'] ?? ($it['subtitulo'] ?? ($it['titulov2'] ?? ($it['titulo'] ?? ''))); $tx = $it['textov2'] ?? ($it['texto'] ?? null); if (empty($tx)) { continue; } ?>
+                <div style="background:linear-gradient(160deg,#00d9eb,#00b3c3); color:#ffffff; border-radius:12px; padding:10px 11px; width:21%; min-width:170px; box-shadow:0 10px 22px rgba(15,23,42,.22); display:flex; flex-direction:column; justify-content:flex-start; border:1px solid rgba(255,255,255,.26);">
+                  <div style="font-weight:700; color:#ffffff; margin-bottom:4px; text-align:center; letter-spacing:.25px; font-size:13px;">&nbsp;<?php echo htmlspecialchars($t); ?></div>
+                  <div style="font-size:11px; line-height:1.6; color:#fdfefe; opacity:.98; text-align:left;">&nbsp;<?php echo nl2br(htmlspecialchars($tx)); ?></div>
+                </div>
+              <?php } } else { for($i=0;$i<4;$i++){ ?>
+                <div style="background:linear-gradient(160deg,#e6f9fc,#d2f1f8); border-radius:12px; width:21%; min-width:170px; height:64px; box-shadow:0 4px 10px rgba(15,23,42,.08); border:1px dashed #b9dfe9;"></div>
+              <?php } } ?>
+            </div>
+            <?php 
+              $ni = isset($this->mb_nicho_inst) && is_array($this->mb_nicho_inst) ? $this->mb_nicho_inst : []; 
+              $niTitle = null; $niCards = [];
+              foreach ($ni as $it) {
+                $hasImg = !empty($it['imagen']);
+                $hasTxt = !empty($it['texto']) || !empty($it['textov2']);
+                $titSec = $it['titulov2'] ?? ($it['titulo'] ?? null);
+                if (!$hasImg && !$hasTxt && $titSec !== null && $niTitle === null) { $niTitle = $titSec; continue; }
+                $niCards[] = $it;
+              }
+              if ($niTitle === null) {
+                foreach ($ni as $it) { if (!empty($it['titulov2']) || !empty($it['titulo'])) { $niTitle = $it['titulov2'] ?? $it['titulo']; break; } }
+              }
+            ?>
+            <div style="text-align: center; margin: 38px 0 20px 0;">
+                <?php if (!empty($niTitle)) { ?>
+                  <div style="background: linear-gradient(135deg,#00e1f0,#00b3c3); color: #fff; font-weight: 800; letter-spacing:.35px; padding: 12px 42px; border-radius: 999px; display: inline-block; box-shadow: 0 14px 28px rgba(15,23,42,.18); border: 1px solid rgba(255,255,255,.32);">
+                    <?php echo htmlspecialchars($niTitle); ?>
+                  </div>
+                <?php } else { ?>
+                  <div style="display:inline-block; width:220px; height:14px; background:#e6eaf0; border-radius:999px;"></div>
+                <?php } ?>
+            </div>
+            <!-- Fila 2: Nicho institucional (B78) -->
+            <!-- Línea conectora hacia Fila 2 -->
+            <div style="width:2px;height:26px;background:linear-gradient(to bottom,#00cfe1,#00b3c3);margin:0 auto 0 auto;border-radius:999px;"></div>
+            <!-- Barra horizontal principal Fila 2 -->
+            <div style="max-width:900px;margin:0 auto; border-top:2px solid rgba(0,179,195,.7);"></div>
+            <!-- Ramas hacia cada tarjeta Fila 2 -->
+            <div style="max-width:900px;margin:0 auto; display:flex; justify-content:space-between; gap:10px;">
+              <div style="width:21%;min-width:170px; display:flex; justify-content:center;">
+                <div style="width:2px;height:18px;background:linear-gradient(to bottom,#00cfe1,#00b3c3); border-radius:999px;"></div>
+              </div>
+              <div style="width:21%;min-width:170px; display:flex; justify-content:center;">
+                <div style="width:2px;height:18px;background:linear-gradient(to bottom,#00cfe1,#00b3c3); border-radius:999px;"></div>
+              </div>
+              <div style="width:21%;min-width:170px; display:flex; justify-content:center;">
+                <div style="width:2px;height:18px;background:linear-gradient(to bottom,#00cfe1,#00b3c3); border-radius:999px;"></div>
+              </div>
+              <div style="width:21%;min-width:170px; display:flex; justify-content:center;">
+                <div style="width:2px;height:18px;background:linear-gradient(to bottom,#00cfe1,#00b3c3); border-radius:999px;"></div>
+              </div>
+            </div>
+            <div id="fila2" style="display:flex; justify-content:space-between; gap:10px; flex-wrap:nowrap; margin-top:4px; max-width:900px; margin-left:auto; margin-right:auto;">
+              <?php if (!empty($niCards)) { foreach ($niCards as $it) { $t = $it['subtitulov2'] ?? ($it['subtitulo'] ?? ($it['titulov2'] ?? ($it['titulo'] ?? ''))); $tx = $it['textov2'] ?? ($it['texto'] ?? null); if (empty($tx)) { continue; } ?>
+                <div style="background:linear-gradient(160deg,#00d0e4,#00a9c4); color:#ffffff; border-radius:12px; padding:10px 11px; width:21%; min-width:170px; box-shadow:0 10px 22px rgba(15,23,42,.22); display:flex; flex-direction:column; justify-content:flex-start; border:1px solid rgba(255,255,255,.26);">
+                  <div style="font-weight:700; color:#ffffff; margin-bottom:4px; text-align:center; letter-spacing:.25px; font-size:13px;">&nbsp;<?php echo htmlspecialchars($t); ?></div>
+                  <div style="font-size:11px; line-height:1.6; color:#fdfefe; opacity:.98; text-align:left;">&nbsp;<?php echo nl2br(htmlspecialchars($tx)); ?></div>
+                </div>
+              <?php } } else { for($i=0;$i<4;$i++){ ?>
+                <div style="background:linear-gradient(160deg,#e6f9fc,#d2f1f8); border-radius:12px; width:21%; min-width:170px; height:64px; box-shadow:0 4px 10px rgba(15,23,42,.08); border:1px dashed #b9dfe9;"></div>
+              <?php } } ?>
+            </div>
+
+
+
+            
+        </div>
+        <!-- Imagen móvil (B79) -->
+        <?php $mb79img = $this->mb_movil ?? null; $mb79link = $this->mb_movil_link ?? null; ?>
+        <div style="flex: 0 0 300px; min-width: 260px; max-width: 320px; display: flex; justify-content: center; align-items: flex-start; position:relative;">
+            <?php if (!empty($mb79img)) { ?><img src="<?php echo htmlspecialchars($mb79img); ?>" alt="Móvil" style="width: 100%; height: auto; display: block; filter: drop-shadow(0 16px 18px rgba(0,0,0,.18));"><?php } else { ?><div style="width:100%;height:420px;background:#eef3f7;border-radius:16px;border:1px solid #e1e7ee;"></div><?php } ?>
+            <?php if (!empty($mb79link)) { ?><a href="<?php echo htmlspecialchars($mb79link); ?>" aria-label="Abrir imagen móvil" style="position:absolute; inset:0; display:block;"></a><?php } ?>
+        </div>
+    </div>
+    <!-- SECCION DE CONTACTO (B80/B81) -->
+    <div style="background: linear-gradient(135deg, #739EC9, #5682B1); 
+                color: #fff; 
+                padding: 70px 20px; 
+                border-radius: 20px; 
+                text-align: center; 
+                font-family: 'Arial Black', sans-serif; 
+                box-shadow: 0 10px 30px rgba(0,0,0,0.4); 
+                margin: 40px auto; 
+                position: relative; 
+                overflow: hidden;
+                width: 80%;">
+        <!-- Efecto de luces en el fondo -->
+        <div style="position: absolute; top: -50px; left: -50px; width: 200px; height: 200px; background: rgba(255,255,255,0.15); border-radius: 50%; filter: blur(80px);"></div>
+        <div style="position: absolute; bottom: -50px; right: -50px; width: 250px; height: 250px; background: rgba(255,255,255,0.1); border-radius: 50%; filter: blur(100px);"></div>      
+        <h2 style="font-size: 34px; margin-bottom: 15px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; color:#fff;">
+            ¿Interesado en nuestras marcas blancas?
+        </h2>        
+        <p style="font-size: 20px; margin-bottom: 40px; line-height: 1.6; color: #fff; font-weight: 300;">
+            Contáctenos hoy mismo para una consulta personalizada 🚀
+        </p>        
+        <div style="display: flex; justify-content: center; gap: 25px; flex-wrap: wrap;">
+            <?php $ag=$this->mb_agenda??[]; $agBtn=$ag['boton'][0]??null; $agLink= isset($this->mb_agenda_link) && $this->mb_agenda_link ? $this->mb_agenda_link : ($ag['link'][0]??null); ?>
+            <?php if ($agBtn && $agLink) { ?><a href="<?php echo htmlspecialchars($agLink); ?>" target="_blank" style="display:inline-flex; align-items:center; justify-content:center; gap:10px; background:#00c7d9; color:#fff; padding:14px 30px; border-radius:9999px; font-size:18px; font-weight:700; text-decoration:none; box-shadow:0 6px 14px rgba(0,0,0,0.15); transition:all .25s ease;" onmouseover="this.style.background='#00aebf'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 18px rgba(0,0,0,0.22)';" onmouseout="this.style.background='#00c7d9'; this.style.transform='translateY(0)'; this.style.boxShadow='0 6px 14px rgba(0,0,0,0.15)';">&nbsp;<?php echo htmlspecialchars($agBtn); ?> <i class="fa-solid fa-arrow-right" style="font-size:16px;"></i></a><?php } else { ?><div style="height:48px;width:220px;background:#e8eef6;border-radius:50px;"></div><?php } ?>
+            <?php $wa=$this->mb_whatsapp??[]; 
+                  $ctrlLink = $this->mb_whatsapp_link ?? null;
+                  $href = null;
+                  if (is_string($ctrlLink) && preg_match('#^https?://#i', trim($ctrlLink))) { $href = trim($ctrlLink); }
+                  elseif (isset($wa['link'][0]) && is_string($wa['link'][0]) && preg_match('#^https?://#i', trim($wa['link'][0]))) { $href = trim($wa['link'][0]); }
+                  $waTel=$wa['telefono'][0]??($wa['wa'][0]??null); 
+                  $waMsg=$wa['texto'][0]??null; 
+                  if (!$href && $waTel) { 
+                    $digits=preg_replace('/\D+/','',$waTel); 
+                    if ($digits) { 
+                      $href='https://wa.me/'.$digits; 
+                      if (is_string($waMsg) && trim($waMsg)!=='') { $href .= '?text=' . rawurlencode($waMsg); }
+                    }
+                  }
+                  if ($href && is_string($waMsg) && trim($waMsg)!=='') {
+                    if (preg_match('#(wa\.me|whatsapp\.com)#i', $href)) {
+                      $href .= (strpos($href, '?') === false ? '?' : '&') . 'text=' . rawurlencode($waMsg);
+                    }
+                  }
+            ?>
+            <?php if ($href) { ?><a href="<?php echo htmlspecialchars($href); ?>" target="_blank" style="background: #25D366; color: #fff; padding: 18px 35px; border-radius: 50px; font-size: 18px; font-weight: bold; text-decoration: none; box-shadow: 0 8px 20px rgba(0,0,0,0.3); transition: all 0.3s; display: inline-flex; align-items: center; gap: 10px;">WhatsApp</a><?php } else { ?><div style="height:48px;width:220px;background:#d3f5e3;border-radius:50px;"></div><?php } ?>
+        </div>
+    </div>
+<div>

@@ -1,0 +1,443 @@
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<div id="empresas-content-container" class="empresas-content" style="background:#ffffff; overflow-x:hidden;">
+    <div class="empresas-container">
+      <?php if (isset($_GET['debugcms']) && $_GET['debugcms']=='1') { ?>
+        <?php foreach (['36','37','38','39','40','41','42','43','44','45'] as $dbg) { $var = 'debug_bloque'.$dbg; if (isset($this->$var)) { ?>
+          <pre style="background:#f8fafc;border:1px solid #e2e8f0;color:#0f172a;font-size:12px;padding:10px;border-radius:6px;margin:10px 0;white-space:pre-wrap;">B<?php echo $dbg; ?>: <?php echo htmlspecialchars(json_encode($this->$var, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES)); ?></pre>
+        <?php } } ?>
+      <?php } ?>
+       <!-- BANNER -->
+        <?php if (!empty($this->emp_banner1)) { ?>
+        <div style="position: relative; max-width: 100%; overflow: hidden; margin-top: 0;">
+            <div style="display: block; width: 100%;">
+                <img src="<?php echo htmlspecialchars($this->emp_banner1); ?>" style="width: 100%; height: auto; display: block;">
+            </div>
+        </div>
+        <?php } else { ?>
+        <div style="position: relative; max-width: 100%; overflow: hidden; margin-top: 10px; min-height: 280px; border-radius:12px; background:linear-gradient(180deg,#eef5fb 0%,#e6eef7 100%); border:1px solid #d9e5f0; box-shadow:0 6px 18px rgba(15, 23, 42, 0.05);"></div>
+        <?php } ?>
+        <?php 
+          $introT = $this->emp_intro['titulo'][0] ?? '';
+          $introX = $this->emp_intro['texto'][0] ?? '';
+        ?>
+        <?php if ($introT) { ?>
+        <p style="font-size: 3.2rem; font-weight: 900; color: #006FA6; text-align: center; margin-bottom: 10px; letter-spacing: 1px; margin-top: 35px;">
+            <?php echo htmlspecialchars($introT); ?>
+        </p>
+        <?php } ?>
+        <?php if ($introX) { ?>
+        <p style="font-size: 1.5rem; font-weight: 400; color: #000000; text-align: center; max-width: 700px; margin: 0 auto 20px; line-height: 1.6; opacity: 0.9; margin-top: 35px;">
+            <?php echo htmlspecialchars($introX); ?>
+        </p>
+        <?php } ?>
+        <!-- TITULO -->
+        <p style="font-size: 3.2rem; font-weight: 900; color: #006FA6; text-align: center; margin-bottom: 10px; letter-spacing: 1px; margin-top: 35px;">
+            Soluciones empresariales
+        </p>
+        <!-- ICONOS -->
+        <?php if (!empty($this->emp_soluciones)) { ?>
+        <?php if (isset($_GET['debugcms']) && $_GET['debugcms']=='1') { ?>
+          <pre style="background:#f8fafc;border:1px solid #e2e8f0;color:#0f172a;font-size:12px;padding:10px;border-radius:6px;margin:10px 0;white-space:pre-wrap;">
+            B38 items:
+            <?php foreach ($this->emp_soluciones as $it) { $t=$it['titulo']??''; $l=$it['link']??($it['Link']??($it['enlace']??($it['url']??''))); echo "- ".($t).' -> '.($l)."\n"; } ?>
+          </pre>
+        <?php } ?>
+        <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 25px; margin-top: 30px;">
+            <?php foreach ($this->emp_soluciones as $it) { 
+                $img=$it['imagen']??null; 
+                $ttl=$it['titulo']??null; 
+                $txt=$it['texto']??null; 
+                $btn=$it['boton']??null; 
+                $lnk=isset($it['link']) ? $it['link'] : (isset($it['Link']) ? $it['Link'] : (isset($it['enlace']) ? $it['enlace'] : (isset($it['url']) ? $it['url'] : null)));
+                if (is_string($lnk)) { $lnk=trim($lnk); }
+            ?>
+            <div style="background: #C9CDCF; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); padding: 25px 20px; text-align: center; width: 220px; transition: transform 0.3s ease, box-shadow 0.3s ease;">
+                <?php if ($img) { ?>
+                <div style="background: #CC085E; border-radius: 50%; padding: 15px; display: flex; justify-content: center; align-items: center; margin: 0 auto 15px; width: 80px; height: 80px;">
+                    <?php if (!empty($lnk)) { ?><a href="<?php echo htmlspecialchars($lnk); ?>" style="display:block;"><?php } ?>
+                    <img src="<?php echo htmlspecialchars($img); ?>" style="width: 50px; height: auto;">
+                    <?php if (!empty($lnk)) { ?></a><?php } ?>
+                </div>
+                <?php } ?>
+                <?php if ($ttl) { ?>
+                  <div style="font-size: 1rem; font-weight: 600; color: #222831;">
+                    <?php if (!empty($lnk)) { ?><a href="<?php echo htmlspecialchars($lnk); ?>" style="color:#222831;text-decoration:none;">&nbsp;<?php echo htmlspecialchars($ttl); ?></a><?php } else { ?>&nbsp;<?php echo htmlspecialchars($ttl); ?><?php } ?>
+                  </div>
+                <?php } ?>
+                <?php if ($txt) { ?><div style="font-size: .9rem; color: #333; margin-top: 6px; line-height: 1.35;">&nbsp;<?php echo nl2br(htmlspecialchars($txt)); ?></div><?php } ?>
+                <?php if (!empty($lnk)) { $label = (is_string($btn) && preg_match('/^\s*https?:\/\//i', $btn)) ? 'Más información' : ($btn ?: 'Más información'); ?>
+                  <div style="margin-top:10px;"><a href="<?php echo htmlspecialchars($lnk); ?>" style="display:inline-block;background:#00b6d6;color:#fff;border-radius:9999px;padding:8px 14px;font-weight:700;text-decoration:none;">&nbsp;<?php echo htmlspecialchars($label); ?></a></div>
+                <?php } ?>
+            </div>
+            <?php } ?>
+        </div>
+        <?php } else { ?>
+        <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:25px; margin-top:30px;">
+            <?php for($i=0;$i<4;$i++){ ?>
+            <div style="background:#e9edf1; border-radius:16px; box-shadow:0 4px 12px rgba(0,0,0,0.06); padding:25px 20px; text-align:center; width:220px;">
+                <div style="background:#cfd6dd; border-radius:50%; width:80px; height:80px; margin:0 auto 15px;"></div>
+                <div style="height:14px; background:#cfd6dd; border-radius:7px; width:80%; margin:0 auto;"></div>
+            </div>
+            <?php } ?>
+        </div>
+        <?php } ?>
+        <!-- BANNER 2 -->
+        <?php if (!empty($this->emp_banner_mid_img)) { ?>
+        <div style="position: relative; max-width: 100%; overflow: hidden; margin-top: 35px; text-align: center;">
+            <div style="position: relative; display: inline-block; max-width: 100%;">
+                <img src="<?php echo htmlspecialchars($this->emp_banner_mid_img); ?>" style="width: 100%; height: auto; display:block;">
+                <?php if (!empty($this->emp_banner_mid_link)) { ?>
+                  <a href="<?php echo htmlspecialchars(trim($this->emp_banner_mid_link)); ?>" aria-label="Abrir banner" style="position:absolute; inset:0; display:block; z-index:5;"></a>
+                <?php } ?>
+            </div>
+            <?php if (isset($_GET['debugcms']) && $_GET['debugcms']=='1') { ?>
+              <pre style="background:#f8fafc;border:1px solid #e2e8f0;color:#0f172a;font-size:12px;padding:10px;border-radius:6px;margin:10px 10px;white-space:pre-wrap;">B39 link: <?php echo htmlspecialchars($this->emp_banner_mid_link??''); ?></pre>
+            <?php } ?>
+        </div>
+        <?php } else { ?>
+        <div style="position: relative; max-width: 100%; overflow: hidden; margin-top: 35px; text-align: center; min-height: 300px; border-radius:12px; background:linear-gradient(180deg,#eef5fb 0%,#e6eef7 100%); border:1px solid #d9e5f0; box-shadow:0 6px 18px rgba(15, 23, 42, 0.05);"></div>
+        <?php } ?>
+        <!-- TARJETAS DE INFORMACION -->
+        <?php if (!empty($this->emp_tarjetas)) { ?>
+        <?php if (isset($_GET['debugcms']) && $_GET['debugcms']=='1') { ?>
+          <pre style="background:#f8fafc;border:1px solid #e2e8f0;color:#0f172a;font-size:12px;padding:10px;border-radius:6px;margin:10px 0;white-space:pre-wrap;">
+            B40 items:
+            <?php foreach ($this->emp_tarjetas as $it) { $t=$it['titulo']??''; $l=$it['link']??($it['Link']??($it['enlace']??($it['url']??''))); echo "- ".($t).' -> '.($l)."\n"; } ?>
+          </pre>
+        <?php } ?>
+        <div id="emp-cards-grid" style="display: grid; margin-top: 20px; max-width: 1200px; margin-left:auto; margin-right:auto; grid-template-columns: repeat(2, minmax(460px, 1fr)); justify-content: center; align-items: start; column-gap: 24px; row-gap: 18px; padding: 10px 16px;">
+          <style>
+            @media (max-width: 1200px) { #emp-cards-grid { grid-template-columns: repeat(2, minmax(380px, 1fr)); column-gap: 20px; row-gap: 18px; padding: 8px 12px; } }
+            @media (max-width: 992px)  { #emp-cards-grid { grid-template-columns: 1fr !important; max-width: 740px; padding: 8px 10px; } }
+            @media (max-width: 768px)  { #emp-cards-grid { grid-template-columns: 1fr !important; max-width: 640px; padding: 8px 10px; } }
+            @media (max-width: 576px)  { #emp-cards-grid { grid-template-columns: 1fr !important; max-width: 540px; padding: 8px 8px; } .emp-card { width: 100% !important; max-width: 520px !important; margin: 0 auto; } }
+          </style>
+          <?php foreach ($this->emp_tarjetas as $it) { 
+                $img=$it['imagen']??null; 
+                $ttl=$it['titulo']??null; 
+                $btn=$it['boton']??null; 
+                $lnk=isset($it['link']) ? $it['link'] : (isset($it['Link']) ? $it['Link'] : (isset($it['enlace']) ? $it['enlace'] : (isset($it['url']) ? $it['url'] : null)));
+                if (is_string($lnk)) { $lnk=trim($lnk); }
+          ?>
+          <div class="emp-card" style="background: #fff; border-radius: 22px; box-shadow: 0 8px 18px rgba(0,0,0,0.08); overflow: hidden; text-align: center; width: 100%; max-width: 520px; margin: 0 auto;">
+            <?php if ($img) { ?>
+              <?php if (!empty($lnk)) { ?><a href="<?php echo htmlspecialchars($lnk); ?>" style="display:block;"><?php } ?>
+              <img src="<?php echo htmlspecialchars($img); ?>" style="width:100%; height:auto; border-bottom:3px solid #e8e8e8;">
+              <?php if (!empty($lnk)) { ?></a><?php } ?>
+            <?php } ?>
+            <?php if ($ttl) { ?>
+              <h2 style="font-size:1.4rem; font-weight:700; color:#00124a; margin:18px 0;">
+                <?php if (!empty($lnk)) { ?><a href="<?php echo htmlspecialchars($lnk); ?>" style="color:#00124a;text-decoration:none;">&nbsp;<?php echo htmlspecialchars($ttl); ?></a><?php } else { ?>&nbsp;<?php echo htmlspecialchars($ttl); ?><?php } ?>
+              </h2>
+            <?php } ?>
+            <?php if (!empty($lnk)) { $label = (is_string($btn) && preg_match('/^\s*https?:\/\//i', $btn)) ? 'Más información' : ($btn ?: 'Más información'); ?>
+              <a href="<?php echo htmlspecialchars($lnk); ?>" style="display:inline-flex; align-items:center; justify-content:center; background-color:#00b6d6; color:#fff; font-weight:bold; border-radius:50px; padding:14px 30px; text-decoration:none; transition:background 0.3s; margin-bottom:25px; font-size:1rem;">&nbsp;<?php echo htmlspecialchars($label); ?><span style="margin-left:10px;">➜</span></a>
+            <?php } ?>
+          </div>
+          <?php } ?>
+        </div>
+        <?php } else { ?>
+        <div class="emp-cards-grid" style="display:grid; margin-top:20px; max-width:1200px; margin-left:auto; margin-right:auto; grid-template-columns: repeat(2, minmax(460px, 1fr)); justify-content:center; align-items:start; column-gap:24px; row-gap:18px; padding:10px 16px;">
+          <style>
+            @media (max-width: 1200px) { .emp-cards-grid { grid-template-columns: repeat(2, minmax(380px, 1fr)); column-gap: 20px; row-gap: 18px; padding:8px 12px; } }
+            @media (max-width: 992px)  { .emp-cards-grid { grid-template-columns: 1fr !important; max-width:740px; padding:8px 10px; } }
+            @media (max-width: 768px)  { .emp-cards-grid { grid-template-columns: 1fr !important; max-width:640px; padding:8px 10px; } }
+            @media (max-width: 576px)  { .emp-cards-grid { grid-template-columns: 1fr !important; max-width:540px; padding:8px 8px; } .emp-card { width:100% !important; max-width:520px !important; margin:0 auto; } }
+          </style>
+          <style>
+            @media (max-width: 1200px) { .emp-cards-grid { grid-template-columns: repeat(2, minmax(380px, 1fr)); column-gap: 20px; row-gap: 18px; padding:8px 12px; } }
+            @media (max-width: 992px)  { .emp-cards-grid { grid-template-columns: 1fr; max-width:740px; padding:8px 10px; } }
+            @media (max-width: 576px)  { .emp-cards-grid { grid-template-columns: 1fr; max-width:540px; padding:8px 8px; } .emp-card { width:100% !important; max-width:520px !important; margin:0 auto; } }
+          </style>
+          <?php for($i=0;$i<4;$i++){ ?>
+          <div class="emp-card" style="background:#fff; border-radius:22px; box-shadow:0 8px 18px rgba(0,0,0,0.08); overflow:hidden; text-align:center; width:100%; max-width:520px;">
+            <div style="width:100%; height:220px; background:#e9edf1; border-bottom:3px solid #e8e8e8;"></div>
+            <div style="height:18px; background:#cfd6dd; border-radius:9px; width:60%; margin:18px auto;"></div>
+            <div style="height:42px; background:#e9edf1; border-radius:25px; width:220px; margin:0 auto 25px;"></div>
+          </div>
+          <?php } ?>
+        </div>
+        <?php } ?>
+
+        <!-- BANNER INFERIOR (CMS o placeholder) -->
+        <?php if (!empty($this->emp_banner_bottom_img)) { ?>
+        <div style="position: relative; max-width: 100%; overflow: hidden; margin-top: 35px; text-align: center;">
+            <div style="position: relative; display: inline-block; max-width: 100%;">
+                <img src="<?php echo htmlspecialchars($this->emp_banner_bottom_img); ?>" style="width: 100%; height: auto; display:block;">
+                <?php if (!empty($this->emp_banner_bottom_link)) { ?>
+                  <a href="<?php echo htmlspecialchars($this->emp_banner_bottom_link); ?>" aria-label="Abrir banner" style="position:absolute; inset:0; display:block; z-index:5;"></a>
+                <?php } ?>
+            </div>
+            <?php if (isset($_GET['debugcms']) && $_GET['debugcms']=='1') { ?>
+              <pre style="background:#f8fafc;border:1px solid #e2e8f0;color:#0f172a;font-size:12px;padding:10px;border-radius:6px;margin:10px 10px;white-space:pre-wrap;">B41 link: <?php echo htmlspecialchars($this->emp_banner_bottom_link??''); ?></pre>
+            <?php } ?>
+        </div>
+        <?php } else { ?>
+        <div style="position: relative; max-width: 100%; overflow: hidden; margin-top: 35px; text-align: center; min-height: 300px; border-radius:12px; background:linear-gradient(180deg,#eef5fb 0%,#e6eef7 100%); border:1px solid #d9e5f0; box-shadow:0 6px 18px rgba(15, 23, 42, 0.05);"></div>
+        <?php } ?>
+      
+        <!-- BOTON DE AGENDA TU DEMO -->
+        <div style="width: 100%; text-align: center; margin-top: 20px;">
+            <?php 
+              $agendaTxt = $this->emp_agenda['boton'][0] ?? ($this->emp_agenda['texto'][0] ?? 'Agenda tu demo');
+              $agendaHref = $this->emp_agenda_link ?? ($this->emp_agenda['link'][0] ?? null);
+            ?>
+            <?php if ($agendaHref) { ?>
+            <a href="<?php echo htmlspecialchars($agendaHref); ?>" target="_blank" rel="noopener" 
+               style="display:inline-flex; align-items:center; justify-content:center; background-color:#00b6d6; color:#fff; font-weight:bold; border-radius:50px; padding:14px 30px; text-decoration:none; transition:background 0.3s; margin:10px auto 25px; font-size:1rem;">
+                <?php echo htmlspecialchars($agendaTxt ?: 'Agenda tu demo'); ?> <span style="margin-left:10px;">➜</span>
+            </a>
+            <?php } else { ?>
+            <div style="display:inline-block; height:44px; min-width:220px; background:#e9edf1; border-radius:50px;"></div>
+            <?php } ?>
+        </div>
+        <!-- Agrega esto en tu <head> -->
+        <section class="emp-atajos-section" style="position:relative; overflow:hidden; background:linear-gradient(135deg, rgba(10,128,155,.92), rgba(19,168,186,.92)); border:2px solid rgba(255,255,255,.35); border-radius:16px; padding:26px 26px; color:#fff; font-family:Arial, sans-serif; margin-top: 35px; box-shadow:0 16px 34px rgba(0,0,0,.14); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);">
+            <div id="emp-atajos-grid" style="display:grid; align-items:start; width:100%; max-width:1200px; margin:0 auto;">
+                <?php 
+                  $icons = [
+                    'fa-building',
+                    'fa-diagram-project',
+                    'fa-sim-card',
+                    'fa-user-tie',
+                    'fa-network-wired'
+                  ];
+                  $max = 0; $items = [];
+                  if (!empty($this->emp_atajos) && is_array($this->emp_atajos)) {
+                    foreach ($this->emp_atajos as $a) { if (!empty($a['link']) && !empty($a['titulo'])) { $items[] = $a; } }
+                    $max = min(5, count($items));
+                  }
+                  $base = (defined('BASE_URL') ? rtrim(BASE_URL,'/') : '');
+                  $map = [
+                    // IDs de subpestañas según CMS para Empresas
+                    // 8: Tarifas, 9: Marcas Blancas, 10: Marca Rápida, 11: Distribuciones, 12: IOT
+                    '8'  => 'empresas/tarifas',
+                    '9'  => 'empresas/marcasBlancas',
+                    '10' => 'empresas/marcaRapida',
+                    '11' => 'empresas/distribuciones',
+                    '12' => 'empresas/iot',
+                  ];
+                  for ($i=0; $i<$max; $i++) {
+                    $l = trim($items[$i]['link'] ?? '');
+                    $t = trim($items[$i]['titulo'] ?? '');
+                    if (!$t) continue;
+                    // Resolver href: si viene 'pestana:<id>' transformar a URL bonita
+                    $href = $l;
+                    if (strpos($l,'pestana:') === 0) {
+                      $pid = substr($l, 8);
+                      $pid = preg_replace('/[^0-9]/','',$pid);
+                      if ($pid && isset($map[$pid])) {
+                        $href = $base . '/' . $map[$pid];
+                      }
+                    }
+                    if (!$href) { continue; }
+                ?>
+                <a href="<?php echo htmlspecialchars($href); ?>" class="info-button" style="display:flex; flex-direction:column; align-items:center; text-decoration:none; text-align:center; gap:10px; color:#fff; font-weight:700;">
+                  <span class="atajo-icon" style="width:96px; height:96px; border-radius:50%; display:grid; place-items:center; font-size:42px; border:1px solid rgba(255,255,255,.5); background: radial-gradient(120px 120px at 30% 30%, rgba(34,211,238,.9) 0%, rgba(14,165,166,.9) 55%, rgba(11,142,151,.9) 100%); box-shadow: 0 0 0 4px rgba(255,255,255,.3), 0 10px 22px rgba(3,105,161,.35);">
+                    <i class="fa-solid <?php echo $icons[$i] ?? 'fa-circle-info'; ?>"></i>
+                  </span>
+                  <span class="atajo-label" style="letter-spacing:.6px; line-height:1.15; text-transform:uppercase; font-size:16px; color:#eaf9ff; text-shadow:0 1px 0 rgba(0,0,0,.18); white-space:normal; word-break:break-word;">&nbsp;<?php echo htmlspecialchars($t); ?></span>
+                </a>
+                <?php } ?>
+            </div>
+        </section>
+        <style>
+          /* Liquid glass sheen overlay */
+          .emp-atajos-section{ position:relative; }
+          .emp-atajos-section::before{ content:""; position:absolute; inset:-1px; border-radius:inherit; pointer-events:none; background: linear-gradient(180deg, rgba(255,255,255,.16), rgba(255,255,255,.04)); mix-blend-mode:screen; }
+          .emp-atajos-section::after{ content:""; position:absolute; top:-35%; left:-10%; width:60%; height:200%; transform: rotate(12deg); background: radial-gradient(ellipse at top left, rgba(255,255,255,.28), transparent 60%); pointer-events:none; }
+
+          /* Desktop: 5 accesos en una sola fila */
+          #emp-atajos-grid { grid-template-columns: repeat(5, minmax(0,1fr)); gap:22px; }
+          .info-button { gap:10px; padding:8px 6px; transition:transform .25s ease, filter .25s ease; }
+          .info-button:hover { transform: translateY(-3px); filter: drop-shadow(0 8px 18px rgba(0,0,0,.28)); }
+          .atajo-icon { width:92px; height:92px; font-size:40px; border:1px solid rgba(255,255,255,.55); background: radial-gradient(120px 120px at 30% 30%, rgba(34,211,238,.94) 0%, rgba(14,165,166,.94) 55%, rgba(11,142,151,.92) 100%); box-shadow: 0 0 0 4px rgba(255,255,255,.35), 0 0 22px rgba(34,211,238,.35), 0 12px 28px rgba(3,105,161,.35); animation: neonPulse 2.8s ease-in-out infinite; }
+          .atajo-label { font-size:16px; line-height:1.2; letter-spacing:.5px; white-space:normal; word-break:break-word; text-shadow:0 1px 0 rgba(0,0,0,.22); color:#eaf9ff; }
+
+          @keyframes neonPulse {
+            0%   { box-shadow: 0 0 0 4px rgba(255,255,255,.35), 0 0 12px rgba(34,211,238,.25), 0 10px 22px rgba(3,105,161,.28); }
+            50%  { box-shadow: 0 0 0 4px rgba(255,255,255,.45), 0 0 22px rgba(34,211,238,.55), 0 14px 28px rgba(3,105,161,.35); }
+            100% { box-shadow: 0 0 0 4px rgba(255,255,255,.35), 0 0 12px rgba(34,211,238,.25), 0 10px 22px rgba(3,105,161,.28); }
+          }
+
+          /* <=1200px: 3 columnas */
+          @media (max-width: 1200px) {
+            #emp-atajos-grid { grid-template-columns: repeat(3, minmax(0,1fr)); gap:20px; }
+            .atajo-icon { width:88px; height:88px; font-size:36px; }
+            .atajo-label { font-size:15px; }
+          }
+          /* Tablets: 2 columnas */
+          @media (max-width: 992px) {
+            #emp-atajos-grid { grid-template-columns: repeat(2, minmax(0,1fr)); gap:18px; }
+            .atajo-icon { width:82px; height:82px; font-size:34px; }
+            .atajo-label { font-size:14px; }
+          }
+          /* Small tablets / large phones */
+          @media (max-width: 768px) {
+            #emp-atajos-grid { grid-template-columns: repeat(2, minmax(0,1fr)); gap:16px; }
+            .atajo-icon { width:76px; height:76px; font-size:30px; }
+          }
+          /* Phones: 1 columna */
+          @media (max-width: 480px) {
+            #emp-atajos-grid { grid-template-columns: repeat(1, minmax(0,1fr)); gap:14px; }
+            .atajo-icon { width:68px; height:68px; font-size:28px; }
+            .atajo-label { font-size:13px; }
+          }
+        </style>
+        <!-- Sección Contacto -->
+        <div style="display: flex; justify-content: center; align-items: flex-start; padding: 60px 25px; gap: 45px; flex-wrap: wrap; font-family: 'Segoe UI','Roboto',Arial,sans-serif; background: linear-gradient(135deg, #ffffff, #f0f7ff); margin-top: 40px;">
+             <!-- Columna de Información -->
+            <div style="max-width: 360px; color: #0d234c;">
+                <?php $elT=$this->emp_eleva['titulo'][0] ?? null; ?>
+                <h2 style="font-size: 28px; font-weight: 900; margin: 0; background: linear-gradient(90deg,#0077b6,#00b4d8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; position: relative; display: inline-block;">
+                    <?php if ($elT) { echo htmlspecialchars($elT); } else { ?><span style="display:inline-block; height:22px; width:380px; background:#cfd6dd; border-radius:6px;"></span><?php } ?>
+                    <span style="display:block; height:4px; background: linear-gradient(90deg,#00b4d8,#0077b6); margin-top:6px; border-radius:4px; width:60%;"></span>
+                </h2>
+                <?php $elS=$this->emp_eleva['subtitulo'][0] ?? null; ?>
+                <p style="font-weight:700; font-size:18px; color:#0d234c; margin:18px 0;">
+                    <?php if ($elS) { echo htmlspecialchars($elS); } else { ?><span style="display:inline-block; height:16px; width:260px; background:#e0e6ec; border-radius:6px;"></span><?php } ?>
+                </p>
+                <?php $elX=$this->emp_eleva['texto'][0] ?? null; ?>
+                <p style="font-size:15px; line-height:1.6; color:#555;">
+                    <?php if ($elX) { echo htmlspecialchars($elX); } else { ?><span style="display:inline-block; height:14px; width:320px; background:#eef3f7; border-radius:6px;"></span><?php } ?>
+                </p>
+            </div>
+            <!-- Columna Central (la de la imagen que me compartiste) -->
+            <div style="display: flex; flex-direction: column; gap: 18px; align-items: flex-start; background: white; padding: 30px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.08); min-width: 280px;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                <?php 
+                  $correo = $this->emp_social['correo'][0] ?? null; 
+                  if (!$correo && !empty($this->emp_social_links) && is_array($this->emp_social_links)) {
+                    foreach ($this->emp_social_links as $row) {
+                      $ic = strtolower((string)($row['icon'] ?? ''));
+                      if (strpos($ic, 'envelope') !== false || strpos($ic, 'email') !== false) { $correo = $row['url'] ?? ''; break; }
+                    }
+                  }
+                ?>
+                <?php if ($correo) { $c = trim($correo); if (!preg_match('#^mailto:#i',$c) && strpos($c,'@')!==false) { $c = 'mailto:'.$c; } ?>
+                  <div style="width: 42px; height: 42px; background: linear-gradient(135deg,#0d234c,#1b3a6f); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 3px 8px rgba(0,0,0,0.2);">
+                      <img src="https://api.iconify.design/mdi:email-outline.svg?color=white" alt="email" style="width: 22px; height: 22px;">
+                  </div>
+                  <a href="<?php echo htmlspecialchars($c); ?>" style="font-size: 15px; color: #333; text-decoration:none;">&nbsp;<?php echo htmlspecialchars(str_replace('mailto:','',$c)); ?></a>
+                <?php } else { ?>
+                  <span style="display:inline-block; height:14px; width:240px; background:#e0e6ec; border-radius:6px;"></span>
+                <?php } ?>
+                </div>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                <?php 
+                  $tel = $this->emp_social['telefono'][0] ?? null; 
+                  if (!$tel && !empty($this->emp_social_links) && is_array($this->emp_social_links)) {
+                    foreach ($this->emp_social_links as $row) {
+                      $ic = strtolower((string)($row['icon'] ?? ''));
+                      if (strpos($ic, 'phone') !== false) { $tel = $row['url'] ?? ''; break; }
+                    }
+                  }
+                ?>
+                <?php if ($tel) { 
+                  $t = trim($tel); 
+                  if (!preg_match('#^tel:#i',$t)) { 
+                    $digits = preg_replace('/\D+/','',$t); 
+                    if ($digits!=='') { $t = 'tel:+'.$digits; }
+                  }
+                ?>
+                  <div style="width: 42px; height: 42px; background: linear-gradient(135deg,#0096c7,#00b4d8); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 3px 8px rgba(0,0,0,0.2);">
+                      <img src="https://api.iconify.design/mdi:phone.svg?color=white" alt="teléfono" style="width: 22px; height: 22px;">
+                  </div>
+                  <a href="<?php echo htmlspecialchars($t); ?>" style="font-size: 15px; color: #333; text-decoration:none;">&nbsp;<?php echo htmlspecialchars($tel); ?></a>
+                <?php } else { ?>
+                  <span style="display:inline-block; height:14px; width:200px; background:#e0e6ec; border-radius:6px;"></span>
+                <?php } ?>
+                </div>
+                <?php 
+                  $wa = $this->emp_social['whatsapp'][0] ?? ($this->emp_social['wa'][0] ?? null); 
+                  if (!$wa && !empty($this->emp_social_links) && is_array($this->emp_social_links)) {
+                    foreach ($this->emp_social_links as $row) {
+                      $ic = strtolower((string)($row['icon'] ?? ''));
+                      if (strpos($ic, 'whatsapp') !== false) { $wa = $row['url'] ?? ''; break; }
+                    }
+                  }
+                ?>
+                <?php if ($wa) { 
+                  $w = trim($wa); 
+                  if (!preg_match('#^https?://#i',$w)) { 
+                    $digits = preg_replace('/\D+/','',$w); 
+                    if ($digits!=='') { $w = 'https://wa.me/'.$digits; }
+                  }
+                ?>
+                  <a href="<?php echo htmlspecialchars($w); ?>" target="_blank"
+                     style="display: flex; align-items:center; gap: 10px; background: linear-gradient(90deg,#00b4d8,#0077b6); color: #fff; padding: 14px 24px; border-radius: 12px; font-weight: bold; font-size: 16px; text-decoration: none; box-shadow: 0 8px 18px rgba(0,180,214,0.35);">
+                    <img src="https://api.iconify.design/mdi:whatsapp.svg?color=white" alt="whatsapp" style="width: 24px; height: 24px;">
+                    Contáctanos Ahora
+                  </a>
+                <?php } else { ?>
+                  <div style="height:48px; width:240px; background:#e9edf1; border-radius:12px;"></div>
+                <?php } ?>
+            </div>
+            <!-- Columna Derecha -->
+            <?php 
+              // Resolver URLs desde byType o desde filas con icono en 'contenido'
+              $platforms = [
+                'facebook'  => ['label' => 'Facebook',  'iconUrl' => 'https://api.iconify.design/mdi:facebook.svg?color=%231877f2', 'match' => 'facebook'],
+                'instagram' => ['label' => 'Instagram', 'iconUrl' => 'https://api.iconify.design/mdi:instagram.svg?color=%23c32aa3', 'match' => 'instagram'],
+                'tiktok'    => ['label' => 'TikTok',    'iconUrl' => 'https://api.iconify.design/ic:baseline-tiktok.svg?color=%23000000', 'match' => 'tiktok'],
+                'youtube'   => ['label' => 'YouTube',   'iconUrl' => 'https://api.iconify.design/mdi:youtube.svg?color=%23ff0000', 'match' => 'youtube'],
+              ];
+              $resolved = [];
+              foreach ($platforms as $key => $meta) {
+                $url = $this->emp_social[$key][0] ?? '';
+                if (!is_string($url) || trim($url) === '') {
+                  if (!empty($this->emp_social_links) && is_array($this->emp_social_links)) {
+                    foreach ($this->emp_social_links as $row) {
+                      $ic = strtolower((string)($row['icon'] ?? ''));
+                      if (strpos($ic, $meta['match']) !== false) { $url = $row['url'] ?? ''; break; }
+                    }
+                  }
+                }
+                // Normalizar: agregar https:// si falta y no es mailto/tel
+                $u = is_string($url) ? trim($url) : '';
+                if ($u !== '' && stripos($u, 'http') !== 0 && stripos($u, 'mailto:') !== 0 && stripos($u, 'tel:') !== 0) {
+                  $u = 'https://' . ltrim($u, '/');
+                }
+                $resolved[$key] = $u;
+              }
+              $hasAnySocial = false; foreach ($resolved as $v) { if (is_string($v) && trim($v) !== '') { $hasAnySocial = true; break; } }
+            ?>
+            <?php if ($hasAnySocial) { ?>
+            <div style="background: white; padding: 25px; border-radius: 18px; box-shadow: 0 12px 35px rgba(0,0,0,0.08); width: 100%; max-width: 320px; text-align: center; border: 2px solid transparent; background-image: linear-gradient(white, white), linear-gradient(135deg,#ff7bac,#00b4d8); background-origin: border-box; background-clip: padding-box, border-box;">
+                <h3 style="font-weight: 800; color: #0d234c; margin-bottom: 20px;">✨ SÍGUENOS ✨</h3>
+                <div style="display: flex; flex-direction: column; gap: 14px;">
+                  <?php foreach ($platforms as $key => $meta) { $url = $resolved[$key] ?? ''; ?>
+                    <?php if ($url) { ?>
+                      <a href="<?php echo htmlspecialchars($url); ?>" target="_blank" rel="noopener" style="display: flex; align-items: center; background-color: #eaf7ff; padding: 12px 15px; border-radius: 10px; text-decoration: none; color: #333; font-weight: 600;">
+                        <img src="<?php echo htmlspecialchars($meta['iconUrl']); ?>" style="width: 26px; height: 26px; margin-right: 15px;">
+                        <span><?php echo htmlspecialchars($meta['label']); ?></span>
+                      </a>
+                    <?php } ?>
+                  <?php } ?>
+                </div>
+            </div>
+            <?php } else { ?>
+            <!-- Skeleton del card de redes (tamaño mayor para balance visual) -->
+            <div style="background: white; padding: 25px; border-radius: 18px; box-shadow: 0 12px 35px rgba(0,0,0,0.08); width: 100%; max-width: 320px; text-align: center; border: 2px solid transparent; background-image: linear-gradient(white, white), linear-gradient(135deg,#ff7bac,#00b4d8); background-origin: border-box; background-clip: padding-box, border-box;">
+                <div style="height: 22px; width: 80%; margin: 0 auto 22px; background: #eef3f7; border-radius: 8px;"></div>
+                <div style="display: flex; flex-direction: column; gap: 16px;">
+                    <div style="height: 56px; background:#eef3f7; border-radius:12px;"></div>
+                    <div style="height: 56px; background:#eef3f7; border-radius:12px;"></div>
+                    <div style="height: 56px; background:#eef3f7; border-radius:12px;"></div>
+                    <div style="height: 56px; background:#eef3f7; border-radius:12px;"></div>
+                </div>
+            </div>
+            <?php } ?>
+        </div>
+    </div>
+</div>
+
+<script src="<?php echo BASE_URL; ?>resources/assets/js/carrusel-banner.js"></script>
+
+
+

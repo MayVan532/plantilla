@@ -1,0 +1,258 @@
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<div class="personas-main-content" style="background:#ffffff; font-family:'Montserrat', sans-serif;">
+  <style>
+    /* Quiénes somos: compactar misión/visión en móvil */
+    @media (max-width: 576px) {
+      .auto-container { padding-left:16px !important; padding-right:16px !important; }
+      .qs-mv { padding-left:6px !important; padding-right:6px !important; }
+      .qs-mv h2 { font-size:26px !important; margin-bottom:6px !important; }
+      .qs-mv p { text-align:left !important; padding:0 4px !important; }
+    }
+    @media (min-width: 577px) and (max-width: 992px) {
+      .auto-container { padding-left:24px !important; padding-right:24px !important; }
+    }
+  </style>
+  <?php if (isset($_GET['debugcms']) && $_GET['debugcms'] == '1' && isset($this->debug_bloque47)) { ?>
+    <pre style="background:#f8fafc;border:1px solid #e2e8f0;color:#0f172a;font-size:12px;padding:10px;border-radius:6px;margin:10px 0;white-space:pre-wrap;">
+<?php echo htmlspecialchars(json_encode($this->debug_bloque47, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)); ?>
+    </pre>
+  <?php } ?>
+  <?php if (isset($_GET['debugcms']) && $_GET['debugcms'] == '1') { ?>
+    <?php if (isset($this->qs_texto)) { ?>
+      <pre style="background:#f8fafc;border:1px solid #e2e8f0;color:#0f172a;font-size:12px;padding:10px;border-radius:6px;margin:10px 0;white-space:pre-wrap;">QS 48: <?php echo htmlspecialchars(json_encode($this->qs_texto, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)); ?></pre>
+    <?php } ?>
+    <?php if (isset($this->qs_imgbtn)) { ?>
+      <pre style="background:#f8fafc;border:1px solid #e2e8f0;color:#0f172a;font-size:12px;padding:10px;border-radius:6px;margin:10px 0;white-space:pre-wrap;">QS 49: <?php echo htmlspecialchars(json_encode($this->qs_imgbtn, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)); ?></pre>
+    <?php } ?>
+    <?php if (isset($this->qs_titulogif)) { ?>
+      <pre style="background:#f8fafc;border:1px solid #e2e8f0;color:#0f172a;font-size:12px;padding:10px;border-radius:6px;margin:10px 0;white-space:pre-wrap;">QS 51: <?php echo htmlspecialchars(json_encode($this->qs_titulogif, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)); ?></pre>
+    <?php } ?>
+    <?php if (isset($this->qs_imgtextolink)) { ?>
+      <pre style="background:#f8fafc;border:1px solid #e2e8f0;color:#0f172a;font-size:12px;padding:10px;border-radius:6px;margin:10px 0;white-space:pre-wrap;">QS 52: <?php echo htmlspecialchars(json_encode($this->qs_imgtextolink, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)); ?></pre>
+    <?php } ?>
+  <?php } ?>
+  <!-- Imagen principal -->
+  <?php if (!empty($this->banner_quienes)) { ?>
+  <div style="position: relative; max-width: 100%; overflow: hidden; margin-top: 0px;">
+    <div style="display: block; width: 100%;">
+      <?php $href = isset($this->banner_quienes_link) ? trim((string)$this->banner_quienes_link) : ''; ?>
+      <?php if ($href) { ?><a href="<?php echo htmlspecialchars($href); ?>" style="display:block;"><?php } ?>
+      <img src="<?php echo htmlspecialchars($this->banner_quienes); ?>" 
+           style="width: 100%; height: auto; display: block;">
+      <?php if ($href) { ?></a><?php } ?>
+    </div>
+  </div>
+  <?php } else { ?>
+  <div style="position: relative; max-width: 100%; overflow: hidden; margin-top: 0; min-height: 320px; border-radius:12px; background:linear-gradient(180deg,#eef5fb 0%,#e6eef7 100%); border:1px solid #d9e5f0; box-shadow:0 6px 18px rgba(15, 23, 42, 0.05);"></div>
+  <?php } ?>
+  <!-- Sección Misión / Visión -->
+  <section style="padding: 60px 0; background:#ffffff;">
+    <div class="auto-container" style="max-width: 1200px; margin: 0 auto;">
+      <div class="row" style="display: flex; justify-content: center; gap: 50px; flex-wrap: wrap;">
+        <?php $qs_mv = isset($this->qs_mv) && is_array($this->qs_mv) ? $this->qs_mv : ['titulo'=>[],'texto'=>[]]; ?>
+        <?php if (!empty($qs_mv['titulo'][0]) || !empty($qs_mv['texto'][0])) { ?>
+        <!-- Misión -->
+        <div class="col-lg-5 col-md-6 col-sm-12 qs-mv" style="text-align: center;">
+          <?php if (!empty($qs_mv['titulo'][0])) { ?>
+          <h2 style="font-size: 32px; font-weight: 800; margin-bottom: 8px; color: #0ea5a6;">
+            <?php echo htmlspecialchars($qs_mv['titulo'][0]); ?>
+          </h2>
+          <?php } ?>
+          <?php if (!empty($qs_mv['texto'][0])) { ?>
+          <div style="width:42px; height:3px; background:#0ea5a6; opacity:.25; margin:0 auto 16px; border-radius:2px;"></div>
+          <p style="font-size: 16px; line-height: 1.8; color: #556070; text-align: justify; margin: 0;">
+            <?php echo htmlspecialchars($qs_mv['texto'][0]); ?>
+          </p>
+          <?php } ?>
+        </div>
+        <?php } else { ?>
+        <!-- Misión (skeleton) -->
+        <div class="col-lg-5 col-md-6 col-sm-12" style="text-align: center;">
+          <div style="height:28px; width:60%; background:#cfd6dd; border-radius:8px; margin:0 auto 12px;"></div>
+          <div style="width:42px; height:3px; background:#0ea5a6; opacity:.25; margin:0 auto 16px; border-radius:2px;"></div>
+          <div style="height:10px; width:90%; background:#e9edf1; border-radius:6px; margin:6px auto;"></div>
+          <div style="height:10px; width:85%; background:#e9edf1; border-radius:6px; margin:6px auto;"></div>
+        </div>
+        <?php } ?>
+        <?php if (!empty($qs_mv['titulo'][1]) || !empty($qs_mv['texto'][1])) { ?>
+        <!-- Visión -->
+        <div class="col-lg-5 col-md-6 col-sm-12" style="text-align: center;">
+          <?php if (!empty($qs_mv['titulo'][1])) { ?>
+          <h2 style="font-size: 32px; font-weight: 800; margin-bottom: 8px; color: #0ea5a6;">
+            <?php echo htmlspecialchars($qs_mv['titulo'][1]); ?>
+          </h2>
+          <?php } ?>
+          <?php if (!empty($qs_mv['texto'][1])) { ?>
+          <div style="width:42px; height:3px; background:#0ea5a6; opacity:.25; margin:0 auto 16px; border-radius:2px;"></div>
+          <p style="font-size: 16px; line-height: 1.8; color: #556070; text-align: justify; margin: 0;">
+            <?php echo htmlspecialchars($qs_mv['texto'][1]); ?>
+          </p>
+          <?php } ?>
+        </div>
+        <?php } else { ?>
+        <!-- Visión (skeleton) -->
+        <div class="col-lg-5 col-md-6 col-sm-12" style="text-align: center;">
+          <div style="height:28px; width:60%; background:#cfd6dd; border-radius:8px; margin:0 auto 12px;"></div>
+          <div style="width:42px; height:3px; background:#0ea5a6; opacity:.25; margin:0 auto 16px; border-radius:2px;"></div>
+          <div style="height:10px; width:90%; background:#e9edf1; border-radius:6px; margin:6px auto;"></div>
+          <div style="height:10px; width:85%; background:#e9edf1; border-radius:6px; margin:6px auto;"></div>
+        </div>
+        <?php } ?>
+      </div>
+    </div>
+  </section>
+  <!-- Imagen intermedia -->
+  <?php $qs_imgbtn = isset($this->qs_imgbtn) && is_array($this->qs_imgbtn) ? $this->qs_imgbtn : []; ?>
+  <?php if (!empty($qs_imgbtn['imagen'][0]) || !empty($qs_imgbtn['boton'][0])) { ?>
+  <div style="display: flex; justify-content: center; align-items: center; flex-direction:column; gap:12px; width: 100%; background: #fff; padding: 36px 0;">
+    <?php if (!empty($qs_imgbtn['imagen'][0])) { ?>
+    <img src="<?php echo htmlspecialchars($qs_imgbtn['imagen'][0]); ?>" 
+         alt="LikePhone" 
+         style="max-width: 68%; height: auto; border: none; border-radius: 0; box-shadow: none;">
+    <?php } ?>
+    <?php if (!empty($qs_imgbtn['boton'][0]) && !empty($qs_imgbtn['link'][0])) { ?>
+      <a href="<?php echo htmlspecialchars($qs_imgbtn['link'][0]); ?>" style="background:#17a2b8; color:#fff; text-decoration:none; padding:10px 22px; border-radius:8px; font-weight:700;">
+        <?php echo htmlspecialchars($qs_imgbtn['boton'][0]); ?>
+      </a>
+    <?php } ?>
+  </div>
+  <?php } else { ?>
+  <div style="display: flex; justify-content: center; align-items: center; flex-direction:column; gap:16px; width: 100%; background: #fff; padding: 60px 0;">
+    <div style="width:80%; min-height:280px; border-radius:12px; background:#eef3f7; border:1px solid #d9e5f0; box-shadow:0 6px 18px rgba(15, 23, 42, 0.05);"></div>
+    <div style="height:36px; width:180px; background:#e3e8ee; border-radius:8px;"></div>
+  </div>
+  <?php } ?>
+  <!-- PLANES PRE-PAGO (estático) -->
+  <section style="padding: 60px 0 40px; background:#ffffff;">
+    <div class="auto-container" style="max-width: 900px; margin: 0 auto; text-align:center;">
+      <?php if (!empty($qs_imgbtn['titulo'][0])) { ?>
+      <h2 style="margin:0 0 12px; font-size:28px; font-weight:800; color:#0f172a; letter-spacing:.2px;">
+        <?php echo htmlspecialchars($qs_imgbtn['titulo'][0]); ?>
+      </h2>
+      <?php } ?>
+      <?php if (!empty($qs_imgbtn['subtitulo'][0])) { ?>
+      <div style="max-width:760px; margin:0 auto 14px; font-size:15px; line-height:1.7; color:#111827; font-weight:600;">
+        <?php echo htmlspecialchars($qs_imgbtn['subtitulo'][0]); ?>
+      </div>
+      <?php } ?>
+      <p style="max-width:760px; margin:0 auto 18px; font-size:14px; line-height:1.8; color:#556070;">
+        <?php echo !empty($qs_imgbtn['texto'][0]) ? htmlspecialchars($qs_imgbtn['texto'][0]) : ''; ?>
+      </p>
+      <?php if (!empty($qs_imgbtn['boton'][0])) { ?>
+      <?php $ctaPlanesHref = isset($this->qs_imgbtn_link) && $this->qs_imgbtn_link ? trim((string)$this->qs_imgbtn_link) : '#'; ?>
+      <a href="<?php echo htmlspecialchars($ctaPlanesHref); ?>" style="display:inline-block; background:#17a2b8; color:#fff; padding:10px 26px; border-radius:6px; font-weight:700; text-decoration:none; box-shadow:0 8px 20px rgba(23,162,184,0.18); transition:transform .15s ease, background-color .2s;" onmouseover="this.style.transform='translateY(-1px)'; this.style.backgroundColor='#128a99';" onmouseout="this.style.transform='translateY(0)'; this.style.backgroundColor='#17a2b8';">
+        <?php echo htmlspecialchars($qs_imgbtn['boton'][0]); ?>
+      </a>
+      <?php } ?>
+    </div>
+  </section>
+  <!-- Cobertura (B20): título/imagen dinámicos + texto fijo y formulario estático -->
+  <?php $qs_cob = isset($this->qs_titulogif) && is_array($this->qs_titulogif) ? $this->qs_titulogif : []; ?>
+  <div class="col-lg-12 col-md-12 col-sm-12 text-center" style="margin-top: 40px;">
+      <?php if (!empty($qs_cob['titulo'][0])) { ?>
+      <h2 style="margin:0 0 10px; font-size:32px; font-weight:800; color:#0f172a; letter-spacing:.2px;">
+        <?php echo htmlspecialchars($qs_cob['titulo'][0]); ?>
+      </h2>
+      <?php } ?>
+      <?php if (!empty($qs_cob['imagen'][0])) { ?>
+      <img src="<?php echo htmlspecialchars($qs_cob['imagen'][0]); ?>" alt="Cobertura" style="max-height:300px; width:auto; margin-bottom:14px;">
+      <?php } else { ?>
+      <div style="height:40px; width:240px; background:#e6eef7; border-radius:10px; margin:0 auto 12px;"></div>
+      <?php } ?>
+      <div style="width:52px; height:3px; background:#0ea5a6; opacity:.25; margin:0 auto 12px; border-radius:2px;"></div>
+      <p style="max-width:720px; margin:8px auto 16px; font-size:16px; color:#556070;">
+        ¿Quieres una experiencia LikeLover? Consulta nuestra red de cobertura con gran alcance en el país.
+      </p>
+      <div class="d-flex align-items-center contact-form default-form" style="max-width: 600px; margin: 12px auto 70px; gap:12px;">
+        <div class="spin1 spinner-border text-success" role="status" style="display:none; margin-right: 10px;">
+          <div class="spinner"></div>
+        </div>
+        <div class="form-group" style="margin-bottom: 0px; flex: 1;">
+          <input type="text" name="x1" id="x1" placeholder="Ingresa tu código postal" required
+                 style="width: 100%; padding: 12px 14px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 16px; outline:none; transition:border-color .25s; box-shadow:0 1px 2px rgba(0,0,0,0.04);" onfocus="this.style.borderColor='#17a2b8'" onblur="this.style.borderColor='#e5e7eb'">
+        </div>
+        <button id="consultar-cpp" 
+          style="background:#17a2b8; color:#fff; border: none; padding: 12px 24px; border-radius: 6px; font-size: 16px; font-weight:700; cursor:pointer; transition: background .25s, transform .15s; box-shadow:0 6px 16px rgba(23,162,184,0.20);" 
+          onmouseover="this.style.backgroundColor='#128a99'; this.style.transform='translateY(-1px)';" 
+          onmouseout="this.style.backgroundColor='#17a2b8'; this.style.transform='translateY(0)';">
+          Consultar
+        </button>
+      </div>
+  </div>
+  <!-- Compatibilidad (solo si hay texto CMS) -->
+  <?php $qs_imgtextolink = isset($this->qs_imgtextolink) && is_array($this->qs_imgtextolink) ? $this->qs_imgtextolink : []; ?>
+  <?php if (!empty($qs_imgtextolink['texto'][0]) || !empty($qs_imgtextolink['imagen'][0]) || (!empty($qs_imgtextolink['boton'][0]) && !empty($qs_imgtextolink['link'][0]))) { ?>
+  <div class="col-lg-12 col-md-12 col-sm-12" 
+       style="display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 40px; padding: 60px 28px; background: #f8fafc; text-align: center; max-width:1100px; margin: 40px auto; border:1px solid #eceff3; border-radius:18px; box-shadow:0 10px 24px rgba(2,12,27,0.06);">
+
+    <?php if (!empty($qs_imgtextolink['titulo'][0]) || !empty($qs_imgtextolink['subtitulo'][0]) || !empty($qs_imgtextolink['texto'][0])) { ?>
+    <div style="flex: 1; min-width: 300px; max-width: 420px; text-align:left;">
+      <div style="width:44px; height:3px; background:#0ea5a6; opacity:.25; border-radius:2px; margin: 0 0 12px 0;"></div>
+      <?php if (!empty($qs_imgtextolink['titulo'][0])) { ?>
+      <div style="font-size:12px; color:#0ea5a6; font-weight:800; letter-spacing:.8px; text-transform:uppercase; margin-bottom:6px;">
+        <?php echo htmlspecialchars($qs_imgtextolink['titulo'][0]); ?>
+      </div>
+      <?php } ?>
+      <?php if (!empty($qs_imgtextolink['subtitulo'][0])) { ?>
+      <h3 style="font-size:22px; font-weight:800; color:#0f172a; margin:0 0 8px;">
+        <?php echo htmlspecialchars($qs_imgtextolink['subtitulo'][0]); ?>
+      </h3>
+      <?php } ?>
+      <p style="font-size: 16px; line-height: 1.85; color: #556070;">
+        <?php echo !empty($qs_imgtextolink['texto'][0]) ? htmlspecialchars($qs_imgtextolink['texto'][0]) : ''; ?>
+      </p>
+    </div>
+    <?php } ?>
+    <div style="flex: 1; min-width: 260px; max-width: 320px;">
+      <?php if (!empty($qs_imgtextolink['imagen'][0])) { ?>
+      <img src="<?php echo htmlspecialchars($qs_imgtextolink['imagen'][0]); ?>" 
+           style="width: 100%; max-width: 300px; display: block; margin: auto; border-radius:12px; box-shadow: 0 12px 28px rgba(2,12,27,0.10);">
+      <?php } ?>
+    </div>
+    <div style="flex: 1; min-width: 300px; max-width: 400px; background: #ffffff; padding: 26px; border-radius: 14px; box-shadow: 0 10px 24px rgba(2,12,27,0.06); border:1px solid #eceff3; text-align:left;">
+      <h2 style="margin: 0 0 6px; font-size: 24px; font-weight: 800; color: #0ea5a6;">Ingresa tu código IMEI</h2>	
+      <p style="margin:0 0 12px; font-size:14px; color:#556070;">Valida tu equipo en segundos</p>
+        
+        <input type="text" name="x2" id="x2" placeholder="Ingresa tu código aquí" required
+               style="width: 100%; padding: 12px 14px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 16px; margin-bottom: 12px; outline:none; transition:border-color .25s; box-shadow:0 1px 2px rgba(0,0,0,0.04);" onfocus="this.style.borderColor='#17a2b8'" onblur="this.style.borderColor='#e5e7eb'">
+        
+        <button id="consultar-imei"
+          style="background:#17a2b8; color:#fff; border:none; padding: 12px 24px; border-radius: 6px; font-size: 16px; font-weight:700; cursor:pointer; transition: background .25s, transform .15s; box-shadow:0 6px 16px rgba(23,162,184,0.20); margin-bottom: 12px;" 
+          onmouseover="this.style.backgroundColor='#128a99'; this.style.transform='translateY(-1px)';" 
+          onmouseout="this.style.backgroundColor='#17a2b8'; this.style.transform='translateY(0)';">
+          ¡Listo!
+        </button>             
+
+        <p style="margin-bottom: 10px; font-size: 14px; color:#556070;">¿No conoces tu código IMEI? Aquí te decimos cómo obtenerlo</p>	
+        
+        <?php if (!empty($qs_imgtextolink['boton'][0])) { ?>
+        <?php $ctaHref = !empty($qs_imgtextolink['link'][0]) ? $qs_imgtextolink['link'][0] : (BASE_URL.'compatibilidad'); ?>
+        <a href="<?php echo htmlspecialchars($ctaHref); ?>" 
+           style="background:#17a2b8; color:#fff; text-decoration: none; padding: 10px 22px; border-radius: 9999px; font-size: 14px; font-weight:700; display: inline-block; margin-top:10px; transition: background .25s, transform .15s; box-shadow:0 6px 16px rgba(23,162,184,0.22);" 
+           onmouseover="this.style.backgroundColor='#128a99'; this.style.transform='translateY(-1px)';" 
+           onmouseout="this.style.backgroundColor='#17a2b8'; this.style.transform='translateY(0)';">
+          <?php echo htmlspecialchars($qs_imgtextolink['boton'][0]); ?>
+        </a>
+        <?php } ?>
+      </div>
+  </div>
+  <?php } else { ?>
+  <div class="col-lg-12 col-md-12 col-sm-12" 
+       style="display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 40px; padding: 60px 28px; background: #f8fafc; text-align: center; max-width:1100px; margin: 40px auto; border:1px solid #eceff3; border-radius:18px; box-shadow:0 10px 24px rgba(2,12,27,0.06);">
+    <div style="flex: 1; min-width: 300px; max-width: 420px; text-align:left;">
+      <div style="width:44px; height:3px; background:#0ea5a6; opacity:.15; border-radius:2px; margin: 0 0 12px 0;"></div>
+      <div style="height:10px; width:90%; background:#e9edf1; border-radius:6px; margin:6px 0;"></div>
+      <div style="height:10px; width:80%; background:#e9edf1; border-radius:6px; margin:6px 0;"></div>
+    </div>
+    <div style="flex: 1; min-width: 260px; max-width: 320px;">
+      <div style="width:100%; height:220px; border-radius:12px; background:#eef3f7; border:1px solid #d9e5f0; box-shadow:0 6px 18px rgba(15, 23, 42, 0.05);"></div>
+    </div>
+    <div style="flex: 1; min-width: 300px; max-width: 400px; background: #ffffff; padding: 26px; border-radius: 14px; box-shadow: 0 10px 24px rgba(2,12,27,0.06); border:1px solid #eceff3; text-align:left;">
+      <div style="height:22px; width:60%; background:#cfd6dd; border-radius:8px; margin-bottom:10px;"></div>
+      <div style="height:12px; width:70%; background:#e9edf1; border-radius:6px; margin-bottom:12px;"></div>
+      <div style="height:44px; background:#eef3f7; border:1px solid #d9e5f0; border-radius:8px; margin-bottom:12px;"></div>
+      <div style="height:40px; width:140px; background:#e3e8ee; border-radius:8px;"></div>
+    </div>
+  </div>
+  <?php } ?>
+</div>

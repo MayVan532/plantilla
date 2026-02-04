@@ -1,0 +1,470 @@
+<div class="section-container active" id="funcionalidades-content" style="padding: 100px 0; background: #ffffff; position: relative; overflow: hidden;">
+    <div style="display:none"></div>
+    <div style="display:none"></div>
+    <?php 
+      $cards = $this->lc_func_cards ?? [];
+      $detalle = $this->lc_func_detalle ?? [];
+      // Preparar mapa titulo => puntos para el JS
+      $detailMap = [];
+      if (is_array($cards)) {
+        foreach ($cards as $c) {
+          if (!is_array($c)) continue;
+          $t = isset($c['titulo']) ? trim((string)$c['titulo']) : '';
+          $pts = isset($c['puntos']) && is_array($c['puntos']) ? array_values($c['puntos']) : [];
+          if ($t !== '' && !empty($pts)) { $detailMap[$t] = array_values(array_filter($pts, function($p){ return trim((string)$p) !== ''; })); }
+        }
+      }
+    ?>
+    <div class="row justify-content-center">
+        <div class="col-lg-11">
+            <div class="row mb-5">
+                <div class="col-12 text-center">
+                    <h2 style="color: #182c83; font-size: 2.5rem; font-weight: 700; text-transform: uppercase; font-family: 'Poppins', sans-serif; letter-spacing: 1px;">FUNCIONALIDADES</h2>
+                </div>
+            </div>
+            <div class="funcionalidades-container">
+                <?php if (!empty($cards)) { $delay=100; foreach ($cards as $c) {
+                  $title = '';
+                  $img = null;
+                  if (is_array($c)) {
+                    $title = $c['titulo'] ?? ($c['texto'] ?? '');
+                    $img = $c['imagen'] ?? null;
+                  } else {
+                    $maybe = (string)$c;
+                    if (preg_match('#^https?://#i', $maybe) || preg_match('#\.(png|jpe?g|webp|gif)$#i', $maybe)) {
+                      $img = $maybe;
+                    } else {
+                      $title = $maybe;
+                    }
+                  }
+                ?>
+                  <div class="funcionalidad-boton" data-delay="<?php echo (int)$delay; ?>">
+                      <div class="funcionalidad-icono">
+                          <?php if ($img) { ?>
+                            <img src="<?php echo htmlspecialchars((string)$img); ?>" alt="<?php echo htmlspecialchars((string)$title); ?>">
+                          <?php } else { ?>
+                            <div style="width:85px;height:85px;border-radius:12px;background:#eef3f7;border:1px solid #d9e5f0;"></div>
+                          <?php } ?>
+                      </div>
+                      <h3><?php echo htmlspecialchars((string)$title ?: ''); ?></h3>
+                  </div>
+                <?php $delay+=200; } } else { ?>
+                  <div class="funcionalidad-boton visible"><div class="funcionalidad-icono"><div style="width:85px;height:85px;border-radius:12px;background:#eef3f7;border:1px solid #d9e5f0;"></div></div><h3>&nbsp;</h3></div>
+                  <div class="funcionalidad-boton visible"><div class="funcionalidad-icono"><div style="width:85px;height:85px;border-radius:12px;background:#eef3f7;border:1px solid #d9e5f0;"></div></div><h3>&nbsp;</h3></div>
+                  <div class="funcionalidad-boton visible"><div class="funcionalidad-icono"><div style="width:85px;height:85px;border-radius:12px;background:#eef3f7;border:1px solid #d9e5f0;"></div></div><h3>&nbsp;</h3></div>
+                <?php } ?>
+            </div>
+            
+            <div class="row mt-5">
+                <div class="col-12">
+                    <div id="funcionalidad-detalle" class="funcionalidad-detalle" style="display: block;">
+                        <div class="card shadow-sm border-0">
+                            <div class="card-body p-4">
+                                <h4 id="detalle-titulo" class="text-primary">Detalles</h4>
+                                <ul id="detalle-lista" class="list-unstyled">
+                                  <?php if (!empty($detalle)) { foreach ($detalle as $row) { $p = is_array($row)?($row['parrafo']??($row['texto']??'')):$row; if (!$p) continue; ?>
+                                    <li class="mb-4 feature-item">
+                                      <div class="d-flex align-items-start">
+                                        <span class="feature-icon"><i class="fas fa-check-circle text-primary"></i></span>
+                                        <span class="feature-text"><?php echo htmlspecialchars((string)$p); ?></span>
+                                      </div>
+                                    </li>
+                                  <?php } } else { ?>
+                                    <li class="mb-4 feature-item"><div class="d-flex align-items-start"><span class="feature-icon"><i class="fas fa-check-circle text-primary"></i></span><span class="feature-text">&nbsp;</span></div></li>
+                                  <?php } ?>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <style>
+        /* Contenedor principal de funcionalidades */
+        .funcionalidades-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: stretch;
+            flex-wrap: nowrap;
+            margin: 0px;
+            width: 100%;
+        }
+        
+        /* Estilo para cada botón de funcionalidad */
+        .funcionalidad-boton {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            margin: 0 10px;
+            padding: 20px 10px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            opacity: 0;
+            transform: translateY(30px);
+            position: relative;
+            overflow: hidden;
+            min-height: 180px; /* Altura mínima para uniformidad */
+            justify-content: center; /* Centrado vertical */
+        }
+        
+        /* Efecto de borde inferior al pasar el ratón */
+        .funcionalidad-boton::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, #0799B6, #182c83);
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.3s ease;
+        }
+        
+        /* Animación al pasar el ratón */
+        .funcionalidad-boton:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(7, 153, 182, 0.15);
+        }
+        
+        .funcionalidad-boton:hover::after {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+        
+        /* Botón activo */
+        .funcionalidad-boton.active {
+            background: linear-gradient(to bottom, rgba(255,255,255,1) 0%, rgba(240,248,255,1) 100%);
+            box-shadow: 0 8px 25px rgba(7, 153, 182, 0.2);
+        }
+        
+        .funcionalidad-boton.active::after {
+            transform: scaleX(1);
+        }
+        
+        /* Contenedor del icono */
+        .funcionalidad-icono {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Imagen del icono */
+        .funcionalidad-icono img {
+            max-width: 100%;
+            max-height: 100%;
+            transition: transform 0.3s ease;
+            width: 85px;
+            height: auto;
+        }
+        
+        .funcionalidad-boton:hover .funcionalidad-icono img {
+            transform: scale(1.1);
+        }
+        
+        /* Título de la funcionalidad */
+        .funcionalidad-boton h3 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #182c83;
+            margin: 0;
+            transition: color 0.3s ease;
+        }
+        
+        .funcionalidad-boton.active h3 {
+            color: #0799B6;
+        }
+        
+        /* Animación de visibilidad */
+        .funcionalidad-boton.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Área de detalle */
+        .funcionalidad-detalle {
+            transition: all 0.5s ease;
+            margin-top: 30px;
+        }
+        
+        .funcionalidad-detalle .card {
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border-left: 4px solid #0799B6;
+        }
+        .functionality-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(7, 153, 182, 0.15);
+            background: #ffffff;
+        }
+        .functionality-item:hover::before {
+            height: 100%;
+        }
+        .functionality-icon-container {
+            position: relative;
+            width: 130px;
+            height: 130px;
+            margin: 0 auto 35px;
+        }
+        .animated-title {
+            position: relative;
+            padding-bottom: 20px;
+            letter-spacing: 2px;
+        }
+        
+        /* Estilos responsivos */
+        @media (max-width: 992px) {
+            .funcionalidades-container {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .funcionalidad-boton {
+                flex: 0 0 calc(33.33% - 20px);
+                margin-bottom: 20px;
+                min-height: 170px;
+                width: calc(33.33% - 20px); /* Ancho fijo */
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .funcionalidades-container {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .funcionalidad-boton {
+                flex: 0 0 calc(50% - 20px);
+                width: calc(50% - 20px); /* Ancho fijo */
+                margin-bottom: 20px;
+                min-height: 160px;
+                height: auto; /* Altura automática */
+            }
+            
+            .funcionalidad-icono {
+                width: 70px;
+                height: 70px;
+            }
+            
+            .funcionalidad-icono img {
+                width: 55px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .funcionalidades-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .funcionalidad-boton {
+                flex: 0 0 100%;
+                width: 100%;
+                max-width: 280px;
+                margin-left: auto;
+                margin-right: auto;
+                min-height: 140px;
+                height: 140px; /* Altura fija para todos los botones */
+                margin-bottom: 15px;
+            }
+            
+            .funcionalidad-boton h3 {
+                font-size: 0.85rem; /* Tamaño de texto uniforme */
+                margin-top: 10px;
+            }
+            
+            h2 {
+                font-size: 2rem !important;
+            }
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap');
+        
+        /* Estilos para los elementos de la lista de detalles */
+        .feature-item {
+            transition: all 0.3s ease;
+            padding: 10px 15px;
+            border-radius: 8px;
+            background-color: rgba(7, 153, 182, 0.03);
+            border-left: 3px solid #0799B6;
+            margin-bottom: 15px !important;
+        }
+        
+        .feature-item:hover {
+            background-color: rgba(7, 153, 182, 0.08);
+            transform: translateX(5px);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .feature-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            min-width: 30px;
+            border-radius: 50%;
+            background-color: rgba(7, 153, 182, 0.1);
+            margin-right: 15px;
+        }
+        
+        .feature-icon i {
+            font-size: 14px;
+            color: #0799B6 !important;
+        }
+        
+        .feature-text {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 15px;
+            color: #444;
+            line-height: 1.5;
+            font-weight: 500;
+        }
+        
+        #detalle-titulo {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            color: #182c83;
+            position: relative;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        
+        #detalle-titulo::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, #0799B6, #182c83);
+            border-radius: 3px;
+        }
+    </style>
+    <script>
+        // Datos de detalle por funcionalidad, generados desde PHP
+        const detailData = <?php echo json_encode($detailMap, JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES); ?>;
+        document.addEventListener('DOMContentLoaded', function() {
+            const title = document.querySelector('.animated-title');
+            if (title) {
+                setTimeout(() => {
+                    title.style.opacity = '0';
+                    title.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                    title.style.transform = 'translateY(20px)';
+                    
+                    setTimeout(() => {
+                        title.style.opacity = '1';
+                        title.style.transform = 'translateY(0)';
+                    }, 100);
+                }, 300);
+            }
+            function isElementInViewport(el) {
+                const rect = el.getBoundingClientRect();
+                return (
+                    rect.top <= (window.innerHeight || document.documentElement.clientHeight) &&
+                    rect.bottom >= 0
+                );
+            }
+            function animateOnScroll() {
+                const items = document.querySelectorAll('.funcionalidad-boton');
+                
+                items.forEach(function(item) {
+                    if (isElementInViewport(item) && !item.classList.contains('visible')) {
+                        const delay = item.getAttribute('data-delay') || 0;
+                        setTimeout(() => {
+                            item.classList.add('visible');
+                            setTimeout(() => {
+                                item.style.transition = 'all 0.8s cubic-bezier(0.165, 0.84, 0.44, 1)';
+                            }, 50);
+                        }, delay);
+                    }
+                });
+            }
+            animateOnScroll();
+            window.addEventListener('scroll', animateOnScroll);
+        });
+    </script>
+    <!-- Overlay para detalles de funcionalidades -->
+    <style>
+        .detail-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:9999;}
+        .detail-content{background:#fff;padding:40px 50px;border-radius:12px;max-width:650px;width:90%;color:#182c83;position:relative;box-shadow:0 20px 45px rgba(0,0,0,0.15);overflow:hidden;transform:scale(0.9);opacity:0;transition:all .35s ease;} .detail-overlay.show .detail-content{transform:scale(1);opacity:1;}
+        .detail-content h4{font-size:1.6rem;margin-bottom:25px;font-weight:700;text-transform:uppercase;color:#0799B6;letter-spacing:1px;text-align:center;} .detail-content ul{margin-top:10px;padding-left:0;list-style:none;} .detail-content ul li{margin-bottom:12px;position:relative;padding-left:30px;font-size:1.05rem;color:#495677;} .detail-content ul li::before{content:'\f058';font-family:'Font Awesome 5 Free';font-weight:900;position:absolute;left:0;top:0;color:#0799B6;}
+        .detail-close{position:absolute;top:12px;right:18px;font-size:28px;cursor:pointer;color:#495677;font-weight:bold;transition:color .25s ease;} .detail-close:hover{color:#0799B6;}
+        
+    </style>
+    
+
+</style>
+    <!-- Se eliminó el overlay modal -->
+    <script>
+            document.addEventListener('DOMContentLoaded', function() {
+            // Los detalles se muestran directamente desde PHP (lc_func_detalle)
+
+            const detalleContenedor = document.getElementById('funcionalidad-detalle');
+            const detalleTitulo = document.getElementById('detalle-titulo');
+            const detalleLista = document.getElementById('detalle-lista');
+            
+            // Función para mostrar los detalles de la funcionalidad seleccionada
+            function mostrarDetalleFuncionalidad(titulo, doScroll = false) {
+                if (detailData && detailData[titulo]) {
+                    // Actualizar el título y la lista
+                    detalleTitulo.textContent = titulo;
+                    detalleLista.innerHTML = detailData[titulo].map(item => `
+                        <li class="mb-4 feature-item">
+                            <div class="d-flex align-items-start">
+                                <span class="feature-icon">
+                                    <i class="fas fa-check-circle text-primary"></i>
+                                </span>
+                                <span class="feature-text">${item}</span>
+                            </div>
+                        </li>
+                    `).join('');
+                    
+                    // Mostrar el contenedor
+                    detalleContenedor.style.display = 'block';
+                    // Desplazamiento solo cuando el usuario hace click
+                    if (doScroll) {
+                        detalleContenedor.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    }
+                }
+            }
+            
+            // Asociar clic a cada botón de funcionalidad
+            const botones = document.querySelectorAll('.funcionalidad-boton');
+            
+            botones.forEach(btn => {
+                btn.addEventListener('click', function(){
+                    const titulo = this.querySelector('h3') ? this.querySelector('h3').textContent.trim() : '';
+                    // Marcar activo
+                    botones.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    mostrarDetalleFuncionalidad(titulo, true);
+                });
+            });
+            
+            // Mostrar por defecto la primera funcionalidad si existe
+            if (botones.length > 0) {
+                const firstTitle = botones[0].querySelector('h3') ? botones[0].querySelector('h3').textContent.trim() : '';
+                botones[0].classList.add('active');
+                // Mostrar sin desplazamiento en carga inicial
+                mostrarDetalleFuncionalidad(firstTitle, false);
+            }
+        });
+    </script>
+</div>

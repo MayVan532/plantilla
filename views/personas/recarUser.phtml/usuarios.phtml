@@ -1,0 +1,246 @@
+<div class="personas-main-content" style="background:#f3f4f6; min-height:100vh; padding:0;">
+
+  <div class="container-fluid">
+    <div class="row no-gutters">
+      <?php $activeMenu = 'inicio'; require __DIR__ . '/_sidebarUsuarios.phtml'; ?>
+
+      <div class="col-12 col-lg-10" style="padding-left:0; padding-right:0;">
+        <?php require __DIR__ . '/_headerUsuarios.phtml'; ?>
+        <div style="padding:16px 24px 24px 24px;">
+          <div style="font-size:18px; color:#111827; margin-bottom:12px; font-weight:700; text-align:left;">Inicio</div>
+
+          <div class="row">
+            <div class="col-12 col-lg-7" style="margin-bottom:16px;">
+              <div style="display:flex; flex-direction:column; align-items:center; gap:12px;">
+                <img src="<?php echo BASE_URL; ?>resources/assets/images/personas/planactivate.png" alt="Plan Activate" style="width:70%; height:auto; border-radius:18px; display:block;">
+
+                <a href="javascript:void(0);" class="comprar-btn" style="display:inline-flex; align-items:center; justify-content:center; padding:9px 24px; border-radius:6px; background:#00bcd4; color:#ffffff; font-size:14px; font-weight:700; text-decoration:none; box-shadow:0 10px 24px rgba(0,188,212,.45);">¡Contrata ahora!</a>
+              </div>
+            </div>
+            <div class="col-12 col-lg-5">
+              <div style="display:flex; flex-direction:column; gap:12px;">
+                <div style="background:#ffffff; border-radius:14px; padding:16px 18px; box-shadow:0 14px 30px rgba(15,23,42,.08); display:flex; flex-direction:column; gap:6px;">
+                  <div style="font-size:14px; font-weight:800; color:#0f172a; text-align:left;">La empresa donde trabajo tiene convenio con LikePhone</div>
+                  <div style="font-size:13px; color:#6b7280;">Ingresa tu número de convenio y accede a tarifas preferenciales.</div>
+                  <div style="display:flex; justify-content:flex-start; margin-top:4px;">
+                    <a href="javascript:void(0);" class="convenio-btn" style="display:inline-flex; align-items:center; justify-content:center; padding:8px 20px; border-radius:6px; background:#00bcd4; color:#ffffff; font-size:12px; font-weight:700; text-decoration:none;">¡Ingresar ahora!</a>
+                  </div>
+                </div>
+                <div style="background:#ffffff; border-radius:14px; padding:16px 18px; box-shadow:0 14px 30px rgba(15,23,42,.08); display:flex; flex-direction:column; gap:6px;">
+                  <div style="font-size:14px; font-weight:800; color:#0f172a; text-align:left;">Quiero conservar mi mismo número</div>
+                  <div style="font-size:13px; color:#6b7280;">Haz tu portabilidad y conserva tu número con las tarifas LikePhone.</div>
+                  <div style="display:flex; justify-content:flex-start; margin-top:4px;">
+                    <a href="<?php echo BASE_URL; ?>personas/usuarios/Portabilidad" style="display:inline-flex; align-items:center; justify-content:center; padding:8px 18px; border-radius:6px; background:#00bcd4; color:#ffffff; font-size:12px; font-weight:700; text-decoration:none;">¡Quiero conservar mi número!</a>
+                  </div>
+                </div>
+                <div style="background:#ffffff; border-radius:14px; padding:16px 18px; box-shadow:0 14px 30px rgba(15,23,42,.08); display:flex; flex-direction:column; gap:6px;">
+                  <div style="font-size:14px; font-weight:800; color:#0f172a; text-align:left;">Beneficios LikePhone</div>
+                  <div style="font-size:13px; color:#6b7280;">Conoce los beneficios de pertenecer a LikePhone: conectividad, atención y servicios pensados para ti.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modales de compra reutilizados de inicio.phtml -->
+<div id="comprarModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:9999; align-items:center; justify-content:center; padding:16px;">
+  <div class="modal-card" style="background:#ffffff; width:100%; max-width:420px; border-radius:8px; box-shadow:0 12px 28px rgba(0,0,0,0.20); overflow:hidden;">
+    <div style="padding:16px 18px; font-weight:700; color:#0f172a; border-bottom:1px solid #e5e7eb;">Elige tu forma de pago</div>
+    <div style="padding:18px; display:flex; flex-direction:column; gap:12px;">
+      <a href="#" class="pay-card-btn" style="background:#0ea5a6; color:#fff; text-decoration:none; padding:12px 16px; border-radius:6px; font-weight:700; text-align:center; box-shadow:0 6px 14px rgba(14,165,166,0.25);">Pagar con Tarjeta</a>
+      <a href="#" class="pay-cash-btn" style="background:#0ea5a6; color:#fff; text-decoration:none; padding:12px 16px; border-radius:6px; font-weight:700; text-align:center; box-shadow:0 6px 14px rgba(14,165,166,0.25);">Pagar en Efectivo</a>
+      <button type="button" class="modal-close" style="background:#e5e7eb; color:#0f172a; padding:10px 16px; border-radius:6px; border:0; font-weight:600; cursor:pointer;">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<div id="tarjetaModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:10000; align-items:center; justify-content:center; padding:16px;">
+  <div class="modal-card" style="background:#ffffff; width:100%; max-width:980px; border-radius:8px; box-shadow:0 12px 28px rgba(0,0,0,0.20); overflow:hidden; max-height:90vh; display:flex; flex-direction:column;">
+    <div style="background:#0ea5a6; color:#fff; padding:12px 18px; font-weight:700;">En la comprar de tu SIM LikePhone el Envío es Gratis</div>
+    <div style="padding:20px; display:grid; grid-template-columns: 360px 1fr; gap:20px; align-items:start; overflow:auto;">
+      <div style="display:none;"></div>
+      <div style="grid-column: 1 / -1; display:grid; gap:16px;">
+        <div style="font-weight:700; color:#0f172a;">Datos de contacto</div>
+        <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:12px;">
+          <input type="text" placeholder="Nombre" style="padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+          <input type="text" placeholder="Apellido Paterno" style="padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+          <input type="text" placeholder="Apellido Materno" style="padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+          <input type="tel" placeholder="Número de teléfono (10 dígitos)" style="grid-column: span 2; padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+          <input type="email" placeholder="Correo Electrónico" style="padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+        </div>
+
+        <div style="font-weight:700; color:#0f172a; margin-top:6px;">Datos de envío</div>
+        <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap:12px;">
+          <input type="text" placeholder="Calle" style="padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+          <input type="text" placeholder="Colonia" style="padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+          <input type="text" placeholder="No. Ext" style="padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+          <input type="text" placeholder="No. Int" style="padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+          <input type="text" placeholder="Código Postal" style="padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+          <input type="text" placeholder="Ciudad" style="padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+          <input type="text" placeholder="Estado" style="grid-column: span 2; padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+          <input type="text" placeholder="Entre Calles" style="grid-column: span 2; padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+        </div>
+
+        <div style="font-weight:700; color:#0f172a; margin-top:6px;">Datos de pago</div>
+        <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap:12px; align-items:center; margin-bottom:8px;">
+          <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+            <span style="color:#64748b; font-size:14px; min-width:130px;">Tarjetas de crédito</span>
+            <img src="<?php echo BASE_URL; ?>resources/assets/images/personas/cards1.png" alt="Crédito" style="height:22px; width:auto;">
+          </div>
+          <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+            <span style="color:#64748b; font-size:14px; min-width:130px;">Tarjetas de débito</span>
+            <img src="<?php echo BASE_URL; ?>resources/assets/images/personas/cards1.png" alt="Débito" style="height:22px; width:auto;">
+          </div>
+        </div>
+        <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap:12px; align-items:center;">
+          <input type="text" placeholder="Nombre del titular" style="padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+          <input type="text" placeholder="Número de tarjeta" style="padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+          <div style="display:grid; grid-template-columns: 1fr auto 1fr; gap:12px; align-items:center;">
+            <input type="text" placeholder="Mes" style="padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+            <img src="<?php echo BASE_URL; ?>resources/assets/images/personas/cvv.png" alt="CVV" style="height:28px; width:auto; opacity:0.9;">
+            <input type="text" placeholder="Año" style="padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+          </div>
+          <input type="text" placeholder="Código de seguridad" style="padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+        </div>
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; color:#64748b; font-size:12px; padding-top:6px;">
+          <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+            <span>Transacciones realizadas vía</span>
+            <img src="<?php echo BASE_URL; ?>resources/assets/images/personas/openpay.png" alt="Openpay" style="height:22px; width:auto;">
+          </div>
+          <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+            <span>Tus pagos se realizan de forma segura con encriptación de 256 bits</span>
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; gap:10px; padding-top:10px; border-top:1px solid #e5e7eb;">
+          <button type="button" class="tarjeta-close" style="background:#e5e7eb; color:#0f172a; padding:10px 16px; border-radius:6px; border:0; font-weight:600; cursor:pointer;">Cerrar</button>
+          <button type="button" style="background:#0ea5a6; color:#fff; padding:10px 18px; border-radius:6px; border:0; font-weight:700; cursor:pointer;">Pagar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="efectivoModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:10000; align-items:center; justify-content:center; padding:16px;">
+  <div class="modal-card" style="background:#ffffff; width:100%; max-width:980px; border-radius:8px; box-shadow:0 12px 28px rgba(0,0,0,0.20); overflow:hidden; max-height:90vh; display:flex; flex-direction:column;">
+    <div style="background:#0ea5a6; color:#fff; padding:12px 18px; font-weight:700;">En la comprar de tu SIM LikePhone el Envío es Gratis</div>
+    <div style="padding:20px; display:grid; grid-template-columns: 1fr; gap:20px; align-items:start; overflow:auto;">
+      <div style="display:grid; gap:16px;">
+        <div style="font-weight:700; color:#0f172a;">Datos de contacto</div>
+        <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:12px;">
+          <input type="text" placeholder="Nombre" style="padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+          <input type="text" placeholder="Apellido Paterno" style="padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+          <input type="text" placeholder="Apellido Materno" style="padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+          <input type="tel" placeholder="Número de teléfono (10 dígitos)" style="grid-column: span 2; padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+          <input type="email" placeholder="Correo Electrónico" style="padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+        </div>
+
+        <div style="font-weight:700; color:#0f172a; margin-top:6px;">Datos de envío</div>
+        <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap:12px;">
+          <input type="text" placeholder="Calle" style="padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+          <input type="text" placeholder="Colonia" style="padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+          <input type="text" placeholder="No. Ext" style="padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+          <input type="text" placeholder="No. Int" style="padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+          <input type="text" placeholder="Código Postal" style="padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+          <input type="text" placeholder="Ciudad" style="padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+          <input type="text" placeholder="Estado" style="grid-column: span 2; padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+          <input type="text" placeholder="Entre Calles" style="grid-column: span 2; padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px;">
+        </div>
+
+        <div style="color:#475569; font-size:14px; margin:10px 0 0;">
+          Tiendas en las que podrás realizar tu pago en efectivo
+          <a href="#" style="color:#0ea5a6; text-decoration:none; font-weight:600;">Ver lista de tiendas</a>
+          /
+          <a href="#" style="color:#0ea5a6; text-decoration:none; font-weight:600;">Ver mapa</a>
+        </div>
+      </div>
+      <div style="display:block;">
+        <img src="<?php echo BASE_URL; ?>resources/assets/images/personas/Horizontal_1.gif" alt="Tiendas en efectivo" style="width:100%; height:auto; border:1px solid #e5e7eb; border-radius:6px;">
+      </div>
+      <div style="color:#475569; font-size:14px; margin:10px 0 0;">
+        Consulta las <a href="#" style="color:#0ea5a6; text-decoration:none; font-weight:600;">Condiciones de Uso</a> del Servicio
+      </div>
+      <div style="display:flex; justify-content:flex-end; gap:10px; padding-top:10px; border-top:1px solid #e5e7eb;">
+        <button type="button" class="efectivo-close" style="background:#e5e7eb; color:#0f172a; padding:10px 16px; border-radius:6px; border:0; font-weight:600; cursor:pointer;">Cerrar</button>
+        <button type="button" style="background:#0ea5a6; color:#fff; padding:10px 18px; border-radius:6px; border:0; font-weight:700; cursor:pointer;">Generar Recibo de Pago</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="codigoModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:10000; align-items:center; justify-content:center; padding:16px;">
+  <div class="modal-card" style="background:#ffffff; width:100%; max-width:460px; border-radius:8px; box-shadow:0 12px 28px rgba(0,0,0,0.20); overflow:hidden;">
+    <div style="background:#0ea5a6; color:#fff; padding:12px 18px; font-weight:700;">¿Tienes algún código de promoción?</div>
+    <div style="padding:20px; display:grid; gap:16px;">
+      <input type="text" placeholder="Código promocional" style="padding:12px 14px; border:1px solid #e5e7eb; border-radius:6px; font-size:16px;">
+      <div style="display:flex; justify-content:center; gap:10px;">
+        <button type="button" class="codigo-close" style="background:#64748b; color:#fff; padding:10px 18px; border-radius:6px; border:0; font-weight:700; cursor:pointer;">Cerrar</button>
+        <button type="button" style="background:#0ea5a6; color:#fff; padding:10px 18px; border-radius:6px; border:0; font-weight:700; cursor:pointer;">Validar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Número de convenio -->
+<div id="convenioModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:10000; align-items:center; justify-content:center; padding:16px;">
+  <div class="modal-card" style="background:#ffffff; width:100%; max-width:420px; border-radius:8px; box-shadow:0 12px 28px rgba(0,0,0,0.20); overflow:hidden;">
+    <div style="padding:14px 18px; border-bottom:1px solid #e5e7eb; display:flex; align-items:center; justify-content:space-between; gap:10px;">
+      <div style="font-weight:700; color:#0f172a; font-size:15px;">Ingresa el número de convenio</div>
+      <button type="button" class="convenio-close" style="background:transparent; border:0; font-size:18px; line-height:1; color:#6b7280; cursor:pointer;">&times;</button>
+    </div>
+    <div style="padding:20px; display:grid; gap:18px;">
+      <input type="text" placeholder="Número de convenio" style="padding:12px 14px; border:1px solid #e5e7eb; border-radius:6px; font-size:15px;">
+      <div style="display:flex; justify-content:center; gap:10px;">
+        <button type="button" class="convenio-close" style="background:#00bcd4; color:#fff; padding:10px 18px; border-radius:6px; border:0; font-weight:700; cursor:pointer;">Cerrar</button>
+        <button type="button" style="background:#00bcd4; color:#fff; padding:10px 22px; border-radius:6px; border:0; font-weight:700; cursor:pointer;">Enviar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function(){
+    var modal = document.getElementById('comprarModal');
+    var tarjeta = document.getElementById('tarjetaModal');
+    var efectivo = document.getElementById('efectivoModal');
+    var codigo = document.getElementById('codigoModal');
+    var convenio = document.getElementById('convenioModal');
+    if (!modal) return;
+
+    function openModal(){ modal.style.display = 'flex'; }
+    function closeModal(){ modal.style.display = 'none'; }
+    function openTarjeta(){ if (tarjeta){ tarjeta.style.display='flex'; } }
+    function closeTarjeta(){ if (tarjeta){ tarjeta.style.display='none'; } }
+    function openEfectivo(){ if (efectivo){ efectivo.style.display='flex'; } }
+    function closeEfectivo(){ if (efectivo){ efectivo.style.display='none'; } }
+    function openCodigo(){ if (codigo){ codigo.style.display='flex'; } }
+    function closeCodigo(){ if (codigo){ codigo.style.display='none'; } }
+    function openConvenio(){ if (convenio){ convenio.style.display='flex'; } }
+    function closeConvenio(){ if (convenio){ convenio.style.display='none'; } }
+
+    document.addEventListener('click', function(e){
+      var comprarBtn = e.target.closest('.comprar-btn');
+      if (comprarBtn) { e.preventDefault(); openModal(); return; }
+      if (e.target.classList && e.target.classList.contains('pay-card-btn')) { e.preventDefault(); closeModal(); openTarjeta(); return; }
+      if (e.target.classList && e.target.classList.contains('pay-cash-btn')) { e.preventDefault(); closeModal(); openEfectivo(); return; }
+      if (e.target.classList && e.target.classList.contains('codigo-btn')) { e.preventDefault(); openCodigo(); return; }
+      if (e.target.classList && e.target.classList.contains('convenio-btn')) { e.preventDefault(); openConvenio(); return; }
+      if (e.target.classList && e.target.classList.contains('modal-close')) { closeModal(); return; }
+
+      if (e.target === modal) { closeModal(); }
+      if (e.target.classList && e.target.classList.contains('tarjeta-close')) { closeTarjeta(); return; }
+      if (e.target === tarjeta) { closeTarjeta(); }
+      if (e.target.classList && e.target.classList.contains('efectivo-close')) { closeEfectivo(); return; }
+      if (e.target === efectivo) { closeEfectivo(); }
+      if (e.target.classList && e.target.classList.contains('codigo-close')) { closeCodigo(); return; }
+      if (e.target === codigo) { closeCodigo(); }
+      if (e.target.classList && e.target.classList.contains('convenio-close')) { closeConvenio(); return; }
+      if (e.target === convenio) { closeConvenio(); }
+    });
+    document.addEventListener('keydown', function(e){ if (e.key === 'Escape'){ closeModal(); closeTarjeta(); closeEfectivo(); closeCodigo(); closeConvenio(); } });
+  })();
+</script>

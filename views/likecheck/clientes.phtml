@@ -1,0 +1,140 @@
+<?php
+  $carr = $this->lc_clientes_carrusel ?? [];
+  $pres = $this->lc_clientes_presencia ?? null;
+  $presLink = $this->lc_clientes_presencia_link ?? null;
+  $adapt = $this->lc_clientes_adaptable ?? [];
+  $ban  = $this->lc_clientes_banner ?? null;
+  $banLink = $this->lc_clientes_banner_link ?? null;
+  $test = $this->lc_clientes_testimonios ?? [];
+  $testLink = $this->lc_clientes_testimonios_link ?? null;
+  // Preparar posible embed de YouTube para testimonios
+  $testYoutubeEmbed = null;
+  if (is_string($testLink)) {
+    $u = trim($testLink);
+    if ($u !== '' && preg_match('#(youtube\.com|youtu\.be)#i', $u)) {
+      $embed = $u;
+      if (preg_match('#youtu\.be/([\w\-]{6,})#i', $u, $m)) {
+        $embed = 'https://www.youtube.com/embed/'.$m[1];
+      } elseif (preg_match('#watch\?v=([\w\-]{6,})#i', $u, $m)) {
+        $embed = 'https://www.youtube.com/embed/'.$m[1];
+      }
+      $testYoutubeEmbed = $embed;
+    }
+  }
+?>
+<div class="likecheck-main-content">
+    <section class="clients-section">
+        <div class="container">
+            <?php if (!empty($_GET['debugcms'])) { ?>
+              <pre style="background:#111;color:#0f0;padding:10px;font-size:11px;max-width:100%;overflow:auto;">
+DEBUG lc_clientes_testimonios_link:
+<?php var_export($this->lc_clientes_testimonios_link ?? null); ?>
+
+DEBUG testYoutubeEmbed:
+<?php var_export($testYoutubeEmbed ?? null); ?>
+              </pre>
+            <?php } ?>
+            <!-- TITULO -->
+            <p style="font-size: 3.2rem; font-weight: 900; color: #1A2A80; text-align: center; letter-spacing: 1px; margin-top: 30px;">
+                NUESTROS CLIENTES </span>
+            </p>
+             <!-- Carrusel de Logos -->
+            <div style="overflow:hidden; width:100%; padding:20px 0;">
+                <div class="carrusel">
+                    <?php if (!empty($carr)) { foreach ($carr as $img) { $src = is_array($img)?($img['imagen']??null):$img; if (!$src) continue; ?>
+                      <img src="<?php echo htmlspecialchars((string)$src); ?>"
+                          style="height:150px; margin:0 40px; object-fit:contain;">
+                    <?php } } else { ?>
+                      <div style="height:150px; width:100%; background:#eef3f7; border:1px solid #d9e5f0; border-radius:8px;"></div>
+                    <?php } ?>
+                </div>
+            </div>
+            <style>
+                .carrusel {
+                    display: flex;
+                    width: max-content;
+                    animation: scroll 40s linear infinite;
+                }
+                @keyframes scroll {
+                    0% {
+                        transform: translateX(0);
+                    }
+                    100% {
+                        transform: translateX(-50%);
+                    }
+                }
+            </style>
+            <!-- Mapa -->
+            <div class="map-container text-center mb-5">
+                <?php if (!empty($pres)) { $p = is_array($pres)?($pres['imagen']??null):$pres; ?>
+                  <?php if ($presLink) { ?><a href="<?php echo htmlspecialchars((string)$presLink); ?>"><?php } ?>
+                  <img src="<?php echo htmlspecialchars((string)$p); ?>" alt="Presencia LikeCheck" style="max-width: 70%; height: auto;">
+                  <?php if ($presLink) { ?></a><?php } ?>
+                <?php } else { ?>
+                  <div style="height:300px; max-width:70%; margin:0 auto; background:#eef3f7; border:1px solid #d9e5f0; border-radius:12px;"></div>
+                <?php } ?>
+            </div>
+            <!-- Titulo -->
+            <div class="text-center mb-4">
+                <h2 style="color: #182c83; font-size: calc(1.2rem + 1vw);">ADAPTABLE A CUALQUIER GIRO</h2>
+            </div>
+             <!-- Tarjetas de industrias (izquierda) -->
+            <div class="row align-items-center mt-5">
+                <div class="col-lg-8">
+                    <div class="row">
+                        <?php if (!empty($adapt)) { foreach ($adapt as $item) { $img = $item['imagen'] ?? null; $title = $item['texto'] ?? ($item['titulo'] ?? null); ?>
+                          <div class="col-md-4 col-sm-6 mb-4">
+                              <div style="background:#fff; border-radius:12px; padding:20px; text-align:center; box-shadow:0 4px 12px rgba(0,0,0,0.1); height:230px; display:flex; flex-direction:column; justify-content:center; align-items:center;">
+                                  <div style="background:#0a58ca; padding:5px; border-radius:12px;">
+                                      <div style="background:#fff; border-radius:8px; padding:5px; overflow:hidden;">
+                                          <?php if ($img) { ?><img src="<?php echo htmlspecialchars((string)$img); ?>" alt="<?php echo htmlspecialchars((string)($title?:'Industria')); ?>" style="width:100px; height:100px; object-fit:cover; border-radius:8px; display:block;"><?php } else { ?>
+                                          <div style="width:100px;height:100px;background:#eef3f7;border-radius:8px;"></div>
+                                          <?php } ?>
+                                      </div>
+                                  </div>
+                                  <p style="font-weight:bold; color:#0d3b66; font-size:18px; margin-top:15px;"><?php echo htmlspecialchars((string)($title?:'')); ?></p>
+                              </div>
+                          </div>
+                        <?php } } else { ?>
+                          <div class="col-12">
+                            <div style="height:230px; background:#eef3f7; border:1px solid #d9e5f0; border-radius:12px;"></div>
+                          </div>
+                        <?php } ?>
+                    </div>
+                </div>
+                <!-- Imagen del equipo (derecha) -->
+                <div class="col-lg-4 text-center d-flex justify-content-center">
+                    <div style="background:#0a58ca; padding:8px; border-radius:18px; box-shadow:0 10px 30px rgba(10,88,202,0.15);">
+                        <div style="background:#ffffff; border-radius:8px; padding:8px; overflow:hidden; width:340px; max-width:100%; height:460px; display:flex; align-items:center; justify-content:center;">
+                            <?php if (!empty($ban)) { $b = is_array($ban)?($ban['imagen']??null):$ban; ?>
+                              <?php if ($banLink) { ?><a href="<?php echo htmlspecialchars((string)$banLink); ?>" style="display:block;width:100%;height:100%;"><?php } ?>
+                              <img src="<?php echo htmlspecialchars((string)$b); ?>" alt="Banner" style="width:100%; height:100%; object-fit:cover; border-radius:8px; display:block;">
+                              <?php if ($banLink) { ?></a><?php } ?>
+                            <?php } else { ?>
+                              <div style="width:100%; height:100%; background:#eef3f7; border:1px solid #d9e5f0; border-radius:8px;"></div>
+                            <?php } ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- TITULO -->
+            <p style="font-size: 3.2rem; font-weight: 900; color: #1A2A80; text-align: center; margin-bottom: 10px; letter-spacing: 1px; margin-top: 30px;">
+                Testimonios de beneficiarios </span>
+            </p>
+            <?php if (!empty($testYoutubeEmbed)) { ?>
+              <div style="display:flex;justify-content:center;margin:40px 0 60px 0;">
+                <div style="width:100%; max-width:700px; aspect-ratio:16/9; border-radius:20px; overflow:hidden;
+                            box-shadow:0 10px 25px rgba(0,0,0,0.1); background:#eef3f7;">
+                  <iframe src="<?php echo htmlspecialchars($testYoutubeEmbed); ?>"
+                          title="Testimonio LikeCheck"
+                          frameborder="0"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowfullscreen
+                          style="width:100%; height:100%; border:none;"></iframe>
+                </div>
+              </div>
+            <?php } ?>
+        </div>
+    </section>
+</div>
+

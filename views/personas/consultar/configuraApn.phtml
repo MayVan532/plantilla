@@ -1,0 +1,45 @@
+<div class="personas-main-content" style="background:#ffffff;">
+  <?php if (isset($_GET['debugcms']) && $_GET['debugcms'] == '1') { ?>
+    <?php if (isset($this->debug_bloque15)) { ?>
+      <pre style="background:#f8fafc;border:1px solid #e2e8f0;color:#0f172a;font-size:12px;padding:10px;border-radius:6px;margin:10px 0;white-space:pre-wrap;">
+<?php echo htmlspecialchars(json_encode($this->debug_bloque15, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)); ?>
+      </pre>
+    <?php } ?>
+    <?php if (isset($this->debug_bloque16)) { ?>
+      <pre style="background:#f8fafc;border:1px solid #e2e8f0;color:#0f172a;font-size:12px;padding:10px;border-radius:6px;margin:10px 0;white-space:pre-wrap;">
+<?php echo htmlspecialchars(json_encode($this->debug_bloque16, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)); ?>
+      </pre>
+    <?php } ?>
+  <?php } ?>
+  <!-- BANNER -->
+  <?php if (!empty($this->banner_apn)) { ?>
+  <div style="position: relative; max-width: 100%; overflow: hidden; margin-top: 0;">
+      <div style="display: block; width: 100%;">
+          <?php $href = isset($this->banner_apn_link) ? trim((string)$this->banner_apn_link) : ''; ?>
+          <?php if ($href) { ?><a href="<?php echo htmlspecialchars($href); ?>" style="display:block;"><?php } ?>
+          <img src="<?php echo htmlspecialchars($this->banner_apn); ?>" 
+              style="width: 100%; height: 300px; object-fit: cover; display: block;">
+          <?php if ($href) { ?></a><?php } ?>
+      </div>
+  </div>
+  <?php } else { ?>
+  <div style="position: relative; max-width: 100%; overflow: hidden; margin-top: 0; min-height: 300px; border-radius:12px; background:linear-gradient(180deg,#eef5fb 0%,#e6eef7 100%); border:1px solid #d9e5f0; box-shadow:0 6px 18px rgba(15, 23, 42, 0.05);"></div>
+  <?php } ?>
+  <!-- Imagen principal -->
+  <?php if (!empty($this->apn_imagen)) { ?>
+  <section class="content" style="text-align: center; padding: 20px 0;">
+    <?php $href2 = isset($this->apn_imagen_link) ? trim((string)$this->apn_imagen_link) : ''; ?>
+    <?php if ($href2) { ?><a href="<?php echo htmlspecialchars($href2); ?>" style="display:inline-block;">
+    <?php } ?>
+    <img src="<?php echo htmlspecialchars($this->apn_imagen); ?>" 
+        alt="Imagen principal"
+        style="max-width: 60%; height: auto; display: inline-block;">
+    <?php if ($href2) { ?></a><?php } ?>
+  </section>
+  <?php } else { ?>
+  <section class="content" style="text-align: center; padding: 20px 0;">
+    <div style="display:inline-block; width:60%; min-height:360px; border-radius:12px; background:#eef3f7; border:1px solid #d9e5f0; box-shadow:0 6px 18px rgba(15, 23, 42, 0.05);"></div>
+  </section>
+  <?php } ?>
+  
+</div>

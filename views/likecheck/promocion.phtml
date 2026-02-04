@@ -1,0 +1,311 @@
+<div class="section-container active" id="promocion-content" style="background: #ffffff; padding: 30px 0 0; margin-top: 0; overflow: hidden; position: relative;">
+    <?php
+      $tit = $this->lc_promo_titulos ?? [];
+      // Bloque 110: titulo = PROMOCIÓN, subtitulo = LikeCheck GRATIS..., texto = Elige el plan...
+      $titTitulo = $tit['titulo'][0]['titulo'] ?? ($tit['titulo'][0] ?? 'PROMOCIÓN');
+      $titSub    = $tit['subtitulo'][0]['subtitulo'] ?? ($tit['subtitulo'][0] ?? '');
+      $titTexto  = $tit['texto'][0]['texto'] ?? ($tit['texto'][0] ?? '');
+      $cards = $this->lc_promo_tarjetas ?? [];
+      $ctaItems = $this->lc_promo_cta ?? [];
+      $ctaLabel = '';
+      if (!empty($ctaItems)) { $first = $ctaItems[0]; $ctaLabel = is_array($first)?($first['boton']??($first['titulo']??'')):$first; }
+      $ctaLink = $this->lc_promo_cta_link ?? '';
+      // Bloque 113: Planes Prepago LikeCheck (titulo + texto)
+      $planes = $this->lc_promo_planes ?? [];
+      $planesTitulo = $planes['titulo'][0]['titulo'] ?? ($planes['titulo'][0] ?? 'PLANES PREPAGO LIKECHECK');
+      $planesTexto  = $planes['texto'][0]['texto'] ?? ($planes['texto'][0] ?? '');
+      $carrusel = $this->lc_promo_carrusel ?? [];
+      $banner1 = $this->lc_promo_banner1 ?? null; $banner1Link = $this->lc_promo_banner1_link ?? '';
+      $banner2 = $this->lc_promo_banner2 ?? null; $banner2Link = $this->lc_promo_banner2_link ?? '';
+    ?>
+    <div class="row mb-3">
+        <div class="col-12 text-center">
+            <h2 style="color: #182c83; font-size: 2.5rem; font-weight: 700; text-transform: uppercase; margin-bottom: 0.5rem; padding-top: 40px; font-family: 'Poppins', sans-serif; letter-spacing: 1px;">
+                <?php echo htmlspecialchars((string)$titTitulo); ?>
+            </h2>
+        </div>
+    </div> 
+    <div class="decorative-circle" style="display:none"></div>
+        <div class="decorative-circle" style="display:none"></div>
+            <div class="decorative-circle" style="display:none"></div>
+                <div class="container mt-3">
+                    <div class="row text-center">
+                        <div class="col-12 mb-4">
+                            <div class="position-relative d-inline-block animate-fade-in-up animate-delay-1">
+                                <h2 class="font-weight-bold" style="color: transparent; background: linear-gradient(45deg, #182c83, #0799B6); background-clip: text; -webkit-background-clip: text; font-size: 3.2rem; text-transform: uppercase; letter-spacing: 1px; font-family: 'Montserrat', sans-serif;">
+                                    <?php echo htmlspecialchars((string)($titSub ?: $titTitulo)); ?>
+                                </h2>
+                            </div>
+                        </div>
+                        <?php if ($titTexto) { ?>
+                        <div class="col-12 mb-5">
+                            <h3 class="animate-fade-in-up animate-delay-2" style="color: #333; font-weight: 500; font-family: 'Poppins', sans-serif; background: rgba(255,255,255,0.7); display: inline-block; padding: 10px 25px; border-radius: 30px; box-shadow: 0 5px 15px rgba(0,0,0,0.08);">
+                                <?php echo htmlspecialchars((string)$titTexto); ?>
+                            </h3>
+                        </div>
+                        <?php } ?>
+                    </div> 
+                    <div class="row justify-content-center">
+                      <?php if (!empty($cards)) { $delay=2; foreach ($cards as $idx=>$card) { $titulo = $card['titulo']??''; $texto = $card['texto']??''; $img = $card['imagen']??''; ?>
+                        <div class="col-lg-3 col-md-6 col-sm-6 mb-5">
+                            <div class="promo-plan-card <?php echo $idx==2?'featured':''; ?> h-100 animate-fade-in-up animate-delay-<?php echo (int)($delay); ?>">
+                                <div class="text-center">
+                                    <h4 class="plan-title"><?php echo htmlspecialchars((string)$titulo); ?></h4>
+                                </div>
+                                <div class="text-center p-4">
+                                  <?php if ($img) { ?>
+                                    <img src="<?php echo htmlspecialchars((string)$img); ?>" class="img-fluid" alt="<?php echo htmlspecialchars((string)$titulo); ?>" style="max-height: 300px; transition: transform 0.5s; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.1));">
+                                  <?php } else { ?>
+                                    <div style="width:100%;height:220px;background:#f1f4f9;border-radius:12px;"></div>
+                                  <?php } ?>
+                                </div>
+                                <div class="text-center py-3" style="background-color: rgba(24, 44, 131, 0.01);">
+                                    <span style="font-weight: 600; color: #182c83;">
+                                      <?php echo htmlspecialchars((string)$texto); ?>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                      <?php $delay++; } } else { ?>
+                        <div class="col-lg-3 col-md-6 col-sm-6 mb-5"><div class="promo-plan-card h-100"><div style="height:340px;background:#f3f6fb;border-radius:14px;"></div></div></div>
+                        <div class="col-lg-3 col-md-6 col-sm-6 mb-5"><div class="promo-plan-card h-100"><div style="height:340px;background:#f3f6fb;border-radius:14px;"></div></div></div>
+                      <?php } ?>
+                    </div>       
+                    <div class="row justify-content-center mt-4">
+                        <div class="col-lg-12 col-12 text-center animate-fade-in-up animate-delay-5">
+                            <div style="background: #ffffff; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05); position: relative; overflow: hidden;">
+                            <h4 class="mb-4" style="color: #333; font-weight: 600; font-family: 'Montserrat', sans-serif; position: relative; display: inline-block;">
+                                BENEFICIOS INCLUIDOS
+                                <div style="height: 2px; width: 60px; background-color: #0799B6; position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%);"></div>
+                            </h4>
+
+                            <div class="benefits-container d-flex justify-content-center" style="gap: 15px; margin-top: 25px; justify-content: center; align-items: center; flex-wrap: nowrap;">
+                                <span style="background-color: #f8f9ff; color: #333; padding: 14px 20px; border-radius: 8px; font-weight: 500; border: 1px solid #eaedf7; display: flex; align-items: center; justify-content: center; width: 260px; height: 60px;">
+                                <i class="fas fa-clock" style="color: #182c83; margin-right: 8px;"></i> Planes por 30 días
+                                </span>
+
+                                <span style="background-color: #f8f9ff; color: #333; padding: 14px 20px; border-radius: 8px; font-weight: 500; border: 1px solid #eaedf7; display: flex; align-items: center; justify-content: center; width: 260px; height: 60px;">
+                                <i class="fas fa-wifi" style="color: #0799B6; margin-right: 8px;"></i> Redes Sociales ilimitadas
+                                </span>
+
+                                <span style="background-color: #f8f9ff; color: #333; padding: 14px 20px; border-radius: 8px; font-weight: 500; border: 1px solid #eaedf7; display: flex; align-items: center; justify-content: center; width: 260px; height: 60px;">
+                                <i class="fas fa-phone-alt" style="color: #182c83; margin-right: 8px;"></i> Llamadas y SMS ilimitados
+                                </span>
+
+                                <span style="background-color: #f8f9ff; color: #333; padding: 14px 20px; border-radius: 8px; font-weight: 500; border: 1px solid #eaedf7; display: flex; align-items: center; justify-content: center; width: 260px; height: 60px;">
+                                <i class="fas fa-globe-americas" style="color: #0799B6; margin-right: 8px;"></i> Cobertura Nacional, EE.UU. y Canadá
+                                </span>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                    <style>
+                    @media (max-width: 992px) {
+                        .benefits-container {
+                        flex-wrap: wrap !important;
+                        }
+                        .benefits-container span {
+                        width: 100% !important;
+                        max-width: 300px !important;
+                        }
+                    }
+                    </style>
+                    
+                    <div class="row">
+                        <div class="col-12 text-center mt-4">
+                          <?php if (!empty($ctaLink)) { ?>
+                            <a href="<?php echo htmlspecialchars((string)$ctaLink); ?>" target="_blank" rel="noopener" style="text-decoration: none;">
+                                <button class="btn btn-lg animate-fade-in-up animate-delay-5" style="background: linear-gradient(45deg, #00c2cb, #00a0bb); color: white; padding: 14px 40px; border-radius: 10px; font-weight: 700; box-shadow: 0 10px 20px rgba(0, 194, 203, 0.3); transition: all 0.3s ease; border: none; min-width: 260px;">
+                                    <span style="position: relative; z-index: 2;">
+                                      <?php echo htmlspecialchars((string)($ctaLabel ?: 'CONTRATAR AHORA')); ?>
+                                    </span>
+                                </button>
+                            </a>
+                          <?php } else { ?>
+                            <div style="height:44px;width:260px;background:#e7ecf4;border-radius:10px;margin:0 auto;"></div>
+                          <?php } ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- PLANES PREPAGO LIKECHECK -->
+                <p style="font-size: 3.2rem; font-weight: 900; color: #1A2A80; text-align: center; letter-spacing: 1px; margin-top: 10px;">
+                    <?php echo htmlspecialchars((string)$planesTitulo); ?>
+                </p>
+                <?php if (!empty($planesTexto)) { ?>
+                <p style="width: 80%; margin: 35px auto 0 auto; text-align: justify; font-size: 20px; color: #000000; line-height: 1.5;">
+                    <?php echo nl2br(htmlspecialchars((string)$planesTexto)); ?>
+                </p>
+                <?php } ?>
+                <!-- IMAGEN DE PLANES -->
+                <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; padding: 20px; margin-top: 40px;">
+                  <?php if (!empty($carrusel)) { $i=0; foreach ($carrusel as $img) { $src = is_array($img)?($img['imagen']??$img['url']??''):$img; if (!$src) continue; if ($i>=3) break; $i++; ?>
+                    <div style="flex: 1 1 300px; max-width: 350px; text-align: center;">
+                        <img src="<?php echo htmlspecialchars((string)$src); ?>" 
+                            alt="promo_<?php echo (int)$i; ?>" 
+                            style="width: 100%; height: auto; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+                    </div>
+                  <?php } } else { ?>
+                    <div style="height:200px;width:320px;background:#eef2f7;border-radius:12px;"></div>
+                  <?php } ?>
+                </div>
+                <!-- SEGUNDA IMAGEN DE PLANES -->
+                <div style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 40px; padding: 20px;">
+                    <div style="flex: 1 1 400px; max-width: 600px; text-align: center;">
+                      <?php 
+                        $img1 = null;
+                        if (!empty($banner1)) {
+                          $img1 = is_array($banner1) ? ($banner1['imagen'] ?? null) : $banner1;
+                        }
+                      ?>
+                      <?php if (!empty($img1)) { ?>
+                        <a href="<?php echo htmlspecialchars((string)$banner1Link); ?>">
+                          <img src="<?php echo htmlspecialchars((string)$img1); ?>" alt="banner1" style="width: 100%; max-height: 600px; height: auto; object-fit: contain;">
+                        </a>
+                      <?php } else { ?>
+                        <div style="height:300px;background:#eef2f7;border-radius:12px;"></div>
+                      <?php } ?>
+                    </div>
+                    <div style="flex: 1 1 400px; max-width: 600px; text-align: center;">
+                      <?php 
+                        $img2 = null;
+                        if (!empty($banner2)) {
+                          $img2 = is_array($banner2) ? ($banner2['imagen'] ?? null) : $banner2;
+                        }
+                      ?>
+                      <?php if (!empty($img2)) { ?>
+                        <a href="<?php echo htmlspecialchars((string)$banner2Link); ?>">
+                          <img src="<?php echo htmlspecialchars((string)$img2); ?>" alt="banner2" style="width: 100%; max-height: 600px; height: auto; object-fit: contain;">
+                        </a>
+                      <?php } else { ?>
+                        <div style="height:300px;background:#eef2f7;border-radius:12px;"></div>
+                      <?php } ?>
+                    </div>
+                </div>
+            <style>
+                @keyframes fadeInUp {
+                    from { opacity: 0; transform: translateY(30px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }        
+                @keyframes pulse {
+                    0% { transform: scale(1); }
+                    50% { transform: scale(1.05); }
+                    100% { transform: scale(1); }
+                }                  
+                @keyframes borderPulse {
+                    0% { box-shadow: 0 0 0 0 rgba(24, 44, 131, 0.6); }
+                    70% { box-shadow: 0 0 0 10px rgba(24, 44, 131, 0); }
+                    100% { box-shadow: 0 0 0 0 rgba(24, 44, 131, 0); }
+                }                  
+                .animate-fade-in-up {
+                    animation: fadeInUp 0.8s ease-out forwards;
+                    opacity: 0;
+                }                  
+                .animate-delay-1 { animation-delay: 0.2s; }
+                .animate-delay-2 { animation-delay: 0.4s; }
+                .animate-delay-3 { animation-delay: 0.6s; }
+                .animate-delay-4 { animation-delay: 0.8s; }
+                .animate-delay-5 { animation-delay: 1s; }                
+                    @keyframes shine {
+                        0% {
+                        background-position: -100% 50%;
+                    }
+                    100% {
+                    background-position: 200% 50%;
+                    }
+                }
+                .promo-plan-card {
+                    background: #fcfdff;
+                    border: none;
+                    border-radius: 18px;
+                    overflow: hidden;
+                    box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+                    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                    position: relative;
+                    z-index: 2;
+                }
+                .promo-plan-card:before {
+                    content: '';
+                    position: absolute;
+                    top: -2px;
+                    left: -2px;
+                    right: -2px;
+                    bottom: -2px;
+                    background: linear-gradient(45deg, rgba(7, 153, 182, 0.4), rgba(24, 44, 131, 0.4), rgba(7, 153, 182, 0.4), rgba(24, 44, 131, 0.4));
+                    background-size: 400% 400%;
+                    border-radius: 20px;
+                    z-index: -1;
+                    animation: shine 6s linear infinite;
+                }                 
+                .promo-plan-card:hover {
+                    transform: translateY(-15px) scale(1.03);
+                    box-shadow: 0 25px 40px rgba(24, 44, 131, 0.3);
+                } 
+                .promo-plan-card.featured {
+                    transform: scale(1.05);
+                    box-shadow: 0 20px 35px rgba(7, 153, 182, 0.35);
+                }             
+                .promo-plan-card.featured:hover {
+                    transform: translateY(-15px) scale(1.08);
+                    box-shadow: 0 30px 45px rgba(7, 153, 182, 0.4);
+                }
+                .plan-title {
+                    background: linear-gradient(135deg, #182c83 0%, #3254c5 100%);
+                    color: white;
+                    padding: 15px 0;
+                    font-weight: bold;
+                    font-size: 1.3rem;
+                    margin-bottom: 0;
+                    letter-spacing: 1px;
+                    position: relative;
+                    overflow: hidden;
+                    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+                }                
+                .plan-title:after {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: -100%;
+                    width: 100%;
+                    height: 100%;
+                    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+                    transition: 0.5s;
+                }                 
+                .promo-plan-card:hover .plan-title:after {
+                    left: 100%;
+                }              
+                .promo-title {
+                    position: relative;
+                    display: inline-block;
+                }                 
+                .promo-title:after {
+                    content: '';
+                    position: absolute;
+                    width: 80%;
+                    height: 3px;
+                    bottom: -10px;
+                    left: 10%;
+                    background: #182c83;
+                    animation: pulse 2s infinite;
+                }
+                .promo-badge {
+                    position: absolute;
+                    top: -10px;
+                    right: -10px;
+                    background-color: #ff6b6b;
+                    color: white;
+                    padding: 5px 10px;
+                    border-radius: 50px;
+                    font-weight: bold;
+                    transform: rotate(15deg);
+                    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+                    z-index: 10;                    
+                }
+                @media (max-width: 768px) {
+                .promo-title:after {
+                    width: 60%;
+                        left: 20%;
+                    }
+                }
+                @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap');
+            </style>

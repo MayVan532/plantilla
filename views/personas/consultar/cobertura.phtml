@@ -1,0 +1,88 @@
+<div class="personas-main-content" style="background:#ffffff;">
+  <?php if (isset($_GET['debugcms']) && $_GET['debugcms'] == '1' && isset($this->debug_bloque8)) { ?>
+    <pre style="background:#f8fafc;border:1px solid #e2e8f0;color:#0f172a;font-size:12px;padding:10px;border-radius:6px;margin:10px 0;white-space:pre-wrap;">
+<?php echo htmlspecialchars(json_encode($this->debug_bloque8, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)); ?>
+    </pre>
+  <?php } ?>
+
+  <!-- BANNER -->
+  <?php if (!empty($this->banner_cobertura)) { ?>
+  <div style="position: relative; max-width: 100%; overflow: hidden; margin-top: 0;">
+      <div style="display: block; width: 100%;">
+          <?php $href = isset($this->banner_cobertura_link) ? trim((string)$this->banner_cobertura_link) : ''; ?>
+          <?php if ($href) { ?><a href="<?php echo htmlspecialchars($href); ?>" style="display:block;"><?php } ?>
+          <img src="<?php echo htmlspecialchars($this->banner_cobertura); ?>"
+               style="width: 100%; height: 300px; object-fit: cover; display: block;">
+          <?php if ($href) { ?></a><?php } ?>
+      </div>
+  </div>
+  <?php } else { ?>
+  <div style="position: relative; max-width: 100%; overflow: hidden; margin-top: 0; min-height: 300px; border-radius:12px; background:linear-gradient(180deg,#eef5fb 0%,#e6eef7 100%); border:1px solid #d9e5f0; box-shadow:0 6px 18px rgba(15, 23, 42, 0.05);"></div>
+  <?php } ?>
+
+  <!-- Mapa de Cobertura -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  <style>
+    .cobertura-map-wrap{ position:relative; width:100%; max-width:100%; margin:32px auto 24px; }
+    .cp-search{ position:static; transform:none; display:flex; gap:8px; justify-content:center; background:transparent; padding:0; border-radius:0; box-shadow:none; z-index:auto; margin:0 auto; width:min(720px,92%); }
+    .cp-search input{ flex:1 1 auto; padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px; }
+    .cp-search button{ padding:10px 16px; border-radius:6px; border:0; color:#fff; font-weight:700; background:#0ea5a6; cursor:pointer; }
+    .city-search{ position:static; transform:none; width:min(720px,92%); background:transparent; padding:0; border-radius:0; box-shadow:none; margin:10px auto 0; }
+    .city-search input{ width:100%; padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px; }
+    #mapCobertura{ width:100%; height:520px; border-radius:12px; border:1px solid #e5e7eb; margin-top:16px; }
+    @media (max-width:640px){ .cp-search input{ width:100%; } }
+  </style>
+  <div class="cobertura-map-wrap">
+    <div class="cp-search" role="search">
+      <input id="cpInput" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="5" placeholder="Ingresa tu código postal">
+      <button id="cpBtn" type="button">Consultar</button>
+    </div>
+    <div id="mapCobertura"></div>
+    <div class="city-search">
+      <input id="cityInput" type="text" placeholder="Ingresa el nombre de tu ciudad">
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script>
+    (function(){
+      var mapEl = document.getElementById('mapCobertura');
+      if (!mapEl) return;
+      var map = L.map('mapCobertura');
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap' }).addTo(map);
+      map.setView([23.6345, -102.5528], 5); // México
+
+      var marker;
+      function flyTo(lat, lon, txt){
+        map.setView([lat, lon], 13);
+        if (marker) map.removeLayer(marker);
+        marker = L.marker([lat, lon]).addTo(map);
+        if (txt) marker.bindPopup(txt).openPopup();
+      }
+
+      function geocode(q, cb){
+        fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(q) + '&countrycodes=mx&limit=1', {headers:{'Accept-Language':'es'}})
+          .then(function(r){return r.json();})
+          .then(function(d){ if (d && d[0]) cb(d[0]); });
+      }
+
+      var cpBtn = document.getElementById('cpBtn');
+      var cpInput = document.getElementById('cpInput');
+      cpBtn && cpBtn.addEventListener('click', function(){
+        var v = (cpInput.value||'').trim();
+        if (!v) return;
+        geocode(v + ' México', function(res){ flyTo(res.lat, res.lon, 'CP ' + v); });
+      });
+      cpInput && cpInput.addEventListener('keydown', function(e){ if (e.key==='Enter') cpBtn.click(); });
+
+      var cityInput = document.getElementById('cityInput');
+      cityInput && cityInput.addEventListener('keydown', function(e){
+        if (e.key==='Enter'){
+          var q = (cityInput.value||'').trim();
+          if (!q) return;
+          geocode(q + ' México', function(res){ flyTo(res.lat, res.lon, q); });
+        }
+      });
+    })();
+  </script>
+</div>
