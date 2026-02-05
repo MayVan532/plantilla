@@ -24,6 +24,6 @@ try {
     $registry->_request = new Request();
     Bootstrap::run($registry->_request);
     //Operador de Resolución de Alcance (::)
-} catch (Exception $e) {
+} catch (Throwable $e) {
     echo $e->getMessage();
 }
