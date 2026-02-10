@@ -3,15 +3,16 @@
     <html lang="en">
     <head>
         <?php
-          $uri = strtolower($_SERVER['REQUEST_URI'] ?? '');
-          $uriPathLower = parse_url($uri, PHP_URL_PATH);
-          $basePath = rtrim(parse_url(BASE_URL, PHP_URL_PATH) ?: '', '/');
-          // Compute relative path: remove basePath prefix
-          $relPath = preg_replace('#^'.preg_quote($basePath, '#').'#', '', $uriPathLower);
-          if ($relPath === '') { $relPath = '/'; }
-          $tabTarget = 'menu-personas';
-          if (preg_match('#^/empresas($|/)#', $relPath)) { $tabTarget = 'menu-empresas'; }
-          elseif (preg_match('#^/likecheck($|/)#', $relPath)) { $tabTarget = 'menu-likecheck'; }
+    	      $uri = strtolower($_SERVER['REQUEST_URI'] ?? '');
+ 	      $uriPathLower = parse_url($uri, PHP_URL_PATH);
+ 	      $basePath = rtrim(parse_url(BASE_URL, PHP_URL_PATH) ?: '', '/');
+ 	      // Compute relative path: remove basePath prefix
+ 	      $relPath = preg_replace('#^'.preg_quote($basePath, '#').'#', '', $uriPathLower);
+ 	      if ($relPath === '') { $relPath = '/'; }
+	      $isCore = (defined('CMS_PAGE_ID') && (int)CMS_PAGE_ID === 1);
+ 	      $tabTarget = 'menu-personas';
+ 	      if (preg_match('#^/empresas($|/)#', $relPath)) { $tabTarget = 'menu-empresas'; }
+ 	      elseif (preg_match('#^/likecheck($|/)#', $relPath)) { $tabTarget = 'menu-likecheck'; }
 
           // Base: usar variables del controlador si existen (footer_*), luego CMS
           $H_social = isset($this->footer_social) && is_array($this->footer_social) ? $this->footer_social : [];
@@ -335,7 +336,7 @@
         <div class="container-fluid top-tabs">
           <div class="container-lg tabs-container">
             <div class="tabs-left">
-              <a class="tab-btn<?php echo ($tabTarget==='menu-personas'?' active':''); ?>" href="<?php echo BASE_URL; ?>personas/inicio" data-target="menu-personas" style="background:transparent!important;border:0!important;box-shadow:none!important;border-radius:0!important;padding:6px 10px;"><i class="fas fa-user"></i> Personas</a>
+              <a class="tab-btn<?php echo ($tabTarget==='menu-personas'?' active':''); ?>" href="<?php echo BASE_URL; ?>" data-target="menu-personas" style="background:transparent!important;border:0!important;box-shadow:none!important;border-radius:0!important;padding:6px 10px;"><i class="fas fa-user"></i> Personas</a>
               <span class="divider"></span>
               <a class="tab-btn<?php echo ($tabTarget==='menu-empresas'?' active':''); ?>" href="<?php echo BASE_URL; ?>empresas/inicio" data-target="menu-empresas" style="background:transparent!important;border:0!important;box-shadow:none!important;border-radius:0!important;padding:6px 10px;"><i class="fas fa-building"></i> Empresas</a>
               <span class="divider"></span>
@@ -430,7 +431,7 @@
                       if (!$logoHref) {
                         if ($tabTarget === 'menu-empresas') { $logoHref = BASE_URL . 'empresas/inicio'; }
                         elseif ($tabTarget === 'menu-likecheck') { $logoHref = BASE_URL . 'likecheck'; }
-                        else { $logoHref = BASE_URL . 'personas/inicio'; }
+                        else { $logoHref = BASE_URL; }
                       }
                     ?>
                     <a href="<?php echo htmlspecialchars($logoHref); ?>" class="navbar-brand">
@@ -448,7 +449,7 @@
                         <!-- Personas Menu -->
                         <div id="menu-personas" class="menu-area w-100<?php echo ($tabTarget==='menu-personas'?' active':''); ?>">
                           <div class="navbar-nav font-weight-bold ml-auto py-0">
-                              <a href="<?php echo BASE_URL; ?>personas/inicio" class="nav-item nav-link<?php echo (preg_match('#^/personas/inicio($|/)#', $relPath)?' active':''); ?>">Inicio</a>
+                              <a href="<?php echo BASE_URL; ?>" class="nav-item nav-link<?php echo (($relPath==='/' || preg_match('#^/personas/inicio($|/)#', $relPath))?' active':''); ?>">Inicio</a>
                               <div class="nav-item dropdown">
                                   <a href="#" class="nav-link<?php echo (preg_match('#^/(cobertura|compatibilidad|estatusenvio|apn|faq|quienessomos)($|/)#', $relPath)?' active':''); ?>">Consultar</a>
                                   <div class="dropdown-menu border-0 m-0">
@@ -464,8 +465,12 @@
                               <div class="nav-item dropdown">
                                   <a href="#" class="nav-link<?php echo (preg_match('#^/(recargas|recargar_empresas)($|/)#', $relPath)?' active':''); ?>">Recargar</a>
                                   <div class="dropdown-menu border-0 m-0">
-                                      <a href="<?php echo BASE_URL; ?>recargas" class="dropdown-item<?php echo (preg_match('#^/recargas($|/)#', $relPath)?' active':''); ?>">Recargar Likephone</a>
-                                      <a href="<?php echo BASE_URL; ?>recargar_empresas" class="dropdown-item<?php echo (preg_match('#^/recargar_empresas($|/)#', $relPath)?' active':''); ?>">Recargar Empresas</a>
+                                      <?php if ($isCore) { ?>
+                                        <a href="<?php echo BASE_URL; ?>recargas" class="dropdown-item<?php echo (preg_match('#^/recargas($|/)#', $relPath)?' active':''); ?>">Recargar Likephone</a>
+                                        <a href="<?php echo BASE_URL; ?>recargar_empresas" class="dropdown-item<?php echo (preg_match('#^/recargar_empresas($|/)#', $relPath)?' active':''); ?>">Recargar Empresas</a>
+                                      <?php } else { ?>
+                                        <a href="<?php echo BASE_URL; ?>recargas" class="dropdown-item<?php echo (preg_match('#^/recargas($|/)#', $relPath)?' active':''); ?>">Recargar</a>
+                                      <?php } ?>
                                   </div>
                               </div>
                               <a href="<?php echo BASE_URL; ?>contacto" class="nav-item nav-link<?php echo (preg_match('#^/contacto($|/)#', $relPath)?' active':''); ?>">Contacto</a>
@@ -518,6 +523,8 @@
               $basePath = rtrim(parse_url(BASE_URL, PHP_URL_PATH) ?: '', '/');
               $relPath = preg_replace('#^'.preg_quote($basePath, '#').'#', '', $uriPathLower);
               if ($relPath === '') { $relPath = '/'; }
+
+	      $isCore = (defined('CMS_PAGE_ID') && (int)CMS_PAGE_ID === 1);
 
               // Flags de visibilidad enviados por el controlador (fallback: todo visible)
               $showPersonas  = isset($this->showPersonas)  ? (bool)$this->showPersonas  : true;
@@ -769,7 +776,7 @@
               <div class="container-lg tabs-container">
                 <div class="tabs-left">
                   <?php if ($showPersonas) { ?>
-                    <a class="tab-btn<?php echo ($tabTarget==='menu-personas'?' active':''); ?>" href="<?php echo BASE_URL; ?>personas/inicio" data-target="menu-personas"><i class="fas fa-user"></i> Personas</a>
+                    <a class="tab-btn<?php echo ($tabTarget==='menu-personas'?' active':''); ?>" href="<?php echo BASE_URL; ?>" data-target="menu-personas"><i class="fas fa-user"></i> Personas</a>
                   <?php } ?>
                   <?php if ($showPersonas && ($showEmpresas || $showLikecheck)) { ?>
                     <span class="divider"></span>
@@ -875,7 +882,7 @@
                           if (!$logoHref) {
                             if ($tabTarget === 'menu-empresas') { $logoHref = BASE_URL . 'empresas/inicio'; }
                             elseif ($tabTarget === 'menu-likecheck') { $logoHref = BASE_URL . 'likecheck'; }
-                            else { $logoHref = BASE_URL . 'personas/inicio'; }
+                            else { $logoHref = BASE_URL; }
                           }
                         ?>
                         <a href="<?php echo htmlspecialchars($logoHref); ?>" class="navbar-brand">
@@ -893,7 +900,7 @@
                             <?php if ($showPersonas) { ?>
                             <div id="menu-personas" class="menu-area w-100<?php echo ($tabTarget==='menu-personas'?' active':''); ?>">
                               <div class="navbar-nav font-weight-bold ml-auto py-0">
-                                  <a href="<?php echo BASE_URL; ?>personas/inicio" class="nav-item nav-link<?php echo (preg_match('#^/personas/inicio($|/)#', $relPath)?' active':''); ?>">Inicio</a>
+                                  <a href="<?php echo BASE_URL; ?>" class="nav-item nav-link<?php echo (($relPath==='/' || preg_match('#^/personas/inicio($|/)#', $relPath))?' active':''); ?>">Inicio</a>
                                   <div class="nav-item dropdown">
                                       <a href="#" class="nav-link<?php echo (preg_match('#^/(cobertura|compatibilidad|estatusenvio|apn|faq|quienessomos)($|/)#', $relPath)?' active':''); ?>">Consultar</a>
                                       <div class="dropdown-menu border-0 m-0">
@@ -909,8 +916,12 @@
                                   <div class="nav-item dropdown">
                                       <a href="#" class="nav-link<?php echo (preg_match('#^/(recargas|recargar_empresas)($|/)#', $relPath)?' active':''); ?>">Recargar</a>
                                       <div class="dropdown-menu border-0 m-0">
-                                          <a href="<?php echo BASE_URL; ?>recargas" class="dropdown-item<?php echo (preg_match('#^/recargas($|/)#', $relPath)?' active':''); ?>">Recargar Likephone</a>
-                                          <a href="<?php echo BASE_URL; ?>recargar_empresas" class="dropdown-item<?php echo (preg_match('#^/recargar_empresas($|/)#', $relPath)?' active':''); ?>">Recargar Empresas</a>
+                                          <?php if ($isCore) { ?>
+                                            <a href="<?php echo BASE_URL; ?>recargas" class="dropdown-item<?php echo (preg_match('#^/recargas($|/)#', $relPath)?' active':''); ?>">Recargar Likephone</a>
+                                            <a href="<?php echo BASE_URL; ?>recargar_empresas" class="dropdown-item<?php echo (preg_match('#^/recargar_empresas($|/)#', $relPath)?' active':''); ?>">Recargar Empresas</a>
+                                          <?php } else { ?>
+                                            <a href="<?php echo BASE_URL; ?>recargas" class="dropdown-item<?php echo (preg_match('#^/recargas($|/)#', $relPath)?' active':''); ?>">Recargar</a>
+                                          <?php } ?>
                                       </div>
                                   </div>
                                   <a href="<?php echo BASE_URL; ?>contacto" class="nav-item nav-link<?php echo (preg_match('#^/contacto($|/)#', $relPath)?' active':''); ?>">Contacto</a>

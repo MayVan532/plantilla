@@ -11,7 +11,16 @@
     private $_modules;
 	
 	 public function __construct(){
-	
+	 	// Si la URL está vacía (ruta raíz), usar Personas como página principal
+	 	$rawUrl = isset($_GET['url']) ? trim((string)$_GET['url']) : '';
+	 	if ($rawUrl === '' || $rawUrl === '/') {
+	 		$this->_modulo = false;
+	 		$this->_controlador = 'personas';
+	 		$this->_metodo = 'index';
+	 		$this->_argumentos = array();
+	 		return;
+	 	}
+
 		 if(isset($_GET["url"])){
                      
            //toma el parametro url via get y lo que hace es filtrarlo

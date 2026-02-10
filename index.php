@@ -14,11 +14,6 @@ try {
     require_once APP_PATH . 'Config.php';
     require_once 'vendor/autoload.php';
 
-    if (!isset($_GET['url']) || $_GET['url'] === '' || $_GET['url'] === '/') {
-        header('location:' . BASE_URL . 'personas/inicio/');
-        exit;
-    }
-
     Session::init();
     $registry = Registry::getInstancia();
     $registry->_request = new Request();

@@ -113,7 +113,7 @@
                     <div class="fp-skeleton" style="display:inline-block; width:100%; height:48px; border-radius:10px;"></div>
                   <?php } ?>
                   <div class="mt-2" style="margin-top:6px;">
-                    <a href="<?php echo BASE_URL; ?>personas/inicio" style="color:#6cd0ff; text-decoration:none; font-weight:600; font-size:13px;">
+                    <a href="<?php echo BASE_URL; ?>" style="color:#6cd0ff; text-decoration:none; font-weight:600; font-size:13px;">
                       &larr; Ir a LikePhone
                     </a>
                   </div>
@@ -217,26 +217,26 @@
                   if ($isEmp) {
                 ?>
                   <!-- Empresas -->
-                  <a href="/qaweb/empresas/inicio" style="color:#ffffff; margin:6px 0; text-decoration:none; font-weight:500;">Inicio</a>
-                  <a href="/qaweb/empresas/tarifas" style="color:#ffffff; margin:6px 0; text-decoration:none; font-weight:500;">Tarifas preferenciales</a>
-                  <a href="/qaweb/empresas/marcaRapida" style="color:#ffffff; margin:6px 0; text-decoration:none; font-weight:500;">Marcas Rápidas</a>
-                  <a href="/qaweb/empresas/marcasBlancas" style="color:#ffffff; margin:6px 0; text-decoration:none; font-weight:500;">Marcas Blancas</a>
-                  <a href="/qaweb/empresas/distribuciones" style="color:#ffffff; margin:6px 0; text-decoration:none; font-weight:500;">Distribuciones</a>
-                  <a href="/qaweb/empresas/iot" style="color:#ffffff; margin:6px 0; text-decoration:none; font-weight:500;">IoT</a>
-                  <a href="/qaweb/empresas/cotizar" style="color:#ffffff; margin:6px 0; text-decoration:none; font-weight:500;">Cotizar</a>
+                  <a href="<?php echo BASE_URL; ?>empresas/inicio" style="color:#ffffff; margin:6px 0; text-decoration:none; font-weight:500;">Inicio</a>
+                  <a href="<?php echo BASE_URL; ?>empresas/tarifas" style="color:#ffffff; margin:6px 0; text-decoration:none; font-weight:500;">Tarifas preferenciales</a>
+                  <a href="<?php echo BASE_URL; ?>empresas/marcaRapida" style="color:#ffffff; margin:6px 0; text-decoration:none; font-weight:500;">Marcas Rápidas</a>
+                  <a href="<?php echo BASE_URL; ?>empresas/marcasBlancas" style="color:#ffffff; margin:6px 0; text-decoration:none; font-weight:500;">Marcas Blancas</a>
+                  <a href="<?php echo BASE_URL; ?>empresas/distribuciones" style="color:#ffffff; margin:6px 0; text-decoration:none; font-weight:500;">Distribuciones</a>
+                  <a href="<?php echo BASE_URL; ?>empresas/iot" style="color:#ffffff; margin:6px 0; text-decoration:none; font-weight:500;">IoT</a>
+                  <a href="<?php echo BASE_URL; ?>empresas/cotizar" style="color:#ffffff; margin:6px 0; text-decoration:none; font-weight:500;">Cotizar</a>
                 <?php } elseif ($isLC) { ?>
                   <!-- Likecheck -->
-                  <a href="/qaweb/likecheck/inicio" style="color:#ffffff; margin:6px 0; text-decoration:none; font-weight:500;">Inicio</a>
-                  <a href="/qaweb/likecheck/funcionalidades" style="color:#ffffff; margin:6px 0; text-decoration:none; font-weight:500;">Funcionalidades</a>
-                  <a href="/qaweb/likecheck/app_crm" style="color:#ffffff; margin:6px 0; text-decoration:none; font-weight:500;">App & CRM</a>
-                  <a href="/qaweb/likecheck/planes" style="color:#ffffff; margin:6px 0; text-decoration:none; font-weight:500;">Planes</a>
-                  <a href="/qaweb/likecheck/cotizador" style="color:#ffffff; margin:6px 0; text-decoration:none; font-weight:500;">Cotizador</a>
-                  <a href="/qaweb/likecheck/promocion" style="color:#ffffff; margin:6px 0; text-decoration:none; font-weight:500;">Promoción</a>
-                  <a href="/qaweb/likecheck/clientes" style="color:#ffffff; margin:6px 0; text-decoration:none; font-weight:500;">Clientes</a>
-                  <a href="/qaweb/likecheck/contacto" style="color:#ffffff; margin:6px 0; text-decoration:none; font-weight:500;">Contacto</a>
+                  <a href="<?php echo BASE_URL; ?>likecheck/inicio" style="color:#ffffff; margin:6px 0; text-decoration:none; font-weight:500;">Inicio</a>
+                  <a href="<?php echo BASE_URL; ?>likecheck/funcionalidades" style="color:#ffffff; margin:6px 0; text-decoration:none; font-weight:500;">Funcionalidades</a>
+                  <a href="<?php echo BASE_URL; ?>likecheck/app_crm" style="color:#ffffff; margin:6px 0; text-decoration:none; font-weight:500;">App & CRM</a>
+                  <a href="<?php echo BASE_URL; ?>likecheck/planes" style="color:#ffffff; margin:6px 0; text-decoration:none; font-weight:500;">Planes</a>
+                  <a href="<?php echo BASE_URL; ?>likecheck/cotizador" style="color:#ffffff; margin:6px 0; text-decoration:none; font-weight:500;">Cotizador</a>
+                  <a href="<?php echo BASE_URL; ?>likecheck/promocion" style="color:#ffffff; margin:6px 0; text-decoration:none; font-weight:500;">Promoción</a>
+                  <a href="<?php echo BASE_URL; ?>likecheck/clientes" style="color:#ffffff; margin:6px 0; text-decoration:none; font-weight:500;">Clientes</a>
+                  <a href="<?php echo BASE_URL; ?>likecheck/contacto" style="color:#ffffff; margin:6px 0; text-decoration:none; font-weight:500;">Contacto</a>
                 <?php } else { ?>
                   <!-- Personas -->
-                  <a href="<?php echo BASE_URL; ?>personas/inicio" style="color:#ffffff; margin:6px 0; text-decoration:none; font-weight:500; transition:0.2s;">Inicio</a>
+                  <a href="<?php echo BASE_URL; ?>" style="color:#ffffff; margin:6px 0; text-decoration:none; font-weight:500; transition:0.2s;">Inicio</a>
                   <a style="color:#ffffff; margin:6px 0; text-decoration:none; font-weight:500;" href="<?php echo BASE_URL; ?>cobertura">Cobertura</a>
                   <a style="color:#ffffff; margin:6px 0; text-decoration:none; font-weight:500;" href="<?php echo BASE_URL; ?>compatibilidad">Compatibilidad</a>
                   <a style="color:#ffffff; margin:6px 0; text-decoration:none; font-weight:500;" href="<?php echo BASE_URL; ?>estatusenvio">Estatus de Envío</a>
@@ -244,8 +244,8 @@
                   <a style="color:#ffffff; margin:6px 0; text-decoration:none; font-weight:500;" href="<?php echo BASE_URL; ?>faq">Preguntas Frecuentes</a>
                   <a style="color:#ffffff; margin:6px 0; text-decoration:none; font-weight:500;" href="<?php echo BASE_URL; ?>quienessomos">Quiénes Somos</a>
                   <a href="<?php echo BASE_URL; ?>portabilidad" style="color:#ffffff; margin:6px 0; text-decoration:none; font-weight:500;">Portabilidad</a>
-                  <a style="color:#ffffff; margin:6px 0; text-decoration:none; font-weight:500;" href="<?php echo BASE_URL; ?>recargas">Recargar Likephone</a>
-                  <a style="color:#ffffff; margin:6px 0; text-decoration:none; font-weight:500;" href="<?php echo BASE_URL; ?>recargar_empresas">Recargar Empresas</a>
+                  <a style="color:#ffffff; margin:6px 0; text-decoration:none; font-weight:500;" href="<?php echo BASE_URL; ?>recargas">Recargar</a>
+                  <?php /* ?><a style="color:#ffffff; margin:6px 0; text-decoration:none; font-weight:500;" href="<?php echo BASE_URL; ?>recargar_empresas">Recargar Empresas</a><?php */ ?>
                   <a href="<?php echo BASE_URL; ?>contacto" style="color:#ffffff; margin:6px 0; text-decoration:none; font-weight:500;">Contacto</a>
                 <?php } ?>
 
