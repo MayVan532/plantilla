@@ -278,9 +278,66 @@
           <div style="text-align:center; margin-top:6px;">
             <button type="submit" name="Submit" 
               style="min-width:150px; background:#00bcd4; color:#fff; border:none; padding:10px 28px; border-radius:6px; font-size:15px; cursor:pointer; font-weight:700; box-shadow:0 10px 30px rgba(0,188,212,0.45);">
-              Enviar código
+              Registrarse
             </button>
           </div>
+
+          <div style="margin-top:8px; text-align:center; font-size:12px; color:#64748b;">
+            Te enviaremos un código por WhatsApp para validar tu número.
+          </div>
+
+          <!-- Overlay informativo: Próximamente -->
+          <div id="registerInfoOverlay" style="display:none; position:fixed; inset:0; background:rgba(15,23,42,0.55); align-items:center; justify-content:center; padding:20px; z-index:9999;">
+            <div role="dialog" aria-modal="true" style="width:100%; max-width:520px; background:#ffffff; border-radius:18px; box-shadow:0 24px 80px rgba(15,23,42,0.35); border:1px solid rgba(2,132,199,0.12); overflow:hidden;">
+              <div style="padding:16px 18px; background:linear-gradient(90deg,#00bcd4 0%,#06b6d4 35%,#22c55e 100%); color:#ffffff; font-weight:800; font-size:14px; display:flex; justify-content:space-between; align-items:center;">
+                <div>Registro</div>
+                <button type="button" id="registerInfoClose" style="border:none; background:rgba(255,255,255,0.18); color:#ffffff; border-radius:10px; padding:6px 10px; font-weight:800; cursor:pointer;">Cerrar</button>
+              </div>
+              <div style="padding:18px 18px 20px;">
+                <div style="display:flex; gap:12px; align-items:flex-start;">
+                  <div style="width:42px; height:42px; border-radius:999px; background:rgba(59,130,246,0.12); display:flex; align-items:center; justify-content:center; border:1px solid rgba(59,130,246,0.25); flex:0 0 auto;">
+                    <i class="fas fa-info" style="color:#2563eb;"></i>
+                  </div>
+                  <div style="flex:1;">
+                    <div style="font-size:16px; font-weight:900; color:#0f172a; margin-bottom:6px;">Próximamente</div>
+                    <div style="font-size:13px; color:#475569; line-height:1.6;">El registro estará disponible en breve. Estamos preparando la verificación por WhatsApp.</div>
+                    <div style="margin-top:12px; font-size:12px; color:#64748b;">Este mensaje se cerrará automáticamente.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <script>
+            (function(){
+              var pending = <?php echo $pending ? 'true' : 'false'; ?>;
+              // Solo interceptar el submit en el primer paso (sin OTP)
+              if (!pending) {
+                var form = document.getElementById('frm_registro');
+                var info = document.getElementById('registerInfoOverlay');
+                var closeBtn = document.getElementById('registerInfoClose');
+                var prevOverflow = '';
+                if (form && info) {
+                  form.addEventListener('submit', function(e){
+                    try { e.preventDefault(); } catch (ex) {}
+                    try {
+                      if (info.parentNode && info.parentNode !== document.body) { document.body.appendChild(info); }
+                      prevOverflow = document.body.style.overflow || '';
+                      document.body.style.overflow = 'hidden';
+                    } catch (ex) {}
+                    info.style.display = 'flex';
+                    function close(){
+                      info.style.display = 'none';
+                      try { document.body.style.overflow = prevOverflow; } catch (ex) {}
+                    }
+                    if (closeBtn) closeBtn.addEventListener('click', close, { once:true });
+                    info.addEventListener('click', function(ev){ if (ev.target === info) close(); });
+                    window.setTimeout(close, 3000);
+                  });
+                }
+              }
+            })();
+          </script>
 
           <?php } else { ?>
             <?php
