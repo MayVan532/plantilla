@@ -88,19 +88,18 @@ HEADER_LOGO_DEBUG: <?php echo htmlspecialchars(json_encode($headerLogoDebug, JSO
   </pre>
 <?php } ?>
 
-<div style="background:#ffffff; border-bottom:3px solid #00bcd4; box-shadow:0 4px 12px rgba(15,23,42,.06); padding:10px 24px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:10;">
+<div style="background:linear-gradient(90deg,#00bcd4 0%,#06b6d4 35%,#22c55e 100%); border-bottom:3px solid rgba(15,23,42,0.10); box-shadow:0 4px 12px rgba(15,23,42,.10); padding:10px 24px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:10;">
   <div style="display:flex; flex-direction:column; gap:2px;">
-    <span style="font-size:14px; font-weight:600; color:#111827;">Panel de usuarios</span>
-    <span style="font-size:12px; color:#6b7280;">LikePhone</span>
+    <span style="font-size:14px; font-weight:800; color:#ffffff;">Panel de usuarios</span>
   </div>
 
-  <div style="display:flex; align-items:center; gap:16px; color:#6b7280; font-size:14px; position:relative;">
+  <div style="display:flex; align-items:center; gap:16px; color:rgba(255,255,255,0.92); font-size:14px; position:relative;">
     <!-- Botón de notificaciones rediseñado -->
     <div id="notifToggle"
-         onmouseover="this.style.background='#e2f3ff'; this.style.boxShadow='0 0 0 2px #bae6fd';"
-         onmouseout="this.style.background='#f1f5f9'; this.style.boxShadow='none';"
-         style="position:relative; cursor:pointer; display:flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:999px; background:#f1f5f9; transition:background-color .2s, box-shadow .2s;">
-      <i class="far fa-bell" style="font-size:16px; color:#0f172a;"></i>
+         onmouseover="this.style.background='rgba(255,255,255,0.30)'; this.style.boxShadow='0 0 0 2px rgba(255,255,255,0.35)';"
+         onmouseout="this.style.background='rgba(255,255,255,0.22)'; this.style.boxShadow='none';"
+         style="position:relative; cursor:pointer; display:flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:999px; background:rgba(255,255,255,0.22); transition:background-color .2s, box-shadow .2s;">
+      <i class="far fa-bell" style="font-size:16px; color:#ffffff;"></i>
       <span id="notifBadge"
             style="position:absolute; top:-4px; right:-2px; background:#ef4444; color:#ffffff; border-radius:999px; padding:0 5px; font-size:10px; font-weight:700; line-height:16px; min-width:16px; text-align:center; box-shadow:0 0 0 2px #ffffff;">
         0
@@ -110,14 +109,7 @@ HEADER_LOGO_DEBUG: <?php echo htmlspecialchars(json_encode($headerLogoDebug, JSO
     <!-- SIN icono de signo de interrogación -->
 
     <div id="userMenuToggle" style="display:flex; align-items:center; gap:12px; cursor:pointer;">
-      <div style="width:96px; height:34px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
-        <?php if (!empty($headerLogo)) { ?>
-          <img src="<?php echo htmlspecialchars($headerLogo, ENT_QUOTES, 'UTF-8'); ?>" alt="LikePhone" style="width:100%; height:auto; object-fit:contain; display:block;">
-        <?php } else { ?>
-          <span style="color:#00bcd4; font-weight:700; font-size:18px;">LP</span>
-        <?php } ?>
-      </div>
-      <span style="font-size:13px; color:#111827; font-weight:500; max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+      <span style="font-size:13px; color:#ffffff; font-weight:700; max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
         <?php echo htmlspecialchars($userLabel, ENT_QUOTES, 'UTF-8'); ?>
       </span>
       <i class="fas fa-chevron-down" style="font-size:11px;"></i>
@@ -136,7 +128,7 @@ HEADER_LOGO_DEBUG: <?php echo htmlspecialchars(json_encode($headerLogoDebug, JSO
     </div>
 
     <div id="userMenu" style="display:none; position:absolute; right:0; top:38px; background:#ffffff; border-radius:8px; box-shadow:0 12px 30px rgba(15,23,42,.18); min-width:150px; padding:6px 0; z-index:20;">
-      <a href="<?php echo BASE_URL; ?>personas/usuarios/Miperfil" style="display:flex; align-items:center; gap:8px; padding:8px 14px; font-size:13px; color:#374151; text-decoration:none;">
+      <a href="<?php echo BASE_URL; ?>usuarios/Miperfil" style="display:flex; align-items:center; gap:8px; padding:8px 14px; font-size:13px; color:#374151; text-decoration:none;">
         <i class="fas fa-user-circle"></i>
         <span>Perfil</span>
       </a>

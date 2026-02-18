@@ -29,6 +29,18 @@
 		  // 1 metodo 2 controllr 3 argumentos
 		  $url= explode('/', $url);
 		  $url= array_filter($url);
+
+		  // Alias directo: /registro (o /register) debe mapear a login/registro
+		  // Esto evita que el renderizador intente cargar views/registro/registro.phtml
+		  $first = strtolower((string)reset($url));
+		  if ($first === 'registro' || $first === 'register') {
+			array_shift($url);
+			$this->_modulo = false;
+			$this->_controlador = 'login';
+			$this->_metodo = 'registro';
+			$this->_argumentos = $url;
+			return;
+		  }
                   
                   
 	    /* modulos de la app */

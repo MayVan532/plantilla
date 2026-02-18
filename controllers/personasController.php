@@ -3,6 +3,22 @@ use Illuminate\Database\Capsule\Manager as Capsule;
 class personasController extends Controller
 
 {
+    protected function getWlApiBaseUrl(): string
+    {
+        $baseUrl = null;
+        if (defined('WL_API_BASE_URL')) {
+            $baseUrl = is_string(constant('WL_API_BASE_URL')) ? trim((string)constant('WL_API_BASE_URL')) : null;
+        }
+        if (!$baseUrl) {
+            $env = getenv('WL_API_BASE_URL');
+            if (is_string($env) && trim($env) !== '') { $baseUrl = trim($env); }
+        }
+        if (!$baseUrl) {
+            $baseUrl = 'https://apis.likephone.mx/api/v1/whitelabels/generic';
+        }
+        return rtrim((string)$baseUrl, '/');
+    }
+
     public function __construct()
     {
         parent::__construct();
@@ -92,7 +108,7 @@ class personasController extends Controller
 
     protected function fetchSocioToken(array $creds): array
     {
-        $debug = ['step' => 'auth-token', 'url' => 'https://apis.likephone.mx/api/v1/platform/socioscomerciales/auth/token'];
+        $debug = ['step' => 'auth-token', 'url' => $this->getWlApiBaseUrl().'/auth/token'];
         try {
             $payload = [
                 'client_id'     => $creds['client_id'] ?? '',
@@ -127,7 +143,7 @@ class personasController extends Controller
     {
         $debug = [
             'step' => 'list-planes',
-            'url'  => 'https://apis.likephone.mx/api/v1/platform/socioscomerciales/planes/listPlanesByProductType',
+            'url'  => $this->getWlApiBaseUrl().'/planes/listPlanesByProductType',
             'tipo_producto' => $tipoProducto,
         ];
         try {
@@ -497,6 +513,163 @@ class personasController extends Controller
         $this->loadFooterPersonas();
         $this->_view->hideMainNav      = true;
         $this->_view->hideGlobalFooter = true;
+
+        $this->_view->_error = null;
+        $this->_view->_success = null;
+
+        $token = class_exists('Session') ? (string)(Session::get('api_token') ?? '') : '';
+        $userId = class_exists('Session') ? (string)(Session::get('cv_usuario') ?? '') : '';
+
+        $profile = null;
+        $debugEnabled = (isset($_GET['debugcms']) && $_GET['debugcms'] === '1');
+        $dbg = [];
+
+        if ($token !== '' && $userId !== '') {
+            $urlProfile = $this->getWlApiBaseUrl().'/account/profile';
+            $headers = ['Authorization: Bearer '.$token];
+
+            if ($this->getInt('guardar_convenio') == 1) {
+                $codigoConvenio = trim((string)$this->getPostParam('codigo_convenio'));
+                if ($codigoConvenio === '') {
+                    $this->_view->_error = 'Ingresa el código de convenio.';
+                } else {
+                $payloadConv = [
+                    'id' => $userId,
+                    'codigo_convenio' => $codigoConvenio,
+                ];
+                $resConv = $this->callJsonApi($this->getWlApiBaseUrl().'/account/assignB2BAgreementToAccount', $headers, $payloadConv);
+                if ($debugEnabled) {
+                    $dbg['assignB2BAgreementToAccount'] = [
+                        'url' => $this->getWlApiBaseUrl().'/account/assignB2BAgreementToAccount',
+                        'http_status' => $resConv['status'],
+                        'error' => $resConv['error'],
+                        'raw_body' => $resConv['body'],
+                        'payload' => $payloadConv,
+                    ];
+                }
+
+                $ok = ($resConv['ok'] && is_array($resConv['body']) && !empty($resConv['body']['success']));
+                if (!$ok) {
+                    $msg = 'No se pudo actualizar el convenio.';
+                    if (is_array($resConv['body']) && isset($resConv['body']['error']) && is_array($resConv['body']['error']) && isset($resConv['body']['error']['message']) && is_string($resConv['body']['error']['message']) && trim($resConv['body']['error']['message']) !== '') {
+                        $msg = trim($resConv['body']['error']['message']);
+                    } elseif (is_array($resConv['body']) && isset($resConv['body']['mensaje']) && is_string($resConv['body']['mensaje']) && trim($resConv['body']['mensaje']) !== '') {
+                        $msg = trim($resConv['body']['mensaje']);
+                    }
+                    $this->_view->_error = $msg;
+                } else {
+                    $msg = 'Convenio actualizado.';
+                    if (isset($resConv['body']['mensaje']) && is_string($resConv['body']['mensaje']) && trim($resConv['body']['mensaje']) !== '') {
+                        $msg = trim($resConv['body']['mensaje']);
+                    }
+                    $this->_view->_success = $msg;
+                }
+                }
+            }
+
+            if ($this->getInt('eliminar_convenio') == 1) {
+                $payloadDel = [
+                    'id' => $userId,
+                ];
+                $resDel = $this->callJsonApi($this->getWlApiBaseUrl().'/account/deleteAgreementB2B', $headers, $payloadDel);
+                if ($debugEnabled) {
+                    $dbg['deleteAgreementB2B'] = [
+                        'url' => $this->getWlApiBaseUrl().'/account/deleteAgreementB2B',
+                        'http_status' => $resDel['status'],
+                        'error' => $resDel['error'],
+                        'raw_body' => $resDel['body'],
+                        'payload' => $payloadDel,
+                    ];
+                }
+
+                $ok = ($resDel['ok'] && is_array($resDel['body']) && !empty($resDel['body']['success']));
+                if (!$ok) {
+                    $msg = 'No se pudo desvincular el convenio.';
+                    if (is_array($resDel['body']) && isset($resDel['body']['error']) && is_array($resDel['body']['error']) && isset($resDel['body']['error']['message']) && is_string($resDel['body']['error']['message']) && trim($resDel['body']['error']['message']) !== '') {
+                        $msg = trim($resDel['body']['error']['message']);
+                    } elseif (is_array($resDel['body']) && isset($resDel['body']['mensaje']) && is_string($resDel['body']['mensaje']) && trim($resDel['body']['mensaje']) !== '') {
+                        $msg = trim($resDel['body']['mensaje']);
+                    }
+                    $this->_view->_error = $msg;
+                } else {
+                    $msg = 'Convenio desvinculado.';
+                    if (isset($resDel['body']['mensaje']) && is_string($resDel['body']['mensaje']) && trim($resDel['body']['mensaje']) !== '') {
+                        $msg = trim($resDel['body']['mensaje']);
+                    }
+                    $this->_view->_success = $msg;
+                }
+            }
+
+            if ($this->getInt('guardar_perfil') == 1) {
+                $nombre = trim((string)$this->getPostParam('nombre'));
+                $apPat  = trim((string)$this->getPostParam('apellido_paterno'));
+                $apMat  = trim((string)$this->getPostParam('apellido_materno'));
+                $email  = trim((string)$this->getPostParam('email'));
+                // $codigoConvenio  = trim((string)$this->getPostParam('codigo_convenio'));
+
+                $payloadUpdate = [
+                    'id' => $userId,
+                    'nombre' => $nombre,
+                    'apellido_paterno' => $apPat,
+                    'apellido_materno' => $apMat,
+                    'email' => $email,
+                    // 'codigo_convenio' => $codigoConvenio,
+                ];
+
+                $resUpd = $this->callJsonApi($this->getWlApiBaseUrl().'/account/updateProfile', $headers, $payloadUpdate);
+                if ($debugEnabled) {
+                    $dbg['updateProfile'] = [
+                        'url' => $this->getWlApiBaseUrl().'/account/updateProfile',
+                        'http_status' => $resUpd['status'],
+                        'error' => $resUpd['error'],
+                        'raw_body' => $resUpd['body'],
+                        'payload' => $payloadUpdate,
+                    ];
+                }
+
+                if (!$resUpd['ok'] || !is_array($resUpd['body']) || empty($resUpd['body']['success'])) {
+                    $msg = 'No se pudo actualizar el perfil.';
+                    if (is_array($resUpd['body']) && isset($resUpd['body']['error']) && is_array($resUpd['body']['error']) && isset($resUpd['body']['error']['message']) && is_string($resUpd['body']['error']['message']) && trim($resUpd['body']['error']['message']) !== '') {
+                        $msg = trim($resUpd['body']['error']['message']);
+                    } elseif (is_array($resUpd['body']) && isset($resUpd['body']['mensaje']) && is_string($resUpd['body']['mensaje']) && trim($resUpd['body']['mensaje']) !== '') {
+                        $msg = trim($resUpd['body']['mensaje']);
+                    }
+                    $this->_view->_error = $msg;
+                } else {
+                    $msg = 'Perfil actualizado.';
+                    if (is_array($resUpd['body']) && isset($resUpd['body']['mensaje']) && is_string($resUpd['body']['mensaje']) && trim($resUpd['body']['mensaje']) !== '') {
+                        $msg = trim($resUpd['body']['mensaje']);
+                    }
+                    $this->_view->_success = $msg;
+                }
+            }
+
+            $resProf = $this->callJsonApi($urlProfile, $headers, ['id' => $userId]);
+            if ($debugEnabled) {
+                $dbg['profile'] = [
+                    'url' => $urlProfile,
+                    'http_status' => $resProf['status'],
+                    'error' => $resProf['error'],
+                    'raw_body' => $resProf['body'],
+                    'payload' => ['id' => $userId],
+                ];
+            }
+            if ($resProf['ok'] && is_array($resProf['body']) && isset($resProf['body']['data']) && is_array($resProf['body']['data'])) {
+                $profile = $resProf['body']['data'];
+            }
+        } else {
+            $this->_view->_error = 'Sesión inválida. Inicia sesión de nuevo.';
+        }
+
+        $this->_view->profile = $profile;
+        if ($debugEnabled) {
+            $this->_view->debug_profile_api = $dbg + [
+                'session' => [
+                    'has_token' => ($token !== ''),
+                    'cv_usuario' => $userId,
+                ],
+            ];
+        }
         $this->_view->renderizar(array('@personas/recarUser.phtml/miperfil'));
     }
 

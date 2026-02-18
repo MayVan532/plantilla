@@ -4,15 +4,33 @@
   	public static function run(Request $peticion){
   		$modulo = $peticion->getModulo();
   		// Datos base del request
-  		$ctrlBase = $peticion->getControlador();
-  		$metodo   = $peticion->getMetodo();
-  		$args     = $peticion->getArgs();
+		$ctrlBase = $peticion->getControlador();
+		$metodo   = $peticion->getMetodo();
+		$args     = $peticion->getArgs();
 
-  		// Mapear rutas de Personas sin prefijo de controlador
-  		// /cobertura, /compatibilidad, /estatusenvio, /apn, /faq, /quienessomos, /portabilidad, /recargas, /recargar_empresas, /contacto
-  		$personasMap = array('cobertura','compatibilidad','estatusenvio','apn','faq','quienessomos','portabilidad','recargas','recargar_empresas','contacto');
-  		if (in_array($ctrlBase, $personasMap)) {
-  			$controllerName = 'personas';
+		// Alias del panel: /usuarios[/Seccion]
+		// El router original interpreta /usuarios/Recargar como controlador=usuarios, metodo=Recargar.
+		// Aquí lo normalizamos a personasController->usuarios('Recargar').
+		if ($ctrlBase === 'usuarios') {
+			$section = $metodo;
+			$metodo = 'usuarios';
+			if (is_string($section) && $section !== '' && $section !== 'index') {
+				array_unshift($args, $section);
+			}
+			$ctrlBase = 'personas';
+		}
+
+		// Alias de registro: /registro -> loginController->registro
+		if ($ctrlBase === 'registro' || $ctrlBase === 'register') {
+			$ctrlBase = 'login';
+			$metodo = 'registro';
+		}
+
+		// Mapear rutas de Personas sin prefijo de controlador
+		// /cobertura, /compatibilidad, /estatusenvio, /apn, /faq, /quienessomos, /portabilidad, /recargas, /recargar_empresas, /contacto
+		$personasMap = array('cobertura','compatibilidad','estatusenvio','apn','faq','quienessomos','portabilidad','recargas','recargar_empresas','contacto','usuarios');
+		if (in_array($ctrlBase, $personasMap)) {
+			$controllerName = 'personas';
   			$metodo = $ctrlBase ?: 'index';
   		} else {
   			$controllerName = $ctrlBase;

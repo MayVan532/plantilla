@@ -135,14 +135,11 @@
                           <!-- Sin logo en Empresas: no mostrar texto de fallback -->
                           <span style="display:block; height:24px;"></span>
                       <?php } else { ?>
-                          <h1 style="color:#fff; font-weight:700; letter-spacing:1px;">LIKEPHONE</h1>
+                          
                       <?php } ?>
                   <?php } ?>
               </a>
-              <p style="line-height:1.6; opacity:0.9; font-size:14px;">
-                  ¡Con LikePhone, la mejor red de telefonía está en tus manos! Gestiona tu línea de forma 
-                  rápida, sencilla y segura. Recargas, portabilidad, planes, saldo y más.
-              </p>
+              
             <?php } ?>
 
             <?php 
