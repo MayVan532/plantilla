@@ -135,7 +135,8 @@ class CmsRepository
                 $q = $conn->table('bloques_cms');
                 $baseFilter($q);
                 $q->where('tipo_bloque', $coords['tipo_bloque']);
-                $row = $q->orderBy('orden','asc')->first();
+                // Prefer latest block when multiple match (matches user's SQL usage)
+                $row = $q->orderBy('id_bloque','desc')->first();
                 if ($row) { return (int)$row->id_bloque; }
             } catch (\Throwable $e) {}
         }

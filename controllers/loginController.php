@@ -23,6 +23,23 @@ class loginController extends Controller
     return rtrim((string)$baseUrl, '/');
   }
 
+  protected function extractApiMessage(array $body, string $fallback): string
+  {
+    $msg = '';
+    if (isset($body['mensaje']) && is_string($body['mensaje']) && trim($body['mensaje']) !== '') {
+      $msg = trim($body['mensaje']);
+    } elseif (isset($body['message']) && is_string($body['message']) && trim($body['message']) !== '') {
+      $msg = trim($body['message']);
+    } elseif (isset($body['data']['mensaje']) && is_string($body['data']['mensaje']) && trim($body['data']['mensaje']) !== '') {
+      $msg = trim($body['data']['mensaje']);
+    } elseif (isset($body['data']['message']) && is_string($body['data']['message']) && trim($body['data']['message']) !== '') {
+      $msg = trim($body['data']['message']);
+    } elseif (isset($body['error']['message']) && is_string($body['error']['message']) && trim($body['error']['message']) !== '') {
+      $msg = trim($body['error']['message']);
+    }
+    return ($msg !== '' ? $msg : $fallback);
+  }
+
   protected function getOtpConfig(): array
   {
     $baseUrl = null;
@@ -233,6 +250,42 @@ class loginController extends Controller
     ];
     try {
       $headers = ['Authorization: Bearer '.$token];
+      $res = $this->callJsonApi($url, $headers, $payload);
+      $debug['http_status'] = $res['status'] ?? null;
+      $debug['error'] = $res['error'] ?? null;
+      if (array_key_exists('body', $res)) {
+        $debug['raw_body'] = $res['body'];
+      }
+      if (isset($res['raw_headers']) && is_string($res['raw_headers'])) {
+        $debug['raw_headers'] = $res['raw_headers'];
+      }
+      // Devolver el body parseado aunque el status sea de error, para exponer mensajes del API
+      if (is_array($res['body'])) {
+        return [$res['body'], $debug];
+      }
+      return [null, $debug];
+    } catch (\Throwable $e) {
+      $debug['exception'] = $e->getMessage();
+      return [null, $debug];
+    }
+  }
+
+  protected function verifyAccount(string $token, string $telefono, string $email, string $codigoConvenio = ''): array
+  {
+    $url = $this->getWlApiBaseUrl().'/account/verify';
+    $debug = [
+      'step' => 'verify_account',
+      'url'  => $url,
+    ];
+    try {
+      $headers = ['Authorization: Bearer '.$token];
+      $payload = [
+        'numero_telefono' => $telefono,
+        'email'           => $email,
+      ];
+      if (trim($codigoConvenio) !== '') {
+        $payload['codigo_convenio'] = $codigoConvenio;
+      }
       $res = $this->callJsonApi($url, $headers, $payload);
       $debug['http_status'] = $res['status'] ?? null;
       $debug['error'] = $res['error'] ?? null;
@@ -734,13 +787,28 @@ class loginController extends Controller
         exit;
       }
 
-      $otpDebug = [];
-      [$otpOk, $otpDbg] = $this->otpSend($tel);
-      $otpDebug['resend'] = $otpDbg;
-      $this->_view->debug_otp = $otpDebug;
-
-      if (!$otpOk) {
-        $this->_view->_error = 'No se pudo reenviar el código. Intenta de nuevo.';
+      // Reenvío ahora también vía WL /account/verify (con Bearer token)
+      $email = (string)($pending['email'] ?? '');
+      $conv  = (string)($pending['codigo_convenio'] ?? '');
+      $creds = $this->getEmpresaApiCredentialsForCurrentPage();
+      if (!$creds) {
+        $this->_view->_error = 'Credenciales API no configuradas para este cliente';
+        $vistas = array('registro');
+        $this->_view->renderizar($vistas);
+        exit;
+      }
+      [$token, $authDbg] = $this->fetchWlToken($creds);
+      $this->_view->debug_auth_api = ['auth' => $authDbg];
+      if (!$token) {
+        $this->_view->_error = 'No se pudo obtener token';
+        $vistas = array('registro');
+        $this->_view->renderizar($vistas);
+        exit;
+      }
+      [$verifyBody, $verifyDbg] = $this->verifyAccount($token, $tel, $email, $conv);
+      $this->_view->debug_verify_api = $verifyDbg;
+      if (!$verifyBody || !is_array($verifyBody) || empty($verifyBody['success'])) {
+        $this->_view->_error = $this->extractApiMessage(is_array($verifyBody)?$verifyBody:[], 'No se pudo reenviar el código. Intenta de nuevo.');
         $vistas = array('registro');
         $this->_view->renderizar($vistas);
         exit;
@@ -749,7 +817,11 @@ class loginController extends Controller
       $pending['otp_sent_at'] = time();
       Session::set('pending_register', $pending);
       $this->_view->pending_register = $pending;
-      $this->_view->_success = 'Te reenviamos el código.';
+      $succ = 'Te reenviamos el código.';
+      if (isset($verifyBody['mensaje']) && is_string($verifyBody['mensaje']) && trim($verifyBody['mensaje']) !== '') {
+        $succ = trim($verifyBody['mensaje']);
+      }
+      $this->_view->_success = $succ;
       $vistas = array('registro');
       $this->_view->renderizar($vistas);
       exit;
@@ -799,13 +871,26 @@ class loginController extends Controller
         exit;
       }
 
-      $otpDebug = [];
-      [$otpOk, $otpDbg] = $this->otpSend($tel);
-      $otpDebug['send'] = $otpDbg;
-      $this->_view->debug_otp = $otpDebug;
-
-      if (!$otpOk) {
-        $this->_view->_error = 'No se pudo enviar el código. Intenta de nuevo.';
+      // Nueva estrategia: validar datos y generar OTP vía WL /account/verify (con Bearer token)
+      $creds = $this->getEmpresaApiCredentialsForCurrentPage();
+      if (!$creds) {
+        $this->_view->_error = 'Credenciales API no configuradas para este cliente';
+        $vistas = array('registro');
+        $this->_view->renderizar($vistas);
+        exit;
+      }
+      [$token, $authDbg] = $this->fetchWlToken($creds);
+      $this->_view->debug_auth_api = ['auth' => $authDbg];
+      if (!$token) {
+        $this->_view->_error = 'No se pudo obtener token';
+        $vistas = array('registro');
+        $this->_view->renderizar($vistas);
+        exit;
+      }
+      [$verifyBody, $verifyDbg] = $this->verifyAccount($token, $tel, $email, $conv);
+      $this->_view->debug_verify_api = $verifyDbg;
+      if (!$verifyBody || !is_array($verifyBody) || empty($verifyBody['success'])) {
+        $this->_view->_error = $this->extractApiMessage(is_array($verifyBody)?$verifyBody:[], 'No se pudo enviar el código. Verifica tus datos.');
         $vistas = array('registro');
         $this->_view->renderizar($vistas);
         exit;
@@ -824,7 +909,11 @@ class loginController extends Controller
       Session::set('pending_register', $pendingRegister);
 
       $this->_view->pending_register = $pendingRegister;
-      $this->_view->_success = 'Te enviamos un código. Ingrésalo para continuar.';
+      $succ = 'Te enviamos un código. Ingrésalo para continuar.';
+      if (isset($verifyBody['mensaje']) && is_string($verifyBody['mensaje']) && trim($verifyBody['mensaje']) !== '') {
+        $succ = trim($verifyBody['mensaje']);
+      }
+      $this->_view->_success = $succ;
       $vistas = array('registro');
       $this->_view->renderizar($vistas);
       exit;

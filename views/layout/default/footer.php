@@ -25,12 +25,17 @@
       if (class_exists('CmsRepository')) {
         $r = CmsRepository::loadBlockByCoordsTypes([
           'id_pagina'=>$cmsPageId,
-          'id_seccion'=>$sec,
           'tipo_bloque'=>$tipo,
           'visible'=>1,
-        ], ['imagen','link','social','texto','correo','telefono'], 1);
+        ], ['imagen','link','social','texto','correo','telefono','text_logo'], 1);
         $by = $r['byType'] ?? [];
-        $F_logo = isset($by['imagen'][0]) ? ($by['imagen'][0]['contenido'] ?? null) : null;
+        $F_logo = null;
+        if (isset($by['imagen'][0])) {
+          $F_logo = is_array($by['imagen'][0]) ? ($by['imagen'][0]['contenido'] ?? null) : (string)$by['imagen'][0];
+        }
+        if (empty($this->footer_logo_text) && isset($by['text_logo'][0])) {
+          $this->footer_logo_text = is_array($by['text_logo'][0]) ? trim((string)($by['text_logo'][0]['contenido'] ?? '')) : trim((string)$by['text_logo'][0]);
+        }
         foreach (($by['link'] ?? []) as $it) { $t = trim((string)($it['contenido'] ?? '')); $u = trim((string)($it['link'] ?? '')); if ($t!=='' && $u!=='') { $F_docs[] = ['t'=>$t,'u'=>$u]; } }
         foreach (($by['social'] ?? []) as $it) { $name=strtolower(trim((string)($it['contenido'] ?? ''))); $lnk=trim((string)($it['link'] ?? '')); if ($name && $lnk) { $F_social[$name]=$lnk; } }
         foreach (($by['texto'] ?? []) as $it) { $txt=trim((string)($it['contenido'] ?? '')); if ($F_aviso==='' && preg_match('/aviso\s+de\s+privacidad/i',$txt)) { $F_aviso=$txt; continue; } if ($F_copy==='' && preg_match('/copyright/i',$txt)) { $F_copy=$txt; continue; } if ($F_tel==='' && preg_match('/\+?\d[\d\s\.-]{6,}/',$txt)) { $F_tel=$txt; continue; } }
@@ -139,7 +144,16 @@
                       <?php } ?>
                   <?php } ?>
               </a>
-              
+              <?php 
+                $logoTxt = isset($this->footer_logo_text) ? trim((string)$this->footer_logo_text) : '';
+                if ($logoTxt !== '') { ?>
+                  <p style="line-height:1.7; opacity:0.9; font-size:14px; text-align:center; margin:10px auto 14px; max-width:320px; color:#e6f5ff;">
+                    <?php echo htmlspecialchars($logoTxt); ?>
+                  </p>
+              <?php } else { ?>
+                  <div class="fp-skeleton fp-ln w2" style="margin:10px auto 14px; width:90%;"></div>
+              <?php } ?>
+
             <?php } ?>
 
             <?php 
@@ -445,6 +459,7 @@
 <?php 
   $dbg = [
     'logo' => $F_logo,
+    'logo_text' => isset($this->footer_logo_text) ? $this->footer_logo_text : null,
     'docs' => $F_docs,
     'social' => $F_social,
     'tel' => $F_tel,
