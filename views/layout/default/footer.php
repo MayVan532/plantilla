@@ -13,6 +13,7 @@
   $F_mail   = isset($this->footer_mail) ? $this->footer_mail : '';
   $F_copy   = isset($this->footer_copy) ? $this->footer_copy : '';
   $F_addr   = isset($this->footer_addr) ? $this->footer_addr : '';
+  $F_logo_text = isset($this->footer_logo_text) ? trim((string)$this->footer_logo_text) : '';
   $cmsPageId = isset($this->cms_page_id) ? (int)$this->cms_page_id : (defined('CMS_PAGE_ID') ? (int)CMS_PAGE_ID : 1);
 
   if ($F_logo===null && empty($F_docs) && empty($F_social)) {
@@ -33,14 +34,51 @@
         if (isset($by['imagen'][0])) {
           $F_logo = is_array($by['imagen'][0]) ? ($by['imagen'][0]['contenido'] ?? null) : (string)$by['imagen'][0];
         }
-        if (empty($this->footer_logo_text) && isset($by['text_logo'][0])) {
-          $this->footer_logo_text = is_array($by['text_logo'][0]) ? trim((string)($by['text_logo'][0]['contenido'] ?? '')) : trim((string)$by['text_logo'][0]);
+        // Primero: resolvemos siempre text_logo directo por id_bloque (fuente autoritativa)
+        if (isset($r['block']) && $r['block'] && isset($r['block']->id_bloque)) {
+          try {
+            $txtItems = CmsRepository::getBlockElements((int)$r['block']->id_bloque, 'text_logo', 1);
+            if (is_array($txtItems) && isset($txtItems[0]) && trim((string)$txtItems[0]) !== '') {
+              $F_logo_text = trim((string)$txtItems[0]);
+            }
+          } catch (\Throwable $e) {}
         }
+        // Segundo: si no quedó, intentamos byType como respaldo
+        if ($F_logo_text === '' && isset($by['text_logo'][0])) {
+          $F_logo_text = is_array($by['text_logo'][0]) ? trim((string)($by['text_logo'][0]['contenido'] ?? '')) : trim((string)$by['text_logo'][0]);
+        }
+        // Sincroniza con la variable de la vista para futuras lecturas
+        $this->footer_logo_text = $F_logo_text;
         foreach (($by['link'] ?? []) as $it) { $t = trim((string)($it['contenido'] ?? '')); $u = trim((string)($it['link'] ?? '')); if ($t!=='' && $u!=='') { $F_docs[] = ['t'=>$t,'u'=>$u]; } }
         foreach (($by['social'] ?? []) as $it) { $name=strtolower(trim((string)($it['contenido'] ?? ''))); $lnk=trim((string)($it['link'] ?? '')); if ($name && $lnk) { $F_social[$name]=$lnk; } }
         foreach (($by['texto'] ?? []) as $it) { $txt=trim((string)($it['contenido'] ?? '')); if ($F_aviso==='' && preg_match('/aviso\s+de\s+privacidad/i',$txt)) { $F_aviso=$txt; continue; } if ($F_copy==='' && preg_match('/copyright/i',$txt)) { $F_copy=$txt; continue; } if ($F_tel==='' && preg_match('/\+?\d[\d\s\.-]{6,}/',$txt)) { $F_tel=$txt; continue; } }
         if (!$F_mail && !empty($by['correo'][0]['contenido'])) { $F_mail = trim((string)$by['correo'][0]['contenido']); }
         if (!$F_tel  && !empty($by['telefono'][0]['contenido'])) { $F_tel = trim((string)$by['telefono'][0]['contenido']); }
+      }
+    } catch (\Throwable $e) {}
+  }
+?>
+<?php
+  if (trim((string)$F_logo_text) === '') {
+    try {
+      if (!class_exists('CmsRepository')) { require_once ROOT.'models'.DS.'CmsRepository.php'; }
+      if (class_exists('CmsRepository')) {
+        $uri = $_SERVER['REQUEST_URI'] ?? '';
+        $tipo = 'footer';
+        if (preg_match('#/(empresas)(/|$)#i', $uri)) { $tipo = 'footer_e'; }
+        elseif (preg_match('#/(likecheck)(/|$)#i', $uri)) { $tipo = 'footer_l'; }
+        $r2 = CmsRepository::loadBlockByCoordsTypes([
+          'id_pagina' => $cmsPageId,
+          'tipo_bloque' => $tipo,
+          'visible' => 1,
+        ], ['text_logo'], 1);
+        if (isset($r2['block']) && $r2['block'] && isset($r2['block']->id_bloque)) {
+          $txt2 = CmsRepository::getBlockElements((int)$r2['block']->id_bloque, 'text_logo', 1);
+          if (is_array($txt2) && isset($txt2[0]) && trim((string)$txt2[0]) !== '') {
+            $F_logo_text = trim((string)$txt2[0]);
+            $this->footer_logo_text = $F_logo_text;
+          }
+        }
       }
     } catch (\Throwable $e) {}
   }
@@ -145,7 +183,7 @@
                   <?php } ?>
               </a>
               <?php 
-                $logoTxt = isset($this->footer_logo_text) ? trim((string)$this->footer_logo_text) : '';
+                $logoTxt = isset($F_logo_text) ? trim((string)$F_logo_text) : '';
                 if ($logoTxt !== '') { ?>
                   <p style="line-height:1.7; opacity:0.9; font-size:14px; text-align:center; margin:10px auto 14px; max-width:320px; color:#e6f5ff;">
                     <?php echo htmlspecialchars($logoTxt); ?>
