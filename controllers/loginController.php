@@ -817,11 +817,6 @@ class loginController extends Controller
       $pending['otp_sent_at'] = time();
       Session::set('pending_register', $pending);
       $this->_view->pending_register = $pending;
-      $succ = 'Te reenviamos el código.';
-      if (isset($verifyBody['mensaje']) && is_string($verifyBody['mensaje']) && trim($verifyBody['mensaje']) !== '') {
-        $succ = trim($verifyBody['mensaje']);
-      }
-      $this->_view->_success = $succ;
       $vistas = array('registro');
       $this->_view->renderizar($vistas);
       exit;
@@ -909,11 +904,6 @@ class loginController extends Controller
       Session::set('pending_register', $pendingRegister);
 
       $this->_view->pending_register = $pendingRegister;
-      $succ = 'Te enviamos un código. Ingrésalo para continuar.';
-      if (isset($verifyBody['mensaje']) && is_string($verifyBody['mensaje']) && trim($verifyBody['mensaje']) !== '') {
-        $succ = trim($verifyBody['mensaje']);
-      }
-      $this->_view->_success = $succ;
       $vistas = array('registro');
       $this->_view->renderizar($vistas);
       exit;

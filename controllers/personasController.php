@@ -935,7 +935,7 @@ class personasController extends Controller
             try { $this->_view->qs_imgbtn_link = CmsRepository::getFirstLinkForType($id19, 'boton', 1); }
             catch (\Throwable $e) { $this->_view->qs_imgbtn_link = null; }
             $id20 = $this->cmsResolveId($PESTANA, 'Cobertura', 'titulo_gif', $SUB);
-            $this->_view->qs_titulogif = CmsRepository::loadBlockByIdTypes($id20, ['titulo','imagen'], 1)['byType'] ?? [];
+            $this->_view->qs_titulogif = CmsRepository::loadBlockByIdTypes($id20, ['titulo','imagen','texto'], 1)['byType'] ?? [];
             $id21 = $this->cmsResolveId($PESTANA, 'Compatibilidad', 'imagen_texto_botonlink', $SUB);
             $this->_view->qs_imgtextolink = CmsRepository::loadBlockByIdTypes($id21, ['titulo','subtitulo','imagen','texto','boton','link'], 1)['byType'] ?? [];
         } catch (\Throwable $e) {}

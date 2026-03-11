@@ -160,9 +160,15 @@
       <div style="height:40px; width:240px; background:#e6eef7; border-radius:10px; margin:0 auto 12px;"></div>
       <?php } ?>
       <div style="width:52px; height:3px; background:#0ea5a6; opacity:.25; margin:0 auto 12px; border-radius:2px;"></div>
-      <p style="max-width:720px; margin:8px auto 16px; font-size:16px; color:#556070;">
-        ¿Quieres una experiencia LikeLover? Consulta nuestra red de cobertura con gran alcance en el país.
-      </p>
+      <?php 
+        $txtCob = isset($qs_cob['texto'][0]) && is_string($qs_cob['texto'][0]) ? trim($qs_cob['texto'][0]) : '';
+        if ($txtCob !== '') { ?>
+          <p style="max-width:720px; margin:8px auto 16px; font-size:16px; color:#556070;">
+            <?php echo htmlspecialchars($txtCob); ?>
+          </p>
+      <?php } else { ?>
+          <div style="height:12px; width:70%; max-width:720px; background:#e9edf1; border-radius:6px; margin:8px auto 16px;"></div>
+      <?php } ?>
       <div class="d-flex align-items-center contact-form default-form" style="max-width: 600px; margin: 12px auto 70px; gap:12px;">
         <div class="spin1 spinner-border text-success" role="status" style="display:none; margin-right: 10px;">
           <div class="spinner"></div>
