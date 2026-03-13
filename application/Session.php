@@ -4,9 +4,19 @@ class Session
     public static function init()
     {
         //iniciar sesion 
+        // Cookie de sesión (duración de vida del navegador). Dominio por defecto: localhost
+        // Mantener compatibilidad con la configuración actual
         session_set_cookie_params(0, '/', 'localhost');
         session_name('web_session');
         session_start();
+        // Tiempo de sesión por defecto (minutos) si no está definido en Config.php
+        if (!defined('SESSION_TIME')) {
+            define('SESSION_TIME', 30); // 30 minutos por defecto
+        }
+        // Inicializar marca de tiempo de actividad para soportar auto-cierre por inactividad
+        if (!isset($_SESSION['tiempo']) || empty($_SESSION['tiempo'])) {
+            $_SESSION['tiempo'] = time();
+        }
     }
 
     

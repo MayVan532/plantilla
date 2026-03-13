@@ -92,11 +92,11 @@
                 carousel.style.transform = `translateX(${-index * getSlideWidth()}px)`;
             }
             prev.addEventListener("click", () => {
-                if (index > 0) index--;
+                index = (index - 1 + slides.length) % slides.length;
                 updateCarousel();
             });
             next.addEventListener("click", () => {
-                if (index < slides.length - 1) index++;
+                index = (index + 1) % slides.length;
                 updateCarousel();
             });
             window.addEventListener('resize', updateCarousel);
@@ -110,25 +110,27 @@
 
 
 
-    <!-- PLAN ACTIVACIÓN (dinámico desde CMS) -->
+    <!-- PLAN ACTIVACIÓN (imagen desde API, textos/botones desde CMS) -->
     <?php
         $byType = isset($this->planActivacion) && is_array($this->planActivacion) ? $this->planActivacion : [];
+        $apiData = isset($this->planActivacionApi) && is_array($this->planActivacionApi) ? $this->planActivacionApi : [];
+        $apiImg  = isset($apiData['img']) && is_string($apiData['img']) && trim($apiData['img']) !== '' ? trim($apiData['img']) : null;
         $plan = [
-        'img'      => $byType['imagen'][0]    ?? null,
+        'img'      => null, // no usar imagen de CMS por petición del usuario
         'titulo'   => $byType['titulo'][0]    ?? null,
         'subtitulo'=> $byType['subtitulo'][0] ?? null,
         'texto'    => $byType['texto'][0]     ?? null,
         'botones'  => isset($byType['boton']) ? $byType['boton'] : [],
         ];
-        $showPlan = $plan['img'] || $plan['titulo'] || $plan['subtitulo'] || $plan['texto'] || !empty($plan['botones']);
+        $showPlan = $apiImg || $plan['titulo'] || $plan['subtitulo'] || $plan['texto'] || !empty($plan['botones']);
     ?>
     <?php if ($showPlan) { ?>
     <div class="plan-activacion" style="background:#ffffff; padding:40px 16px;">
         <div class="plan-card" style="max-width:1200px; margin:0 auto; display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap;">
             <!-- Imagen -->
-            <?php if (!empty($plan['img'])) { ?>
+            <?php if (!empty($apiImg)) { ?>
             <div class="plan-img" style="flex:1 1 420px; text-align:center;">
-                <img src="<?php echo htmlspecialchars($plan['img']); ?>" alt="Plan Activación"
+                <img src="<?php echo htmlspecialchars($apiImg); ?>" alt="Plan Activación"
                     style="width:100%; max-width:520px; border-radius:10px; box-shadow:0 10px 24px rgba(0,0,0,0.12);">
             </div>
             <?php } ?>
@@ -355,6 +357,44 @@
                     <div style="height:38px; width:120px; background:#e3e8ee; border-radius:8px;"></div>
                 </div>
             </div>
+        </div>
+    </div>
+    <?php } ?>
+
+
+
+    <?php
+        $planesPublic = isset($this->planesPublic) && is_array($this->planesPublic) ? $this->planesPublic : [];
+    ?>
+    <?php if (!empty($planesPublic)) { ?>
+    <div class="public-plans" style="background:#ffffff; padding:24px 16px;">
+        <div style="max-width:1200px; margin:0 auto; display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:18px;">
+            <?php foreach ($planesPublic as $plan) { 
+                $nombre   = isset($plan['nombre_comercial']) ? (string)$plan['nombre_comercial'] : '';
+                $vigencia = isset($plan['vigencia']) ? (string)$plan['vigencia'] : '';
+                $datosMb  = isset($plan['datos']) ? (string)$plan['datos'] : '';
+                $ticket   = isset($plan['ticket']) ? (string)$plan['ticket'] : '';
+            ?>
+            <div style="background:#fff; border:1px solid #e5e7eb; border-radius:10px; box-shadow:0 10px 24px rgba(0,0,0,0.06); overflow:hidden; display:flex; flex-direction:column;">
+                <div style="padding:16px 16px 8px; border-bottom:1px solid #eef2f7;">
+                    <div style="color:#0ea5a6; font-weight:800; text-transform:uppercase; font-size:14px;"><?php echo htmlspecialchars(strtoupper($nombre)); ?></div>
+                    <?php if ($vigencia !== '') { ?>
+                    <div style="color:#64748b; font-size:12px; margin-top:4px;">Vigencia <?php echo htmlspecialchars($vigencia); ?> días</div>
+                    <?php } ?>
+                </div>
+                <div style="padding:14px 16px; color:#334155; font-size:14px; line-height:1.6;">
+                    <?php if ($datosMb !== '') { ?>
+                    <div style="margin-bottom:6px;">Vigencia <?php echo htmlspecialchars($vigencia); ?> días, <?php echo htmlspecialchars($datosMb); ?> MB de datos</div>
+                    <?php } ?>
+                    <?php if ($ticket !== '') { ?>
+                    <div style="max-height:96px; overflow:auto; white-space:pre-wrap;"><?php echo htmlspecialchars($ticket); ?></div>
+                    <?php } ?>
+                </div>
+                <div style="padding:12px 16px; display:flex; justify-content:flex-end;">
+                    <a href="<?php echo BASE_URL; ?>recargas" style="background:#0ea5a6; color:#fff; text-decoration:none; padding:10px 14px; border-radius:8px; font-weight:700; box-shadow:0 6px 14px rgba(14,165,166,0.25);">Recargar</a>
+                </div>
+            </div>
+            <?php } ?>
         </div>
     </div>
     <?php } ?>

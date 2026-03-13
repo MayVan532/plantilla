@@ -12,11 +12,18 @@
 
           <div class="row">
             <div class="col-12 col-lg-7" style="margin-bottom:16px;">
+              <?php 
+                $apiAct = isset($this->planActivacionApi) && is_array($this->planActivacionApi) ? $this->planActivacionApi : [];
+                $apiImg = isset($apiAct['img']) && is_string($apiAct['img']) && trim($apiAct['img']) !== '' ? trim($apiAct['img']) : null;
+              ?>
               <div style="display:flex; flex-direction:column; align-items:center; gap:12px;">
-                <img src="<?php echo BASE_URL; ?>resources/assets/images/personas/planactivate.png" alt="Plan Activate" style="width:70%; height:auto; border-radius:18px; display:block;">
-
+                <?php if (!empty($apiImg)) { ?>
+                  <img src="<?php echo htmlspecialchars($apiImg); ?>" alt="Plan Activación" style="width:70%; height:auto; border-radius:18px; display:block; box-shadow:0 10px 24px rgba(0,0,0,.12);">
+                <?php } ?>
                 <a href="javascript:void(0);" class="comprar-btn" style="display:inline-flex; align-items:center; justify-content:center; padding:9px 24px; border-radius:6px; background:#00bcd4; color:#ffffff; font-size:14px; font-weight:700; text-decoration:none; box-shadow:0 10px 24px rgba(0,188,212,.45);">¡Contrata ahora!</a>
               </div>
+
+          
             </div>
             <div class="col-12 col-lg-5">
               <div style="display:flex; flex-direction:column; gap:12px;">

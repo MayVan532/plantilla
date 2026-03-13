@@ -182,3 +182,142 @@ HEADER_LOGO_DEBUG: <?php echo htmlspecialchars(json_encode($headerLogoDebug, JSO
     });
   })();
 </script>
+
+<script>
+  (function(){
+    try {
+      var SESSION_MINUTES = <?php echo (int)(defined('SESSION_TIME') ? SESSION_TIME : 15); ?>;
+      var LIMIT_MS = Math.max(1, SESSION_MINUTES) * 60 * 1000;
+
+      var logoutTimer = null;
+      var warnTimer = null;
+      var loggingOut = false;
+      var logoutDeadline = 0;
+
+      // UI de aviso (toast fijo, naranja, esquina inferior derecha)
+      var warnEl = document.createElement('div');
+      warnEl.setAttribute('id', 'inactivity-warning');
+      warnEl.setAttribute('role', 'alert');
+      warnEl.style.cssText = [
+        'position:fixed',
+        'right:24px',
+        'bottom:24px',
+        'left:auto',
+        'transform:none',
+        'background:linear-gradient(90deg,#f59e0b,#f97316)', // naranja
+        'color:#fff',
+        'padding:12px 16px',
+        'border-radius:12px',
+        'font-size:14px',
+        'font-weight:700',
+        'box-shadow:0 10px 24px rgba(0,0,0,0.20)',
+        'border:1px solid rgba(255,255,255,0.18)',
+        'z-index:99999',
+        'display:none',
+        'max-width:380px',
+        'min-width:280px',
+        'text-align:left',
+        'letter-spacing:.2px',
+        'transition:opacity .2s ease, transform .2s ease',
+        'opacity:0',
+        'transform:translateY(8px)',
+        'display:flex',
+        'align-items:center',
+        'gap:10px'
+      ].join(';');
+      warnEl.innerHTML = 'Se cerrará la sesión por inactividad en 30s...';
+      document.addEventListener('DOMContentLoaded', function(){
+        // Evitar duplicados si el script se carga dos veces
+        if (!document.getElementById('inactivity-warning')) {
+          document.body.appendChild(warnEl);
+        }
+      });
+
+      function showWarning(msg){
+        // Ícono inline de alerta
+        var icon = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" ' +
+                   'xmlns="http://www.w3.org/2000/svg" aria-hidden="true" ' +
+                   'style="flex:0 0 auto; margin-right:2px;">' +
+                   '<path d="M12 9v4" stroke="#fff" stroke-width="2" stroke-linecap="round" />' +
+                   '<circle cx="12" cy="17" r="1.4" fill="#fff" />' +
+                   '<path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3l-8.47-14.14a2 2 0 00-3.42 0z" ' +
+                   'stroke="rgba(255,255,255,.9)" stroke-width="1.2" fill="none"/></svg>';
+
+        warnEl.style.display = 'flex';
+        warnEl.innerHTML = icon + '<span style="display:inline-block;">' + msg + '</span>';
+        requestAnimationFrame(function(){
+          warnEl.style.opacity = '1';
+          warnEl.style.transform = 'translateY(0)';
+        });
+      }
+
+      function hideWarning(){
+        warnEl.style.opacity = '0';
+        warnEl.style.transform = 'translateY(8px)';
+        setTimeout(function(){ warnEl.style.display = 'none'; }, 180);
+      }
+
+      function autoLogout(){
+        if (loggingOut) return; loggingOut = true;
+        var logoutUrl = '<?php echo BASE_URL; ?>index/cerrar';
+        var redirectUrl = '<?php echo BASE_URL; ?>login';
+        try {
+          fetch(logoutUrl, { method:'GET', credentials:'include', cache:'no-store' })
+            .finally(function(){ window.location.replace(redirectUrl); });
+        } catch(e){ window.location.replace(redirectUrl); }
+      }
+
+      // Cuenta regresiva visible (segundos finales)
+      var countdownInterval = null;
+      function startCountdown(){
+        var secsLeft = Math.max(0, Math.ceil((logoutDeadline - Date.now())/1000));
+        function tick(){
+          secsLeft = Math.max(0, Math.ceil((logoutDeadline - Date.now())/1000));
+          showWarning('Se cerrará la sesión por inactividad en ' + secsLeft + 's...');
+          if (secsLeft <= 0) {
+            clearInterval(countdownInterval);
+            autoLogout();
+          }
+        }
+        tick();
+        clearInterval(countdownInterval);
+        countdownInterval = setInterval(tick, 1000);
+      }
+
+      function clearAllTimers(){
+        if (logoutTimer) clearTimeout(logoutTimer);
+        if (warnTimer) clearTimeout(warnTimer);
+        if (countdownInterval) clearInterval(countdownInterval);
+      }
+
+      function armTimers(){
+        clearAllTimers();
+        hideWarning();
+        logoutDeadline = Date.now() + LIMIT_MS;
+
+        // Programar logout exacto
+        logoutTimer = setTimeout(autoLogout, LIMIT_MS);
+
+        // Aviso 30s antes (o inmediato si LIMIT_MS <= 30s)
+        var warnLead = 30000;
+        var warnDelay = LIMIT_MS > warnLead ? (LIMIT_MS - warnLead) : 0;
+        warnTimer = setTimeout(function(){
+          startCountdown();
+        }, warnDelay);
+      }
+
+      // Arranca y reprograma con actividad
+      armTimers();
+      ['mousemove','keydown','click','touchstart','touchmove','scroll'].forEach(function(evt){
+        document.addEventListener(evt, armTimers, { passive: true });
+      });
+
+      // Reprograma al volver visible para evitar desfases
+      document.addEventListener('visibilitychange', function(){
+        if (document.visibilityState === 'visible') {
+          armTimers();
+        }
+      });
+    } catch(e) {}
+  })();
+</script>

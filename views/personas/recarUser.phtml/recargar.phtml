@@ -8,6 +8,67 @@
         <div style="padding:16px 24px 24px 24px;">
           <div style="font-size:18px; font-weight:600; color:#111827; margin-bottom:14px; text-align:left;">Recargar</div>
           <div style="background:#ffffff; border-radius:18px; padding:24px; box-shadow:0 18px 40px rgba(15,23,42,.08);">
+            <?php if (isset($_GET['debugcms']) && $_GET['debugcms'] == '1') { 
+              $dbg = isset($this->planesUserDebug) ? $this->planesUserDebug : []; 
+              $cnt = isset($this->planesUser) && is_array($this->planesUser) ? count($this->planesUser) : 0;
+            ?>
+            <div style="background:#f8fafc;border:1px solid #e2e8f0;color:#0f172a;font-size:12px;padding:10px;border-radius:6px;margin:0 0 12px 0;">
+              <strong>RECARGAR DEBUG</strong>
+              <pre style="white-space:pre-wrap;margin:6px 0;">
+<?php echo htmlspecialchars(json_encode([
+  'user_id' => isset($dbg['user_id']) ? $dbg['user_id'] : null,
+  'http_status' => isset($dbg['http_status']) ? $dbg['http_status'] : (isset($dbg['status']) ? $dbg['status'] : null),
+  'error' => isset($dbg['error']) ? $dbg['error'] : null,
+  'planes_count' => $cnt,
+], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)); ?>
+              </pre>
+            </div>
+            <?php } ?>
+            <?php $planesUser = isset($this->planesUser) && is_array($this->planesUser) ? $this->planesUser : []; ?>
+            <?php if (!empty($planesUser)) { ?>
+            <div class="container-fluid" style="padding:0;">
+              <div class="row" style="margin-left:-8px; margin-right:-8px;">
+                <?php foreach ($planesUser as $plan) { 
+                  $nombre   = isset($plan['nombre_comercial']) ? (string)$plan['nombre_comercial'] : '';
+                  $vigencia = isset($plan['vigencia']) ? (string)$plan['vigencia'] : '';
+                  $datosMb  = isset($plan['datos']) ? (string)$plan['datos'] : '';
+                  $ticket   = isset($plan['ticket']) ? (string)$plan['ticket'] : '';
+                ?>
+                <div class="col-12 col-sm-6 col-md-3" style="padding:8px;">
+                  <div style="background:#f9fafb; border-radius:16px; overflow:hidden; box-shadow:0 6px 16px rgba(15,23,42,.06); height:100%; display:flex; flex-direction:column;">
+                    <?php 
+                      $imgFile = '';
+                      if (!empty($plan['imagen_web1'])) { $imgFile = (string)$plan['imagen_web1']; }
+                      elseif (!empty($plan['imagen_movil1'])) { $imgFile = (string)$plan['imagen_movil1']; }
+                      if ($imgFile !== '') {
+                        $imgBase = defined('WL_IMG_BASE_URL') ? WL_IMG_BASE_URL : (BASE_URL . 'public/img/');
+                        $imgSrc = rtrim($imgBase, '/').'/'. rawurlencode($imgFile);
+                        echo '<img src="' . htmlspecialchars($imgSrc) . '" alt="' . htmlspecialchars($nombre ?: 'Plan') . '" style="width:100%; height:180px; object-fit:cover; display:block;">';
+                      }
+                    ?>
+                    <div style="padding:12px 14px 8px 14px; border-bottom:1px solid #eef2f7;">
+                      <div style="color:#0ea5a6; font-weight:800; text-transform:uppercase; font-size:14px;"><?php echo htmlspecialchars(strtoupper($nombre)); ?></div>
+                      <?php if ($vigencia !== '') { ?>
+                      <div style="color:#64748b; font-size:12px; margin-top:4px;">Vigencia <?php echo htmlspecialchars($vigencia); ?> días</div>
+                      <?php } ?>
+                    </div>
+                    <div style="padding:12px 14px 16px 14px; flex:1; display:flex; flex-direction:column;">
+                      <?php if ($datosMb !== '') { ?>
+                      <div style="font-size:13px; color:#111827; margin-bottom:8px;">Incluye <?php echo htmlspecialchars($datosMb); ?> MB de datos</div>
+                      <?php } ?>
+                      <?php if ($ticket !== '') { ?>
+                      <div style="font-size:12px; color:#475569; max-height:128px; overflow:auto; white-space:pre-wrap;"><?php echo htmlspecialchars($ticket); ?></div>
+                      <?php } ?>
+                      <div style="margin-top:auto;">
+                        <a href="#" class="lkp-recargar-btn" style="display:inline-block; width:100%; text-align:center; padding:8px 10px; border-radius:4px; background:#00c8f8; color:#ffffff; font-size:13px; font-weight:600; text-decoration:none; box-shadow:0 4px 12px rgba(34,197,235,0.35);">Recargar</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <?php } ?>
+              </div>
+            </div>
+            <?php } else if (false) { ?>
             <style>
               .tooltip-container {
                 position: relative;
@@ -363,6 +424,7 @@
                 </div>
 
               </div>
+            <?php } ?>
             </div>
           </div>
         </div>
@@ -430,13 +492,13 @@
   </div>
 
   <!-- Modal forma de pago -->
-  <div id="lkpPagoModal" class="lkp-modal-overlay">
-    <div class="lkp-modal">
-      <div class="lkp-modal-header">Elige tu forma de pago</div>
-      <div class="lkp-modal-body">
-        <button type="button" class="lkp-modal-btn lkp-modal-btn-primary" id="lkpPagarTarjeta">Pagar con Tarjeta</button>
-        <button type="button" class="lkp-modal-btn lkp-modal-btn-primary" id="lkpPagarEfectivo">Pagar en Efectivo</button>
-        <button type="button" class="lkp-modal-btn lkp-modal-btn-secondary" id="lkpCerrarModal">Cerrar</button>
+  <div id="lkpPagoModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:10000; align-items:center; justify-content:center; padding:16px;">
+    <div class="lkp-modal" style="background:#ffffff; border-radius:10px; width:100%; max-width:420px; overflow:hidden; box-shadow:0 12px 28px rgba(0,0,0,0.20);">
+      <div class="lkp-modal-header" style="padding:16px 18px; font-weight:700; color:#0f172a; border-bottom:1px solid #e5e7eb; text-align:center;">Elige tu forma de pago</div>
+      <div class="lkp-modal-body" style="padding:18px; display:flex; flex-direction:column; gap:12px;">
+        <button type="button" class="lkp-modal-btn lkp-modal-btn-primary" id="lkpPagarTarjeta" style="background:#00c8f8; color:#ffffff; border:none; border-radius:8px; padding:10px 14px; font-weight:700; cursor:pointer;">Pagar con Tarjeta</button>
+        <button type="button" class="lkp-modal-btn lkp-modal-btn-primary" id="lkpPagarEfectivo" style="background:#00c8f8; color:#ffffff; border:none; border-radius:8px; padding:10px 14px; font-weight:700; cursor:pointer;">Pagar en Efectivo</button>
+        <button type="button" class="lkp-modal-btn lkp-modal-btn-secondary" id="lkpCerrarModal" style="background:#e5e7eb; color:#0f172a; border:none; border-radius:8px; padding:10px 14px; font-weight:700; cursor:pointer;">Cerrar</button>
       </div>
     </div>
   </div>
@@ -450,10 +512,13 @@
       </div>
       <div style="padding:20px; display:grid; grid-template-columns: 1fr; gap:20px; align-items:start; overflow:auto;">
         <div style="display:grid; gap:16px;">
-          <div style="font-weight:700; color:#0f172a;">Seleccionar Número</div>
-          <select style="padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px; max-width:360px;">
-            <option>Selecciona tu número</option>
-          </select>
+          <div style="font-weight:700; color:#0f172a;">Número de teléfono (10 dígitos)</div>
+          <input type="tel" inputmode="numeric" pattern="[0-9]{10}" maxlength="10"
+                 placeholder="Número de teléfono (10 dígitos)"
+                 style="padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px; max-width:360px;" required>
+
+          <div style="font-weight:700; color:#0f172a;">Correo electrónico</div>
+          <input type="email" placeholder="correo electronico" style="padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px; max-width:360px;" required>
 
           <div style="color:#475569; font-size:14px; margin-top:6px;">
             Tiendas en las que podrás realizar tu pago en efectivo
@@ -482,12 +547,12 @@
 
       function abrirModal(event) {
         if (event) event.preventDefault();
-        modal.classList.add('lkp-open');
+        if (modal) { modal.style.display = 'flex'; }
       }
 
       function cerrarModal(event) {
         if (event) event.preventDefault();
-        modal.classList.remove('lkp-open');
+        if (modal) { modal.style.display = 'none'; }
       }
 
       function abrirTarjeta(event) {

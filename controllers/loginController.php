@@ -249,7 +249,7 @@ class loginController extends Controller
       'url'  => $url,
     ];
     try {
-      $headers = ['Authorization: Bearer '.$token];
+      $headers = ['Authorization: ' . TokenApiExterno::obtenerAuthorizationHeader()];
       $res = $this->callJsonApi($url, $headers, $payload);
       $debug['http_status'] = $res['status'] ?? null;
       $debug['error'] = $res['error'] ?? null;
@@ -278,7 +278,7 @@ class loginController extends Controller
       'url'  => $url,
     ];
     try {
-      $headers = ['Authorization: Bearer '.$token];
+      $headers = ['Authorization: ' . TokenApiExterno::obtenerAuthorizationHeader()];
       $payload = [
         'numero_telefono' => $telefono,
         'email'           => $email,
@@ -414,7 +414,7 @@ class loginController extends Controller
       'url'  => $url,
     ];
     try {
-      $headers = ['Authorization: Bearer '.$token];
+      $headers = ['Authorization: ' . TokenApiExterno::obtenerAuthorizationHeader()];
       $payload = [
         'numero_telefono' => $telefono,
         'password'        => $password,
@@ -693,7 +693,11 @@ class loginController extends Controller
           Session::set('nombre_usuario', $body['data']['nombre']);
         }
         if (isset($body['data']['id'])) {
-          Session::set('cv_usuario', $body['data']['id']);
+          $uid = $body['data']['id'];
+          Session::set('cv_usuario', $uid); // legado
+          // normalizados usados por el panel
+          Session::set('id', $uid);
+          Session::set('usuario_id', $uid);
         }
       }
       $op_extra = new CORE;
@@ -1024,6 +1028,9 @@ class loginController extends Controller
           }
           if (isset($loginBody['data']['id'])) {
             Session::set('cv_usuario', $loginBody['data']['id']);
+            // IDs de sesión normalizados para el frontend
+            Session::set('id', $loginBody['data']['id']);
+            Session::set('usuario_id', $loginBody['data']['id']);
           }
         }
         $op_extra = new CORE;

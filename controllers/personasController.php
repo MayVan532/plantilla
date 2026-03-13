@@ -19,6 +19,35 @@ class personasController extends Controller
         return rtrim((string)$baseUrl, '/');
     }
 
+    protected function fetchPlanesNew(?string $userId = null): array
+    {
+        $debug = [
+            'step' => 'getPlanes',
+            'url'  => $this->getWlApiBaseUrl().'/planes/getPlanes',
+        ];
+        try {
+            $headers = ['Authorization: ' . TokenApiExterno::obtenerAuthorizationHeader()];
+            $payload = [];
+            if (is_string($userId) && trim($userId) !== '') {
+                $payload['id'] = trim($userId);
+            }
+            $res = $this->callJsonApi($debug['url'], $headers, $payload);
+            $debug['http_status'] = $res['status'] ?? null;
+            $debug['error'] = $res['error'] ?? null;
+            if (!$res['ok'] || !is_array($res['body'])) {
+                $debug['raw_body'] = $res['body'] ?? null;
+                return [[], $debug];
+            }
+            $body = $res['body'];
+            $planes = isset($body['data']['planes']) && is_array($body['data']['planes']) ? $body['data']['planes'] : [];
+            $debug['planes_count'] = count($planes);
+            return [$planes, $debug];
+        } catch (\Throwable $e) {
+            $debug['exception'] = $e->getMessage();
+            return [[], $debug];
+        }
+    }
+
     public function __construct()
     {
         parent::__construct();
@@ -147,7 +176,7 @@ class personasController extends Controller
             'tipo_producto' => $tipoProducto,
         ];
         try {
-            $headers = ['Authorization: Bearer '.$token];
+            $headers = ['Authorization: ' . TokenApiExterno::obtenerAuthorizationHeader()];
             $payload = ['tipo_producto' => $tipoProducto];
             $res = $this->callJsonApi($debug['url'], $headers, $payload);
             $debug['http_status'] = $res['status'];
@@ -333,6 +362,16 @@ class personasController extends Controller
             $this->_view->planActivacion = $bloque2['byType'];
             $this->_view->debug_bloque2 = $bloque2['debug']; 
 
+            // Imagen del Plan de Activación desde API (sobrescribe la de CMS si existe)
+            try {
+                $api = $this->fetchPlanActivacion();
+                $this->_view->planActivacionApi = $api['data'];
+                $this->_view->planActivacionApiDebug = $api['debug'];
+            } catch (\Throwable $e) {
+                $this->_view->planActivacionApi = [];
+                $this->_view->planActivacionApiDebug = ['error' => $e->getMessage()];
+            }
+
             // Cargar datos del bloque 3: Cobertura (id resuelto)
             $id3 = $this->cmsResolveId($PESTANA, 'Cobertura', 'imagen_texto_botonlink', null);
             $bloque3 = CmsRepository::loadBlockByIdTypes($id3, ['titulo','subtitulo','texto','boton','imagen'], 1);
@@ -410,32 +449,7 @@ class personasController extends Controller
             $this->_view->Recargalikes = $bloque6['byType'];
             $this->_view->debug_bloque6 = $bloque6['debug']; 
 
-            // === Consumo de APIs de Socios Comerciales (B2B Telecom / empresa ligada a la página actual) ===
-            $apiDebug = ['step' => 'init', 'page_id' => $this->resolveCmsPageId()];
-            $empresaCreds = $this->getEmpresaApiCredentialsForCurrentPage();
-            if ($empresaCreds) {
-                $apiDebug['empresa'] = [
-                    'id_pagina'      => $empresaCreds['id_pagina'],
-                    'id_empresa'     => $empresaCreds['id_empresa'],
-                    'pagina_nombre'  => $empresaCreds['pagina_nombre'],
-                    'empresa_nombre' => $empresaCreds['empresa_nombre'],
-                ];
-                // 1) Obtener token
-                list($token, $authDbg) = $this->fetchSocioToken($empresaCreds);
-                $apiDebug['auth'] = $authDbg;
-                if ($token) {
-                    // 2) Obtener planes por tipo de producto (3)
-                    list($planes, $planesDbg) = $this->fetchPlanesByProductType($token, '3');
-                    $apiDebug['planes'] = $planesDbg;
-                    $this->_view->planesSocio = is_array($planes) ? $planes : [];
-                } else {
-                    $this->_view->planesSocio = [];
-                }
-            } else {
-                $apiDebug['empresa'] = 'no-credentials-for-page';
-                $this->_view->planesSocio = [];
-            }
-            $this->_view->planesSocioDebug = $apiDebug;
+            // (Inicio público) No se muestran listas de planes; solo Plan Activación (imagen la integraremos desde API aparte)
 
         } catch (\Throwable $e) {
             $debug['error'] = $e->getMessage();
@@ -445,6 +459,51 @@ class personasController extends Controller
         }
 
         $this->_view->renderizar(array('@personas/inicio'));
+    }
+
+    protected function fetchPlanActivacion(): array
+    {
+        $debug = [
+            'step' => 'getplanActivacion',
+            'url'  => $this->getWlApiBaseUrl().'/planes/getplanActivacion',
+        ];
+        try {
+            $headers = ['Authorization: ' . TokenApiExterno::obtenerAuthorizationHeader()];
+            $payload = [];
+            $res = $this->callJsonApi($debug['url'], $headers, $payload);
+            $debug['http_status'] = $res['status'] ?? null;
+            $debug['error'] = $res['error'] ?? null;
+            $data = [];
+            if ($res['ok'] && is_array($res['body'])) {
+                $body = $res['body'];
+                // Nuevo esquema: data.planes[0] contiene el plan de activación y sus imágenes
+                $planesNode = isset($body['data']) && is_array($body['data']) ? $body['data'] : [];
+                if (isset($planesNode['planes']) && is_array($planesNode['planes']) && count($planesNode['planes']) > 0) {
+                    $plan0 = $planesNode['planes'][0];
+                } else {
+                    // Compatibilidad con antiguo esquema (si viniera plano)
+                    $plan0 = $planesNode;
+                }
+                $imgFile = null;
+                // Preferir las primeras variantes por defecto
+                foreach (['imagen_web1','imagen_movil1','imagen_web2','imagen_movil2','imagen','url_imagen'] as $k) {
+                    if (isset($plan0[$k]) && is_string($plan0[$k]) && trim($plan0[$k]) !== '') { $imgFile = trim($plan0[$k]); break; }
+                }
+                $imgUrl = null;
+                if ($imgFile) {
+                    $base = defined('WL_IMG_BASE_URL') ? WL_IMG_BASE_URL : (defined('BASE_URL') ? BASE_URL.'public/img/' : '');
+                    // Asumimos que WL_IMG_BASE_URL ya incluye la subcarpeta correcta (p.ej., .../public/img/marcas_blancas/)
+                    $imgUrl = rtrim($base, '/').'/'.rawurlencode($imgFile);
+                }
+                $data = ['img' => $imgUrl, 'raw' => $plan0];
+            } else {
+                $debug['raw_body'] = $res['body'] ?? null;
+            }
+            return ['data' => $data, 'debug' => $debug];
+        } catch (\Throwable $e) {
+            $debug['exception'] = $e->getMessage();
+            return ['data' => [], 'debug' => $debug];
+        }
     }
 
     public function usuarios($section = null)
@@ -470,6 +529,33 @@ class personasController extends Controller
         $this->loadFooterPersonas();
         $this->_view->hideMainNav      = true; // sin header público
         $this->_view->hideGlobalFooter = true; // sin footer público
+        // Planes para el dashboard (requiere sesión), usando el nuevo endpoint
+        try {
+            $uid = class_exists('Session') ? (string)(Session::get('id') ?? '') : '';
+            $dbgUserHome = ['source' => 'usuarios-home', 'user_id' => $uid];
+            if ($uid === '') {
+                $this->_view->planesUser = [];
+                $dbgUserHome['error'] = 'missing-user-id';
+                $this->_view->planesUserDebug = $dbgUserHome;
+            } else {
+                list($planesUserHome, $dbgUserHomeCall) = $this->fetchPlanesNew($uid);
+                $dbgUserHome = array_merge($dbgUserHome, $dbgUserHomeCall);
+                $this->_view->planesUser = is_array($planesUserHome) ? $planesUserHome : [];
+                $this->_view->planesUserDebug = $dbgUserHome;
+            }
+        } catch (\Throwable $e) {
+            $this->_view->planesUser = [];
+            $this->_view->planesUserDebug = ['error' => $e->getMessage()];
+        }
+        // Cargar imagen de Plan Activación desde API para el panel (sin fallback)
+        try {
+            $api = $this->fetchPlanActivacion();
+            $this->_view->planActivacionApi = $api['data'];
+            $this->_view->planActivacionApiDebug = $api['debug'];
+        } catch (\Throwable $e) {
+            $this->_view->planActivacionApi = [];
+            $this->_view->planActivacionApiDebug = ['error' => $e->getMessage()];
+        }
         // Renderiza el panel de usuarios: views/personas/recarUser.phtml/usuarios.phtml
         $this->_view->renderizar(array('@personas/recarUser.phtml/usuarios'));
     }
@@ -481,6 +567,24 @@ class personasController extends Controller
         $this->loadFooterPersonas();
         $this->_view->hideMainNav      = true;
         $this->_view->hideGlobalFooter = true;
+        // Cargar planes para usuario logueado (sin fallback público)
+        try {
+            $uid = class_exists('Session') ? (string)(Session::get('id') ?? '') : '';
+            $dbgUser = ['source' => 'usuarios-recargar', 'user_id' => $uid];
+            if ($uid === '') {
+                $this->_view->planesUser = [];
+                $dbgUser['error'] = 'missing-user-id';
+                $this->_view->planesUserDebug = $dbgUser;
+            } else {
+                list($planesUser, $dbgUserCall) = $this->fetchPlanesNew($uid);
+                $dbgUser = array_merge($dbgUser, $dbgUserCall);
+                $this->_view->planesUser = is_array($planesUser) ? $planesUser : [];
+                $this->_view->planesUserDebug = $dbgUser;
+            }
+        } catch (\Throwable $e) {
+            $this->_view->planesUser = [];
+            $this->_view->planesUserDebug = ['error' => $e->getMessage()];
+        }
         $this->_view->renderizar(array('@personas/recarUser.phtml/recargar'));
     }
 
@@ -518,15 +622,16 @@ class personasController extends Controller
         $this->_view->_success = null;
 
         $token = class_exists('Session') ? (string)(Session::get('api_token') ?? '') : '';
-        $userId = class_exists('Session') ? (string)(Session::get('cv_usuario') ?? '') : '';
+        $userId = class_exists('Session') ? (string)(Session::get('id') ?? '') : '';
 
         $profile = null;
         $debugEnabled = (isset($_GET['debugcms']) && $_GET['debugcms'] === '1');
         $dbg = [];
 
-        if ($token !== '' && $userId !== '') {
+        // No dependemos de api_token, usamos TokenApiExterno para Authorization.
+        if ($userId !== '') {
             $urlProfile = $this->getWlApiBaseUrl().'/account/profile';
-            $headers = ['Authorization: Bearer '.$token];
+            $headers = ['Authorization: ' . TokenApiExterno::obtenerAuthorizationHeader()];
 
             if ($this->getInt('guardar_convenio') == 1) {
                 $codigoConvenio = trim((string)$this->getPostParam('codigo_convenio'));
@@ -1011,35 +1116,15 @@ class personasController extends Controller
             $this->_view->debug_bloque27 = $b27['debug'];
         } catch (\Throwable $e) {}
 
-        // === Consumo de APIs de Socios Comerciales (mismo flujo que en index) ===
+        // === Consumo de APIs: nuevo flujo con TokenApiExterno -> planes/getPlanes ===
         try {
-            $apiDebug = ['step' => 'init', 'page_id' => $this->resolveCmsPageId()];
-            $empresaCreds = $this->getEmpresaApiCredentialsForCurrentPage();
-            if ($empresaCreds) {
-                $apiDebug['empresa'] = [
-                    'id_pagina'      => $empresaCreds['id_pagina'],
-                    'id_empresa'     => $empresaCreds['id_empresa'],
-                    'pagina_nombre'  => $empresaCreds['pagina_nombre'],
-                    'empresa_nombre' => $empresaCreds['empresa_nombre'],
-                ];
-                // 1) Obtener token
-                list($token, $authDbg) = $this->fetchSocioToken($empresaCreds);
-                $apiDebug['auth'] = $authDbg;
-                if ($token) {
-                    // 2) Obtener planes por tipo de producto (3)
-                    list($planes, $planesDbg) = $this->fetchPlanesByProductType($token, '3');
-                    $apiDebug['planes'] = $planesDbg;
-                    $this->_view->planesSocio = is_array($planes) ? $planes : [];
-                } else {
-                    $this->_view->planesSocio = [];
-                }
-            } else {
-                $apiDebug['empresa'] = 'no-credentials-for-page';
-                $this->_view->planesSocio = [];
-            }
+            $apiDebug = ['step' => 'getPlanes', 'page_id' => $this->resolveCmsPageId()];
+            $uid = class_exists('Session') ? (string)(Session::get('id') ?? '') : '';
+            list($planes, $dbg) = $this->fetchPlanesNew($uid !== '' ? $uid : null);
+            $this->_view->planesSocio = is_array($planes) ? $planes : [];
+            $apiDebug['planes'] = $dbg;
             $this->_view->planesSocioDebug = $apiDebug;
         } catch (\Throwable $e) {
-            // En caso de falla, exponer estructuras vacías para que la vista no truene
             $this->_view->planesSocio = [];
             $this->_view->planesSocioDebug = ['error' => $e->getMessage()];
         }
