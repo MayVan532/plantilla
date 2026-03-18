@@ -917,10 +917,34 @@ class loginController extends Controller
       $codigo = trim((string)$this->getPostParam('codigo'));
       $pending = Session::get('pending_register');
       if (!is_array($pending)) {
-        $this->_view->_error = 'Primero solicita el código.';
-        $vistas = array('registro');
-        $this->_view->renderizar($vistas);
-        exit;
+        // Fallback: reconstruir pending desde POST si la sesión se perdió
+        $nombre  = trim((string)$this->getPostParam('nombre'));
+        $apPat   = trim((string)$this->getPostParam('apellido_paterno'));
+        $apMat   = trim((string)$this->getPostParam('apellido_materno'));
+        $email   = trim((string)$this->getPostParam('email'));
+        $pass    = (string)$this->getPostParam('password');
+        $tel     = trim((string)$this->getPostParam('numero_telefono'));
+        $conv    = trim((string)$this->getPostParam('codigo_convenio'));
+        $sentAtP = (int)$this->getPostParam('otp_sent_at');
+
+        if ($tel !== '' && $email !== '') {
+          $pending = [
+            'nombre'            => $nombre,
+            'apellido_paterno'  => $apPat,
+            'apellido_materno'  => $apMat,
+            'email'             => $email,
+            'password'          => $pass,
+            'numero_telefono'   => $tel,
+            'codigo_convenio'   => $conv,
+            'otp_sent_at'       => ($sentAtP > 0 ? $sentAtP : time()),
+          ];
+          Session::set('pending_register', $pending);
+        } else {
+          $this->_view->_error = 'Primero solicita el código.';
+          $vistas = array('registro');
+          $this->_view->renderizar($vistas);
+          exit;
+        }
       }
 
       $sentAt = isset($pending['otp_sent_at']) ? (int)$pending['otp_sent_at'] : 0;

@@ -350,6 +350,16 @@
 
             <input type="hidden" name="resend_otp" id="resend_otp" value="0">
 
+            <!-- Fallback: enviar datos originales como ocultos por si la sesión se pierde y hay que reconstruir pending_register en el servidor -->
+            <input type="hidden" name="nombre" value="<?php echo htmlspecialchars((string)($pending['nombre'] ?? ''), ENT_QUOTES, 'UTF-8'); ?>">
+            <input type="hidden" name="apellido_paterno" value="<?php echo htmlspecialchars((string)($pending['apellido_paterno'] ?? ''), ENT_QUOTES, 'UTF-8'); ?>">
+            <input type="hidden" name="apellido_materno" value="<?php echo htmlspecialchars((string)($pending['apellido_materno'] ?? ''), ENT_QUOTES, 'UTF-8'); ?>">
+            <input type="hidden" name="email" value="<?php echo htmlspecialchars((string)($pending['email'] ?? ''), ENT_QUOTES, 'UTF-8'); ?>">
+            <input type="hidden" name="password" value="<?php echo htmlspecialchars((string)($pending['password'] ?? ''), ENT_QUOTES, 'UTF-8'); ?>">
+            <input type="hidden" name="numero_telefono" value="<?php echo htmlspecialchars((string)($pending['numero_telefono'] ?? ''), ENT_QUOTES, 'UTF-8'); ?>">
+            <input type="hidden" name="codigo_convenio" value="<?php echo htmlspecialchars((string)($pending['codigo_convenio'] ?? ''), ENT_QUOTES, 'UTF-8'); ?>">
+            <input type="hidden" name="otp_sent_at" value="<?php echo (int)$sentAt; ?>">
+
             <div style="text-align:center; margin-top:6px;">
               <button type="submit" name="Submit"
                 style="min-width:150px; background:#00bcd4; color:#fff; border:none; padding:10px 28px; border-radius:6px; font-size:15px; cursor:pointer; font-weight:700; box-shadow:0 10px 30px rgba(0,188,212,0.45);">
