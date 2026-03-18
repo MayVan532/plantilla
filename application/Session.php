@@ -4,9 +4,15 @@ class Session
     public static function init()
     {
         //iniciar sesion 
-        // Cookie de sesión (duración de vida del navegador). Dominio por defecto: localhost
-        // Mantener compatibilidad con la configuración actual
-        session_set_cookie_params(0, '/', 'localhost');
+        // Configurar cookie de sesión con dominio dinámico según el host actual
+        $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+        // eliminar puerto si viene en el host
+        $host = preg_replace('/:\\d+$/', '', strtolower((string)$host));
+        // dominio para cookie: en localhost usar 'localhost'; en prod usar el host tal cual
+        $cookieDomain = ($host === 'localhost' || $host === '127.0.0.1') ? 'localhost' : $host;
+        $isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || (isset($_SERVER['SERVER_PORT']) && (string)$_SERVER['SERVER_PORT'] === '443');
+        // lifetime 0 (sesión de navegador), path '/', dominio dinámico, secure según protocolo, httponly true
+        session_set_cookie_params(0, '/', $cookieDomain, $isHttps, true);
         session_name('web_session');
         session_start();
         // Tiempo de sesión por defecto (minutos) si no está definido en Config.php

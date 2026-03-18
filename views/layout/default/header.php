@@ -331,6 +331,17 @@
     </head>
     <body>
         <?php $hideMainNav = !empty($this->hideMainNav); ?>
+        <?php
+          // Endurecer: si la ruta actual pertenece al panel (/usuarios...) ocultar siempre el header público
+          try {
+            $uriNow = strtolower($_SERVER['REQUEST_URI'] ?? '');
+            $pathNow = parse_url($uriNow, PHP_URL_PATH);
+            $basePathNow = rtrim(parse_url(BASE_URL, PHP_URL_PATH) ?: '', '/');
+            $relNow = preg_replace('#^'.preg_quote($basePathNow, '#').'#', '', $pathNow);
+            if ($relNow === '') { $relNow = '/'; }
+            if (strpos($relNow, '/usuarios') === 0) { $hideMainNav = true; }
+          } catch (\Throwable $e) {}
+        ?>
         <?php if (!$hideMainNav) { ?>
         <!-- Top Tabs Start -->
         <div class="container-fluid top-tabs">
