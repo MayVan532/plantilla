@@ -79,27 +79,52 @@
     </div>
     <script>
         (function() {
-            const carousel = document.getElementById("carousel");
+            var carousel = document.getElementById('carousel');
             if (!carousel) return;
-            const slides = carousel.querySelectorAll(".carousel-slide");
-            const prev = document.getElementById("prevBtn");
-            const next = document.getElementById("nextBtn");
-            let index = 0;
-            function getSlideWidth(){
-                return carousel.getBoundingClientRect().width;
+            var prev = document.getElementById('prevBtn');
+            var next = document.getElementById('nextBtn');
+            var slides = Array.prototype.slice.call(carousel.querySelectorAll('.carousel-slide'));
+            if (slides.length === 0) return;
+            var firstClone = slides[0].cloneNode(true);
+            var lastClone = slides[slides.length - 1].cloneNode(true);
+            carousel.insertBefore(lastClone, slides[0]);
+            carousel.appendChild(firstClone);
+            var allSlides = Array.prototype.slice.call(carousel.querySelectorAll('.carousel-slide'));
+            var index = 1;
+            var transitioning = false;
+            function width(){ return carousel.getBoundingClientRect().width; }
+            function setTransform(instant){
+                if (instant) carousel.style.transition = 'none';
+                carousel.style.transform = 'translateX(' + (-index * width()) + 'px)';
+                if (instant) carousel.offsetHeight;
+                if (instant) carousel.style.transition = '';
             }
-            function updateCarousel() {
-                carousel.style.transform = `translateX(${-index * getSlideWidth()}px)`;
+            setTransform(true);
+            function goNext(){
+                if (transitioning) return;
+                transitioning = true;
+                index += 1;
+                setTransform(false);
             }
-            prev.addEventListener("click", () => {
-                index = (index - 1 + slides.length) % slides.length;
-                updateCarousel();
+            function goPrev(){
+                if (transitioning) return;
+                transitioning = true;
+                index -= 1;
+                setTransform(false);
+            }
+            carousel.addEventListener('transitionend', function(){
+                if (index === allSlides.length - 1) {
+                    index = 1;
+                    setTransform(true);
+                } else if (index === 0) {
+                    index = allSlides.length - 2;
+                    setTransform(true);
+                }
+                transitioning = false;
             });
-            next.addEventListener("click", () => {
-                index = (index + 1) % slides.length;
-                updateCarousel();
-            });
-            window.addEventListener('resize', updateCarousel);
+            if (next) next.addEventListener('click', function(){ goNext(); });
+            if (prev) prev.addEventListener('click', function(){ goPrev(); });
+            window.addEventListener('resize', function(){ setTransform(true); });
         })();
     </script>
     <?php } else { ?>
