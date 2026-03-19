@@ -547,6 +547,33 @@ class personasController extends Controller
             $this->_view->planesUser = [];
             $this->_view->planesUserDebug = ['error' => $e->getMessage()];
         }
+        // Perfil del usuario (mismo flujo que Mi Perfil) para prellenar modales del panel
+        try {
+            $this->_view->profile = [];
+            $userId = class_exists('Session') ? (string)(Session::get('id') ?? '') : '';
+            $debugEnabled = (isset($_GET['debugcms']) && $_GET['debugcms'] === '1');
+            if ($userId !== '') {
+                $urlProfile = $this->getWlApiBaseUrl().'/account/profile';
+                $headers = ['Authorization: ' . TokenApiExterno::obtenerAuthorizationHeader()];
+                // Igual que Mi Perfil: enviar id en payload (POST por defecto)
+                $res = $this->callJsonApi($urlProfile, $headers, ['id' => $userId]);
+                if ($debugEnabled) {
+                    $this->_view->profileDebug = [
+                        'url' => $urlProfile,
+                        'http_status' => $res['status'] ?? null,
+                        'error' => $res['error'] ?? null,
+                        'raw_body' => $res['body'] ?? null,
+                    ];
+                }
+                $ok = ($res['ok'] && is_array($res['body']) && (!empty($res['body']['data']) || !empty($res['body']['success'])));
+                if ($ok) {
+                    $body = $res['body'];
+                    $this->_view->profile = isset($body['data']) && is_array($body['data']) ? $body['data'] : $body;
+                }
+            }
+        } catch (\Throwable $e) {
+            $this->_view->profile = [];
+        }
         // Cargar imagen de Plan Activación desde API para el panel (sin fallback)
         try {
             $api = $this->fetchPlanActivacion();
@@ -584,6 +611,32 @@ class personasController extends Controller
         } catch (\Throwable $e) {
             $this->_view->planesUser = [];
             $this->_view->planesUserDebug = ['error' => $e->getMessage()];
+        }
+        // Perfil del usuario para prellenar Recargar (idéntico a Mi Perfil)
+        try {
+            $this->_view->profile = [];
+            $userId = class_exists('Session') ? (string)(Session::get('id') ?? '') : '';
+            $debugEnabled = (isset($_GET['debugcms']) && $_GET['debugcms'] === '1');
+            if ($userId !== '') {
+                $urlProfile = $this->getWlApiBaseUrl().'/account/profile';
+                $headers = ['Authorization: ' . TokenApiExterno::obtenerAuthorizationHeader()];
+                $res = $this->callJsonApi($urlProfile, $headers, ['id' => $userId]);
+                if ($debugEnabled) {
+                    $this->_view->profileDebug = [
+                        'url' => $urlProfile,
+                        'http_status' => $res['status'] ?? null,
+                        'error' => $res['error'] ?? null,
+                        'raw_body' => $res['body'] ?? null,
+                    ];
+                }
+                $ok = ($res['ok'] && is_array($res['body']) && (!empty($res['body']['data']) || !empty($res['body']['success'])));
+                if ($ok) {
+                    $body = $res['body'];
+                    $this->_view->profile = isset($body['data']) && is_array($body['data']) ? $body['data'] : $body;
+                }
+            }
+        } catch (\Throwable $e) {
+            $this->_view->profile = [];
         }
         $this->_view->renderizar(array('@personas/recarUser.phtml/recargar'));
     }

@@ -16,66 +16,6 @@
             $cvPlan = isset($raw['cv_plan']) ? (string)$raw['cv_plan'] : '';
 
             $profile = (isset($this->profile) && is_array($this->profile)) ? $this->profile : [];
-            $dbgProfile = ['method'=>'none'];
-            if (empty($profile)) {
-              try {
-                if (!class_exists('TokenApiExterno')) {
-                  $lib = ROOT . 'libs' . DS . 'class.TokenApiExterno.php';
-                  if (is_readable($lib)) { require_once $lib; }
-                }
-                if (class_exists('TokenApiExterno')) {
-                  $auth = TokenApiExterno::obtenerAuthorizationHeader();
-                  $ctx = stream_context_create([
-                    'http' => [
-                      'method' => 'GET',
-                      'header' => implode("\r\n", array_filter([
-                        'Accept: application/json',
-                        // En controladores se usa 'Authorization: ' . TokenApiExterno::obtenerAuthorizationHeader()
-                        is_string($auth) && $auth !== '' ? ('Authorization: ' . $auth) : null,
-                      ]) ),
-                      'timeout' => 10,
-                    ]
-                  ]);
-                  $resp = @file_get_contents('https://apis.likephone.mx/api/v1/whitelabels/generic/account/profile', false, $ctx);
-                  $json = is_string($resp) ? json_decode($resp, true) : null;
-                  if (is_array($json)) { 
-                    $profile = isset($json['data']) && is_array($json['data']) ? $json['data'] : $json; 
-                    $dbgProfile = ['method'=>'fopen','ok'=>true];
-                  } else {
-                    // Fallback con cURL como en Mi Perfil
-                    if (function_exists('curl_init')) {
-                      $ch = curl_init('https://apis.likephone.mx/api/v1/whitelabels/generic/account/profile');
-                      $hdrs = array_values(array_filter([
-                        'Accept: application/json',
-                        is_string($auth) && $auth !== '' ? ('Authorization: ' . $auth) : null,
-                      ]));
-                      curl_setopt_array($ch, [
-                        CURLOPT_RETURNTRANSFER => true,
-                        CURLOPT_HTTPGET => true,
-                        CURLOPT_HTTPHEADER => $hdrs,
-                        CURLOPT_TIMEOUT => 15,
-                        CURLOPT_CONNECTTIMEOUT => 8,
-                        CURLOPT_SSL_VERIFYPEER => true,
-                        CURLOPT_SSL_VERIFYHOST => 2,
-                      ]);
-                      $cResp = curl_exec($ch);
-                      $cHttp = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
-                      $cErr  = curl_error($ch);
-                      curl_close($ch);
-                      $cJson = is_string($cResp) ? json_decode($cResp, true) : null;
-                      if (is_array($cJson)) {
-                        $profile = isset($cJson['data']) && is_array($cJson['data']) ? $cJson['data'] : $cJson;
-                        $dbgProfile = ['method'=>'curl','ok'=>($cHttp>=200&&$cHttp<300),'http'=>$cHttp];
-                      } else {
-                        $dbgProfile = ['method'=>'curl','ok'=>false,'http'=>$cHttp,'error'=>$cErr?:'no-json'];
-                      }
-                    } else {
-                      $dbgProfile = ['method'=>'fopen','ok'=>false,'error'=>'curl_missing'];
-                    }
-                  }
-                }
-              } catch (\Throwable $e) { /* silencio */ }
-            }
             $prefNombre = isset($profile['nombre']) ? (string)$profile['nombre'] : '';
             $prefApPat = isset($profile['apellido_paterno']) ? (string)$profile['apellido_paterno'] : '';
             $prefApMat = isset($profile['apellido_materno']) ? (string)$profile['apellido_materno'] : '';
@@ -85,19 +25,6 @@
 
           <?php if (isset($_GET['debugcms']) && $_GET['debugcms']=='1') { ?>
             <pre style="background:#f8fafc;border:1px solid #e2e8f0;color:#0f172a;font-size:12px;padding:10px;border-radius:6px;margin:10px 0;white-space:pre-wrap;">ACTIVACION DEBUG: <?php echo htmlspecialchars(json_encode($apiAct, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES)); ?></pre>
-            <pre style="background:#eef6ff;border:1px solid #bfdbfe;color:#0f172a;font-size:12px;padding:10px;border-radius:6px;margin:10px 0;white-space:pre-wrap;">PROFILE VIEW DEBUG: <?php echo htmlspecialchars(json_encode([
-              'profile_keys' => array_keys((array)$profile),
-              'profile_sample' => $profile,
-              'prefNombre' => $prefNombre,
-              'prefApPat' => $prefApPat,
-              'prefApMat' => $prefApMat,
-              'prefTel' => $prefTel,
-              'prefEmail' => $prefEmail,
-              'fetch_dbg' => $dbgProfile,
-            ], JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES)); ?></pre>
-            <?php if (isset($this->profileDebug)) { ?>
-              <pre style="background:#fff7ed;border:1px solid #fdba74;color:#0f172a;font-size:12px;padding:10px;border-radius:6px;margin:10px 0;white-space:pre-wrap;">PROFILE CTRL DEBUG: <?php echo htmlspecialchars(json_encode($this->profileDebug, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES)); ?></pre>
-            <?php } ?>
           <?php } ?>
 
           <div class="row">
@@ -141,31 +68,18 @@
 <!-- Nuevo flujo de activación -->
 <div id="actDatosModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:12000; align-items:center; justify-content:center; padding:16px;">
   <div style="background:#ffffff; width:100%; max-width:860px; border-radius:12px; overflow:auto; max-height:92vh;">
-    <style>
-      /* Responsive grids for activation modal (override inline with !important) */
-      #actDatosModal .act-grid-3 { display:grid; grid-template-columns: repeat(3, minmax(0,1fr)) !important; gap:12px; }
-      #actDatosModal .act-grid-2 { display:grid; grid-template-columns: repeat(2, minmax(0,1fr)) !important; gap:12px; }
-      #actDatosModal input, #actDatosModal textarea, #actDatosModal select { width:100%; box-sizing:border-box; }
-      @media (max-width: 991px) {
-        #actDatosModal .act-grid-3 { grid-template-columns: repeat(2, minmax(0,1fr)) !important; }
-      }
-      @media (max-width: 640px) {
-        #actDatosModal .act-grid-3, #actDatosModal .act-grid-2 { grid-template-columns: 1fr !important; }
-        #actDatosModal .act-actions { position:sticky; bottom:0; background:#fff; padding-top:4px; }
-      }
-    </style>
     <div style="padding:14px 16px; font-weight:800; color:#0f172a; border-bottom:1px solid #e5e7eb; display:flex; align-items:center; justify-content:space-between;">
       <span>Datos para activar tu línea</span>
       <button type="button" id="actDatosClose" style="border:0;background:transparent;font-size:20px;line-height:1;cursor:pointer">×</button>
     </div>
     <div style="padding:16px; display:grid; gap:12px;">
       <input type="hidden" id="actCvPlan" value="<?php echo htmlspecialchars($cvPlan); ?>">
-      <div class="act-grid-3" style="display:grid; grid-template-columns: repeat(3, 1fr); gap:12px;">
+      <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:12px;">
         <input id="actNombre" type="text" placeholder="Nombre" style="padding:10px 12px;border:1px solid #e5e7eb;border-radius:6px;" value="<?php echo htmlspecialchars($prefNombre, ENT_QUOTES, 'UTF-8'); ?>">
         <input id="actApPat" type="text" placeholder="Apellido Paterno" style="padding:10px 12px;border:1px solid #e5e7eb;border-radius:6px;" value="<?php echo htmlspecialchars($prefApPat, ENT_QUOTES, 'UTF-8'); ?>">
         <input id="actApMat" type="text" placeholder="Apellido Materno" style="padding:10px 12px;border:1px solid #e5e7eb;border-radius:6px;" value="<?php echo htmlspecialchars($prefApMat, ENT_QUOTES, 'UTF-8'); ?>">
       </div>
-      <div class="act-grid-3" style="display:grid; grid-template-columns: repeat(3, 1fr); gap:12px;">
+      <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:12px;">
         <!-- Campo de género oculto temporalmente
         <select id="actGenero" style="padding:10px 12px;border:1px solid #e5e7eb;border-radius:6px;">
           <option value="">Género</option>
@@ -176,12 +90,12 @@
         <input id="actFechaNac" type="date" placeholder="Fecha de nacimiento" style="padding:10px 12px;border:1px solid #e5e7eb;border-radius:6px;">
         <input id="actTelefono" type="tel" maxlength="10" placeholder="Número de teléfono (10 dígitos)" style="padding:10px 12px;border:1px solid #e5e7eb;border-radius:6px;" value="<?php echo htmlspecialchars($prefTel, ENT_QUOTES, 'UTF-8'); ?>">
       </div>
-      <div class="act-grid-3" style="display:grid; grid-template-columns: repeat(3, 1fr); gap:12px;">
+      <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:12px;">
         <input id="actEmail" type="email" placeholder="Correo electrónico" style="padding:10px 12px;border:1px solid #e5e7eb;border-radius:6px;" value="<?php echo htmlspecialchars($prefEmail, ENT_QUOTES, 'UTF-8'); ?>">
         <input id="actCP" type="text" placeholder="Código postal" style="padding:10px 12px;border:1px solid #e5e7eb;border-radius:6px;">
         <input id="actColonia" type="text" placeholder="Colonia" style="padding:10px 12px;border:1px solid #e5e7eb;border-radius:6px;">
       </div>
-      <div class="act-grid-3" style="display:grid; grid-template-columns: repeat(3, 1fr); gap:12px;">
+      <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:12px;">
         <input id="actCalle" type="text" placeholder="Calle" style="padding:10px 12px;border:1px solid #e5e7eb;border-radius:6px;">
         <input id="actNoExt" type="text" placeholder="Número exterior" style="padding:10px 12px;border:1px solid #e5e7eb;border-radius:6px;">
         <input id="actNoInt" type="text" placeholder="Número interior" style="padding:10px 12px;border:1px solid #e5e7eb;border-radius:6px;">
@@ -189,7 +103,7 @@
       <textarea id="actRefs" placeholder="Referencias" style="padding:10px 12px;border:1px solid #e5e7eb;border-radius:6px; min-height:70px;"></textarea>
       <textarea id="actObs" placeholder="Observaciones" style="padding:10px 12px;border:1px solid #e5e7eb;border-radius:6px; min-height:70px;"></textarea>
       <div id="actError" style="display:none;color:#b91c1c;font-size:12px;"></div>
-      <div class="act-actions" style="display:flex; justify-content:flex-end; gap:10px;">
+      <div style="display:flex; justify-content:flex-end; gap:10px;">
         <button type="button" id="actContinuar" style="margin-top:6px; background:#0ea5a6;color:#fff;border:0;border-radius:6px;padding:10px 12px;font-weight:700;cursor:pointer;">Continuar</button>
       </div>
     </div>
@@ -203,41 +117,14 @@
       <button type="button" id="actIframeClose" style="border:0;background:rgba(255,255,255,0.12);color:#fff;border-radius:6px;padding:6px 10px;cursor:pointer;">Cerrar</button>
     </div>
     <iframe id="actIframe" src="about:blank" style="flex:1; width:100%; border:0;"></iframe>
-    <?php if (isset($_GET['debugcms']) && $_GET['debugcms']==='1') { ?>
-    <div id="actDebugPanel" style="margin:8px; padding:8px; background:#fff7ed; border:1px solid #fdba74; border-radius:8px; max-height:24vh; overflow:auto; font-size:12px; display:none;"></div>
-    <?php } ?>
   </div>
 </div>
 
 <script>
 (function(){
-  var DEBUGPAY = <?php echo (isset($_GET['debugcms']) && $_GET['debugcms']==='1') ? 'true' : 'false'; ?>;
-  function showDebug(obj){ try { var box=document.getElementById('actDebugPanel'); if(!box) return; box.style.display='block'; var pre=document.createElement('pre'); pre.style.margin='0'; pre.style.whiteSpace='pre-wrap'; pre.textContent= typeof obj==='string'? obj: JSON.stringify(obj,null,2); box.appendChild(pre);}catch(_){}}
-  // Prefill se hace desde servidor; sin fetch adicional
-
-  function openActDatos(cv){
-    var h=document.getElementById('actCvPlan'); if(h) h.value=cv||'';
-    var e=document.getElementById('actError'); if(e){ e.style.display='none'; e.textContent=''; }
-    // Prefill seguro desde perfil si los campos están vacíos
-    try {
-      var vNombre = <?php echo json_encode($prefNombre); ?>;
-      var vApPat  = <?php echo json_encode($prefApPat); ?>;
-      var vApMat  = <?php echo json_encode($prefApMat); ?>;
-      var vTel    = <?php echo json_encode($prefTel); ?>;
-      var vMail   = <?php echo json_encode($prefEmail); ?>;
-      var iNombre = document.getElementById('actNombre'); if (iNombre && (iNombre.value||'').trim()==='' && vNombre) iNombre.value = vNombre;
-      var iApPat  = document.getElementById('actApPat');  if (iApPat  && (iApPat.value||'').trim()===''  && vApPat)  iApPat.value  = vApPat;
-      var iApMat  = document.getElementById('actApMat');  if (iApMat  && (iApMat.value||'').trim()===''  && vApMat)  iApMat.value  = vApMat;
-      var iTel    = document.getElementById('actTelefono'); if (iTel && (iTel.value||'').trim()==='' && vTel) iTel.value = vTel;
-      var iMail   = document.getElementById('actEmail'); if (iMail && (iMail.value||'').trim()==='' && vMail) iMail.value = vMail;
-    } catch(_){}
-    // Sin fetch adicional; valores ya vienen prellenados del servidor
-    var m=document.getElementById('actDatosModal'); if(m){ m.style.display='flex'; }
-  }
+  function openActDatos(cv){ var h=document.getElementById('actCvPlan'); if(h) h.value=cv||''; var e=document.getElementById('actError'); if(e){ e.style.display='none'; e.textContent=''; } var m=document.getElementById('actDatosModal'); if(m){ m.style.display='flex'; } }
   function closeActDatos(){ var m=document.getElementById('actDatosModal'); if(m){ m.style.display='none'; } }
-  function bindActIframeEvents(f){ if(!f) return; try { f.onload=function(){ if (DEBUGPAY) showDebug({iframe:'load', src: f.getAttribute('src')||'srcdoc'}); }; f.onerror=function(){ if (DEBUGPAY) showDebug({iframe:'error', src: f.getAttribute('src')||'srcdoc'}); }; } catch(_){}}
-  function openActIframe(url){ var f=document.getElementById('actIframe'); if(f){ f.removeAttribute('srcdoc'); bindActIframeEvents(f); f.src=url; } var m=document.getElementById('actIframeModal'); if(m){ m.style.display='flex'; } }
-  function openActIframeHtml(html){ var f=document.getElementById('actIframe'); if(f){ bindActIframeEvents(f); f.src='about:blank'; try{ f.srcdoc=html; }catch(e){} } var m=document.getElementById('actIframeModal'); if(m){ m.style.display='flex'; } }
+  function openActIframe(url){ var f=document.getElementById('actIframe'); if(f){ f.src=url; } var m=document.getElementById('actIframeModal'); if(m){ m.style.display='flex'; } }
   function closeActIframe(){ var f=document.getElementById('actIframe'); if(f){ f.src='about:blank'; } var m=document.getElementById('actIframeModal'); if(m){ m.style.display='none'; } }
 
   var cx=document.getElementById('actDatosClose'); if(cx) cx.addEventListener('click', closeActDatos);
@@ -269,28 +156,9 @@
     var obs=(document.getElementById('actObs').value||'').trim();
     var err=document.getElementById('actError');
 
-    // Limpia estilos previos
-    function clearInvalid(id){ var el=document.getElementById(id); if(el){ el.style.borderColor=''; el.style.backgroundColor=''; } }
-    function markInvalid(id){ var el=document.getElementById(id); if(el){ el.style.borderColor='#ef4444'; el.style.backgroundColor='#fef2f2'; } }
-    ['actNombre','actApPat','actApMat','actFechaNac','actTelefono','actEmail','actCP','actColonia','actCalle','actNoExt','actNoInt','actRefs','actObs'].forEach(clearInvalid);
-
-    var errores=[];
-    if(cv===''){ errores.push('Falta el plan de activación.'); }
-    if(nombre===''){ errores.push('Nombre es requerido.'); markInvalid('actNombre'); }
-    if(apPat===''){ errores.push('Apellido paterno es requerido.'); markInvalid('actApPat'); }
-    if(apMat===''){ errores.push('Apellido materno es requerido.'); markInvalid('actApMat'); }
-    if(fNac===''){ errores.push('Fecha de nacimiento es requerida.'); markInvalid('actFechaNac'); }
-    if(tel.length!==10){ errores.push('El número debe tener 10 dígitos.'); markInvalid('actTelefono'); }
-    if(email===''||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ errores.push('Correo inválido.'); markInvalid('actEmail'); }
-    if(!/^\d{5}$/.test(cp)){ errores.push('Código postal debe ser de 5 dígitos.'); markInvalid('actCP'); }
-    if(col===''){ errores.push('Colonia es requerida.'); markInvalid('actColonia'); }
-    if(calle===''){ errores.push('Calle es requerida.'); markInvalid('actCalle'); }
-    if(noext===''){ errores.push('Número exterior es requerido.'); markInvalid('actNoExt'); }
-    if(noint===''){ errores.push('Número interior es requerido.'); markInvalid('actNoInt'); }
-    if(refs===''){ errores.push('Referencias son requeridas.'); markInvalid('actRefs'); }
-    if(obs===''){ errores.push('Observaciones son requeridas.'); markInvalid('actObs'); }
-
-    if(errores.length>0){ err.innerHTML = '<div style="background:#fee2e2;border:1px solid #fecaca;color:#991b1b;padding:8px 10px;border-radius:6px;">'+ errores.join('<br>') +'</div>'; err.style.display='block'; return; }
+    if(cv===''){ err.textContent='Falta el plan (cv_plan).'; err.style.display='block'; return; }
+    if(tel.length!==10){ err.textContent='El número debe tener 10 dígitos.'; err.style.display='block'; return; }
+    if(email===''||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ err.textContent='Correo inválido.'; err.style.display='block'; return; }
 
     err.style.display='none';
 
@@ -311,15 +179,9 @@
     fd.append('referencias', refs);
     fd.append('observaciones', obs);
 
-    if (DEBUGPAY) fd.append('debugpay','1');
     fetch('<?php echo BASE_URL; ?>payments/crearCheckoutActivacion', { method:'POST', body: fd })
       .then(function(r){ return r.json().catch(function(){ return {success:false, message:'Respuesta inválida'}; }); })
-      .then(function(j){ if (DEBUGPAY && j){ showDebug(j.debug || j); }
-        if (j && j.success){
-          if (typeof j.html === 'string' && j.html.length>0) { try { closeActDatos(); openActIframeHtml(j.html); if (DEBUGPAY) showDebug({note:'usando iframe.srcdoc por html en respuesta'}); return; } catch(_e){} }
-          var url = (j.iframe_url && typeof j.iframe_url==='string' && j.iframe_url.length>0) ? j.iframe_url : 'about:blank';
-          closeActDatos(); openActIframe(url);
-        } else { err.innerHTML = '<div style="background:#fee2e2;border:1px solid #fecaca;color:#991b1b;padding:8px 10px;border-radius:6px;">'+ ((j&&j.message)? j.message : 'No se pudo crear el checkout.') +'</div>'; err.style.display='block'; } })
+      .then(function(j){ if (j && j.success && j.iframe_url) { closeActDatos(); openActIframe(j.iframe_url); } else { err.textContent=(j&&j.message)? j.message : 'No se pudo crear el checkout.'; err.style.display='block'; } })
       .catch(function(){ err.textContent='Error de red.'; err.style.display='block'; });
   }); }
 })();

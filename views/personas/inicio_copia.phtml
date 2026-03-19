@@ -374,7 +374,7 @@
                 </script>
 
                <!-- NUEVO: Modal datos Activación (completo) -->
-                <div id="actDatosModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:2147483647; align-items:center; justify-content:center; padding:16px;">
+                <div id="actDatosModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:10010; align-items:center; justify-content:center; padding:16px;">
                 <div style="background:#ffffff; width:100%; max-width:860px; border-radius:12px; overflow:auto; max-height:92vh;">
                     <style>
                       /* Grillas responsivas con overrides para vencer inline styles */
@@ -399,8 +399,13 @@
                     </div>
 
                     <div class="act-grid-2" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                        <!-- Género oculto temporalmente -->
-                        <div style="display:none;"></div>
+                        <div>
+                        <label style="font-size:13px;color:#334155;">Género</label>
+                        <select id="actGenero" style="width:100%;padding:10px 12px;border:1px solid #e5e7eb;border-radius:6px;">
+                            <option value="1">Masculino</option>
+                            <option value="2">Femenino</option>
+                        </select>
+                        </div>
                         <div>
                         <label style="font-size:13px;color:#334155;">Fecha de nacimiento</label>
                         <input id="actFechaNac" type="date" style="width:100%;padding:10px 12px;border:1px solid #e5e7eb;border-radius:6px;">
@@ -453,52 +458,27 @@
                 </div>
 
                 <!-- NUEVO: Modal iframe Activación -->
-                <div id="actIframeModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:2147483647; align-items:center; justify-content:center; padding:16px;">
+                <div id="actIframeModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:10011; align-items:center; justify-content:center; padding:16px;">
                 <div style="background:#ffffff; width:100%; max-width:860px; height:90vh; border-radius:10px; overflow:hidden; display:flex; flex-direction:column;">
                     <div style="padding:10px 14px; background:#0ea5a6; color:#fff; display:flex; align-items:center; justify-content:space-between;">
                     <span style="font-weight:700;">Pago seguro</span>
                     <button type="button" id="actIframeClose" style="border:0;background:transparent;font-size:20px;line-height:1;color:#fff;cursor:pointer">×</button>
                     </div>
                     <iframe id="actIframe" src="about:blank" style="border:0; width:100%; height:100%;"></iframe>
-                    <?php if (isset($_GET['debugcms']) && $_GET['debugcms']==='1') { ?>
-                    <div id="actDebugPanel" style="margin:8px; padding:8px; background:#fff7ed; border:1px solid #fdba74; border-radius:8px; max-height:24vh; overflow:auto; font-size:12px; display:none;"></div>
-                    <?php } ?>
                 </div>
                 </div>
 
                 <!-- NUEVO: JS de checkout Activación -->
                 <script>
 (function(){
-  var DEBUGPAY = <?php echo (isset($_GET['debugcms']) && $_GET['debugcms']==='1') ? 'true' : 'false'; ?>;
-  function showDebug(obj){
-    try {
-      var box = document.getElementById('actDebugPanel');
-      if (!box) return;
-      box.style.display='block';
-      var pre = document.createElement('pre');
-      pre.style.margin='0';
-      pre.style.whiteSpace='pre-wrap';
-      pre.textContent = typeof obj === 'string' ? obj : JSON.stringify(obj, null, 2);
-      box.appendChild(pre);
-    } catch(_){ }
-  }
-  function ensureInBody(el){ try { if (el && el.parentNode !== document.body) { document.body.appendChild(el); } } catch(_){} }
   function openDatos(cv){
     var hid = document.getElementById('actCvPlan');
     if (hid && cv) hid.value = cv;
     document.getElementById('actError').style.display='none';
-    var m=document.getElementById('actDatosModal'); ensureInBody(m); m.style.display='flex';
+    document.getElementById('actDatosModal').style.display='flex';
   }
   function closeDatos(){ document.getElementById('actDatosModal').style.display='none'; }
-  function bindIframeEvents(ifr){
-    if (!ifr) return;
-    try {
-      ifr.onload = function(){ if (DEBUGPAY) showDebug({ iframe:'load', src: ifr.getAttribute('src')||'srcdoc' }); };
-      ifr.onerror = function(){ if (DEBUGPAY) showDebug({ iframe:'error', src: ifr.getAttribute('src')||'srcdoc' }); };
-    } catch(_){ }
-  }
-  function openIframe(url){ var ifr=document.getElementById('actIframe'); ifr.removeAttribute('srcdoc'); bindIframeEvents(ifr); ifr.src = url; var m=document.getElementById('actIframeModal'); ensureInBody(m); m.style.display='flex'; }
-  function openIframeHtml(html){ var ifr=document.getElementById('actIframe'); bindIframeEvents(ifr); ifr.src='about:blank'; try{ ifr.srcdoc = html; }catch(e){ /* noop */ } var m=document.getElementById('actIframeModal'); ensureInBody(m); m.style.display='flex'; }
+  function openIframe(url){ document.getElementById('actIframe').src = url; document.getElementById('actIframeModal').style.display='flex'; }
   function closeIframe(){ document.getElementById('actIframe').src='about:blank'; document.getElementById('actIframeModal').style.display='none'; }
 
   var c1 = document.getElementById('actDatosClose'); if (c1) c1.addEventListener('click', closeDatos);
@@ -523,39 +503,9 @@
       var num  = (document.getElementById('actNumero').value || '').replace(/[^0-9]/g,'');
       var mail = (document.getElementById('actEmail').value || '').trim();
       var err  = document.getElementById('actError');
-      var nombre=(document.getElementById('actNombre').value||'').trim();
-      var apPat =(document.getElementById('actApPat').value||'').trim();
-      var apMat =(document.getElementById('actApMat').value||'').trim();
-      var fNac  =(document.getElementById('actFechaNac').value||'').trim();
-      var cp    =(document.getElementById('actCP').value||'').trim();
-      var col   =(document.getElementById('actColonia').value||'').trim();
-      var calle =(document.getElementById('actCalle').value||'').trim();
-      var noext =(document.getElementById('actNumExt').value||'').trim();
-      var noint =(document.getElementById('actNumInt').value||'').trim();
-      var refs  =(document.getElementById('actRefs').value||'').trim();
-      var obs   =(document.getElementById('actObs').value||'').trim();
-
-      function clearInvalid(id){ var el=document.getElementById(id); if(el){ el.style.borderColor=''; el.style.backgroundColor=''; } }
-      function markInvalid(id){ var el=document.getElementById(id); if(el){ el.style.borderColor='#ef4444'; el.style.backgroundColor='#fef2f2'; } }
-      ['actNombre','actApPat','actApMat','actFechaNac','actNumero','actEmail','actCP','actColonia','actCalle','actNumExt','actNumInt','actRefs','actObs'].forEach(clearInvalid);
-
-      var errores=[];
-      if (cv === '') { errores.push('Falta el plan de activación.'); }
-      if (nombre===''){ errores.push('Nombre es requerido.'); markInvalid('actNombre'); }
-      if (apPat===''){ errores.push('Apellido paterno es requerido.'); markInvalid('actApPat'); }
-      if (apMat===''){ errores.push('Apellido materno es requerido.'); markInvalid('actApMat'); }
-      if (fNac===''){ errores.push('Fecha de nacimiento es requerida.'); markInvalid('actFechaNac'); }
-      if (num.length !== 10) { errores.push('El número debe tener 10 dígitos.'); markInvalid('actNumero'); }
-      if (mail === '' || !/^\S+@\S+\.\S+$/.test(mail)) { errores.push('Correo inválido.'); markInvalid('actEmail'); }
-      if (!/^\d{5}$/.test(cp)) { errores.push('Código postal debe ser de 5 dígitos.'); markInvalid('actCP'); }
-      if (col===''){ errores.push('Colonia es requerida.'); markInvalid('actColonia'); }
-      if (calle===''){ errores.push('Calle es requerida.'); markInvalid('actCalle'); }
-      if (noext===''){ errores.push('Número exterior es requerido.'); markInvalid('actNumExt'); }
-      if (noint===''){ errores.push('Número interior es requerido.'); markInvalid('actNumInt'); }
-      if (refs===''){ errores.push('Referencias son requeridas.'); markInvalid('actRefs'); }
-      if (obs===''){ errores.push('Observaciones son requeridas.'); markInvalid('actObs'); }
-
-      if (errores.length>0){ err.innerHTML='<div style="background:#fee2e2;border:1px solid #fecaca;color:#991b1b;padding:8px 10px;border-radius:6px;">'+errores.join('<br>')+'</div>'; err.style.display='block'; return; }
+      if (cv === '') { err.textContent='Falta el plan de activación.'; err.style.display='block'; return; }
+      if (num.length !== 10) { err.textContent='El número debe tener 10 dígitos.'; err.style.display='block'; return; }
+      if (mail === '' || !/^\S+@\S+\.\S+$/.test(mail)) { err.textContent='Correo inválido.'; err.style.display='block'; return; }
       err.style.display='none';
 
       var fd = new FormData();
@@ -565,7 +515,7 @@
       fd.append('nombre', (document.getElementById('actNombre').value||'').trim());
       fd.append('apellido_paterno', (document.getElementById('actApPat').value||'').trim());
       fd.append('apellido_materno', (document.getElementById('actApMat').value||'').trim());
-      fd.append('genero_id', '1');
+      fd.append('genero_id', (document.getElementById('actGenero').value||'').trim());
       fd.append('fecha_nacimiento', (document.getElementById('actFechaNac').value||'').trim());
       fd.append('codigo_postal', (document.getElementById('actCP').value||'').trim());
       fd.append('colonia', (document.getElementById('actColonia').value||'').trim());
@@ -575,20 +525,9 @@
       fd.append('referencias', (document.getElementById('actRefs').value||'').trim());
       fd.append('observaciones', (document.getElementById('actObs').value||'').trim());
 
-      if (DEBUGPAY) fd.append('debugpay','1');
       fetch('<?php echo BASE_URL; ?>payments/crearCheckoutActivacion', { method:'POST', body: fd })
         .then(function(r){ return r.json().catch(function(){ return {success:false, message:'Respuesta inválida'}; }); })
-        .then(function(j){ if (DEBUGPAY && j){ showDebug(j.debug || j); }
-          if (j && j.success){
-            // Preferir srcdoc cuando el backend regresó HTML crudo (raw_html) en modo debug, aunque exista iframe_url
-            if (DEBUGPAY && j.debug && (j.debug.raw_html || j.raw_html) && typeof j.debug.html === 'string' && j.debug.html.length > 0) {
-              try { closeDatos(); openIframeHtml(j.debug.html); showDebug({ note:'raw_html detectado; usando iframe.srcdoc con HTML devuelto' }); return; } catch(e) {
-                try { var blob = new Blob([j.debug.html], {type:'text/html'}); var url = URL.createObjectURL(blob); closeDatos(); openIframe(url); showDebug({ note:'Fallback a Blob URL por debug.html', blob_url:url }); return; } catch(_e) {}
-              }
-            }
-            var url = (j.iframe_url && typeof j.iframe_url === 'string' && j.iframe_url.length>0) ? j.iframe_url : 'about:blank';
-            closeDatos(); openIframe(url);
-          } else { err.textContent = (j&&j.message)? j.message : 'No se pudo crear el checkout.'; err.style.display='block'; } })
+        .then(function(j){ if (j && j.success && j.iframe_url) { closeDatos(); openIframe(j.iframe_url); } else { err.textContent = (j&&j.message)? j.message : 'No se pudo crear el checkout.'; err.style.display='block'; } })
         .catch(function(){ err.textContent='Error de red.'; err.style.display='block'; });
     });
   }

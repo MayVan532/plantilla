@@ -24,17 +24,54 @@
               </pre>
             </div>
             <?php } ?>
+            <?php 
+              // Prefill desde perfil del usuario (editable en el modal)
+              $profile = (isset($this->profile) && is_array($this->profile)) ? $this->profile : [];
+              if (empty($profile)) {
+                try {
+                  if (!class_exists('TokenApiExterno')) {
+                    $lib = ROOT . 'libs' . DS . 'class.TokenApiExterno.php';
+                    if (is_readable($lib)) { require_once $lib; }
+                  }
+                  if (class_exists('TokenApiExterno')) {
+                    $auth = TokenApiExterno::obtenerAuthorizationHeader();
+                    $ctx = stream_context_create([
+                      'http' => [
+                        'method' => 'GET',
+                        'header' => implode("\r\n", array_filter([
+                          'Accept: application/json',
+                          // $auth ya viene con 'Authorization: ...'
+                          is_string($auth) && $auth !== '' ? $auth : null,
+                        ])),
+                        'timeout' => 10,
+                      ]
+                    ]);
+                    $resp = @file_get_contents('https://apis.likephone.mx/api/v1/whitelabels/generic/account/profile', false, $ctx);
+                    $json = is_string($resp) ? json_decode($resp, true) : null;
+                    if (is_array($json)) { $profile = isset($json['data']) && is_array($json['data']) ? $json['data'] : $json; }
+                  }
+                } catch (\Throwable $e) { /* silencio */ }
+              }
+              $prefTel = isset($profile['numero_telefono']) ? (string)$profile['numero_telefono'] : (isset($profile['telefono']) ? (string)$profile['telefono'] : '');
+              $prefEmail = isset($profile['email']) ? (string)$profile['email'] : '';
+            ?>
             <?php $planesUser = isset($this->planesUser) && is_array($this->planesUser) ? $this->planesUser : []; ?>
+            <style>
+              .lkp-cards-row { display:grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap:16px; margin:0; align-items:stretch; }
+              @media (max-width: 991px) { .lkp-cards-row { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+              @media (max-width: 767px) { .lkp-cards-row { grid-template-columns: 1fr; } }
+            </style>
             <?php if (!empty($planesUser)) { ?>
             <div class="container-fluid" style="padding:0;">
-              <div class="row" style="margin-left:-8px; margin-right:-8px;">
+              <div class="row lkp-cards-row" style="margin:0;">
                 <?php foreach ($planesUser as $plan) { 
                   $nombre   = isset($plan['nombre_comercial']) ? (string)$plan['nombre_comercial'] : '';
                   $vigencia = isset($plan['vigencia']) ? (string)$plan['vigencia'] : '';
                   $datosMb  = isset($plan['datos']) ? (string)$plan['datos'] : '';
                   $ticket   = isset($plan['ticket']) ? (string)$plan['ticket'] : '';
+                  $cvplan   = isset($plan['cv_plan']) ? (string)$plan['cv_plan'] : (isset($plan['offeringId']) ? (string)$plan['offeringId'] : '');
                 ?>
-                <div class="col-12 col-sm-6 col-md-3" style="padding:8px;">
+                <div class="lkp-card" style="padding:8px;">
                   <div style="background:#f9fafb; border-radius:16px; overflow:hidden; box-shadow:0 6px 16px rgba(15,23,42,.06); height:100%; display:flex; flex-direction:column;">
                     <?php 
                       $imgFile = '';
@@ -43,7 +80,7 @@
                       if ($imgFile !== '') {
                         $imgBase = defined('WL_IMG_BASE_URL') ? WL_IMG_BASE_URL : (BASE_URL . 'public/img/');
                         $imgSrc = rtrim($imgBase, '/').'/'. rawurlencode($imgFile);
-                        echo '<img src="' . htmlspecialchars($imgSrc) . '" alt="' . htmlspecialchars($nombre ?: 'Plan') . '" style="width:100%; height:180px; object-fit:cover; display:block;">';
+                        echo '<img src="' . htmlspecialchars($imgSrc) . '" alt="' . htmlspecialchars($nombre ?: 'Plan') . '" style="width:100%; height:220px; object-fit:cover; display:block;">';
                       }
                     ?>
                     <div style="padding:12px 14px 8px 14px; border-bottom:1px solid #eef2f7;">
@@ -57,10 +94,10 @@
                       <div style="font-size:13px; color:#111827; margin-bottom:8px;">Incluye <?php echo htmlspecialchars($datosMb); ?> MB de datos</div>
                       <?php } ?>
                       <?php if ($ticket !== '') { ?>
-                      <div style="font-size:12px; color:#475569; max-height:128px; overflow:auto; white-space:pre-wrap;"><?php echo htmlspecialchars($ticket); ?></div>
+                      <div style="font-size:12px; color:#475569; white-space:pre-wrap;"><?php echo htmlspecialchars($ticket); ?></div>
                       <?php } ?>
                       <div style="margin-top:auto;">
-                        <a href="#" class="lkp-recargar-btn" style="display:inline-block; width:100%; text-align:center; padding:8px 10px; border-radius:4px; background:#00c8f8; color:#ffffff; font-size:13px; font-weight:600; text-decoration:none; box-shadow:0 4px 12px rgba(34,197,235,0.35);">Recargar</a>
+                        <a href="#" class="lkp-recargar-btn" data-cv="<?php echo htmlspecialchars($cvplan); ?>" style="display:inline-block; width:100%; text-align:center; padding:8px 10px; border-radius:4px; background:#00c8f8; color:#ffffff; font-size:13px; font-weight:600; text-decoration:none; box-shadow:0 4px 12px rgba(34,197,235,0.35);">Recargar</a>
                       </div>
                     </div>
                   </div>
@@ -68,6 +105,7 @@
                 <?php } ?>
               </div>
             </div>
+            
             <?php } else if (false) { ?>
             <style>
               .tooltip-container {
@@ -639,6 +677,116 @@
         modalEfectivo.addEventListener('click', cerrarEfectivo);
       }
     })();
+  </script>
+
+  <!-- NUEVOS: Modal datos de recarga (simple) + Iframe -->
+  <div id="recDatosModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:2147483647; align-items:center; justify-content:center; padding:16px;">
+    <div style="background:#ffffff; width:100%; max-width:460px; border-radius:10px; overflow:auto; max-height:90vh;">
+      <div style="padding:14px 16px; font-weight:700; color:#0f172a; border-bottom:1px solid #e5e7eb; display:flex; align-items:center; justify-content:space-between;">
+        <span>Completa tus datos</span>
+        <button type="button" id="recDatosClose" style="border:0;background:transparent;font-size:20px;line-height:1;cursor:pointer">×</button>
+      </div>
+      <div style="padding:16px; display:grid; gap:10px;">
+        <input type="hidden" id="recCvPlan" value="">
+        <label style="font-size:13px;color:#334155;">Número (10 dígitos)</label>
+        <input id="recNumero" type="tel" maxlength="10" style="padding:10px 12px;border:1px solid #e5e7eb;border-radius:6px;" placeholder="Ej. 8123456789" value="<?php echo htmlspecialchars($prefTel); ?>">
+        <label style="font-size:13px;color:#334155;">Correo electrónico</label>
+        <input id="recEmail" type="email" style="padding:10px 12px;border:1px solid #e5e7eb;border-radius:6px;" placeholder="tucorreo@dominio.com" value="<?php echo htmlspecialchars($prefEmail); ?>">
+        <button id="recContinuar" style="margin-top:6px; background:#0ea5a6;color:#fff;border:0;border-radius:6px;padding:10px 12px;font-weight:600;cursor:pointer;">Continuar</button>
+        <div id="recError" style="display:none;color:#b91c1c;font-size:12px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="recIframeModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:2147483647; align-items:center; justify-content:center; padding:16px;">
+    <div style="background:#ffffff; width:100%; max-width:860px; height:90vh; border-radius:10px; overflow:hidden; display:flex; flex-direction:column;">
+      <div style="padding:10px 14px; background:#0ea5a6; color:#fff; display:flex; align-items:center; justify-content:space-between;">
+        <span style="font-weight:700;">Pago seguro</span>
+        <button type="button" id="recIframeClose" style="border:0;background:transparent;font-size:20px;line-height:1;color:#fff;cursor:pointer">×</button>
+      </div>
+      <iframe id="recIframe" src="about:blank" style="border:0; width:100%; height:100%;"></iframe>
+      <?php if (isset($_GET['debugcms']) && $_GET['debugcms']==='1') { ?>
+      <div id="recDebugPanel" style="margin:8px; padding:8px; background:#fff7ed; border:1px solid #fdba74; border-radius:8px; max-height:24vh; overflow:auto; font-size:12px; display:none;"></div>
+      <?php } ?>
+    </div>
+  </div>
+
+  <script>
+  (function(){
+    var DEBUGPAY = <?php echo (isset($_GET['debugcms']) && $_GET['debugcms']==='1') ? 'true' : 'false'; ?>;
+    function showRecDebug(obj){
+      try {
+        var box = document.getElementById('recDebugPanel');
+        if (!box) return; box.style.display='block';
+        var pre=document.createElement('pre'); pre.style.margin='0'; pre.style.whiteSpace='pre-wrap';
+        pre.textContent = typeof obj==='string'? obj : JSON.stringify(obj,null,2);
+        box.appendChild(pre);
+      } catch(_){ }
+    }
+    function ensureInBody(el){ try { if (el && el.parentNode !== document.body) { document.body.appendChild(el); } } catch(_){} }
+    function openRecDatos(cv){
+      var h=document.getElementById('recCvPlan'); if(h) h.value=cv||'';
+      var err=document.getElementById('recError'); if(err){ err.style.display='none'; err.textContent=''; }
+      // Prefill seguro desde perfil si vacío
+      var numInp=document.getElementById('recNumero');
+      var mailInp=document.getElementById('recEmail');
+      try {
+        if (numInp && (numInp.value||'').trim()==='') { numInp.value = <?php echo json_encode($prefTel); ?>; }
+        if (mailInp && (mailInp.value||'').trim()==='') { mailInp.value = <?php echo json_encode($prefEmail); ?>; }
+      } catch(e){}
+      // Sin fetch adicional; valores ya vienen del servidor
+      var m=document.getElementById('recDatosModal'); ensureInBody(m); m.style.display='flex';
+    }
+    function closeRecDatos(){ document.getElementById('recDatosModal').style.display='none'; }
+    function bindRecIframeEvents(ifr){ if(!ifr) return; try { ifr.onload=function(){ if(DEBUGPAY) showRecDebug({iframe:'load', src: ifr.getAttribute('src')||'srcdoc'}); }; ifr.onerror=function(){ if(DEBUGPAY) showRecDebug({iframe:'error', src: ifr.getAttribute('src')||'srcdoc'}); }; } catch(_){}}
+    function openRecIframe(url){ var ifr=document.getElementById('recIframe'); ifr.removeAttribute('srcdoc'); bindRecIframeEvents(ifr); ifr.src=url; var m=document.getElementById('recIframeModal'); ensureInBody(m); m.style.display='flex'; }
+    function openRecIframeHtml(html){ var ifr=document.getElementById('recIframe'); bindRecIframeEvents(ifr); ifr.src='about:blank'; try{ ifr.srcdoc=html; }catch(e){} var m=document.getElementById('recIframeModal'); ensureInBody(m); m.style.display='flex'; }
+    function closeRecIframe(){ document.getElementById('recIframe').src='about:blank'; document.getElementById('recIframeModal').style.display='none'; }
+
+    var cx=document.getElementById('recDatosClose'); if(cx) cx.addEventListener('click', closeRecDatos);
+    var ix=document.getElementById('recIframeClose'); if(ix) ix.addEventListener('click', closeRecIframe);
+
+    // Interceptar click en .lkp-recargar-btn del panel
+    document.addEventListener('click', function(e){
+      var btn=e.target && e.target.closest? e.target.closest('.lkp-recargar-btn'):null;
+      if(!btn) return; e.preventDefault(); e.stopImmediatePropagation();
+      var cv=btn.getAttribute('data-cv')||''; openRecDatos(cv);
+    }, true);
+
+    var go=document.getElementById('recContinuar');
+    if(go){ go.addEventListener('click', function(){
+      var cv=(document.getElementById('recCvPlan').value||'').trim();
+      var numEl=document.getElementById('recNumero');
+      var mailEl=document.getElementById('recEmail');
+      var num=(numEl.value||'').replace(/[^0-9]/g,'');
+      var mail=(mailEl.value||'').trim();
+      var err=document.getElementById('recError');
+      // limpiar estilos
+      [numEl, mailEl].forEach(function(el){ el.style.borderColor=''; el.style.backgroundColor=''; });
+      var errores=[];
+      if(cv===''){ errores.push('Falta el plan (cv_plan).'); }
+      if(num.length!==10){ errores.push('El número debe tener 10 dígitos.'); numEl.style.borderColor='#ef4444'; numEl.style.backgroundColor='#fef2f2'; }
+      if(mail===''||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail)){ errores.push('Correo inválido.'); mailEl.style.borderColor='#ef4444'; mailEl.style.backgroundColor='#fef2f2'; }
+      if(errores.length>0){ err.innerHTML='<div style="background:#fee2e2;border:1px solid #fecaca;color:#991b1b;padding:8px 10px;border-radius:6px;">'+ errores.join('<br>') +'</div>'; err.style.display='block'; return; }
+      err.style.display='none';
+
+      var fd=new FormData();
+      fd.append('cv_plan', cv);
+      fd.append('numero_data', num);
+      fd.append('email', mail);
+      if (DEBUGPAY) fd.append('debugpay','1');
+
+      fetch('<?php echo BASE_URL; ?>payments/crearCheckoutRecarga', { method:'POST', body: fd })
+        .then(function(r){ return r.json().catch(function(){ return {success:false, message:'Respuesta inválida'}; }); })
+        .then(function(j){ if (DEBUGPAY && j){ showRecDebug(j.debug || j); }
+          if (j && j.success){
+            if (typeof j.html === 'string' && j.html.length>0) { try { closeRecDatos(); openRecIframeHtml(j.html); if(DEBUGPAY) showRecDebug({note:'usando iframe.srcdoc por html en respuesta'}); return; } catch(_e){} }
+            var url = (j.iframe_url && typeof j.iframe_url==='string' && j.iframe_url.length>0) ? j.iframe_url : 'about:blank';
+            closeRecDatos(); openRecIframe(url);
+          } else { err.textContent=(j&&j.message)? j.message : 'No se pudo crear el checkout.'; err.style.display='block'; } })
+        .catch(function(){ err.textContent='Error de red.'; err.style.display='block'; });
+    }); }
+  })();
   </script>
 
 </div>
