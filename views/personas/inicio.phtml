@@ -580,6 +580,10 @@
         .then(function(r){ return r.json().catch(function(){ return {success:false, message:'Respuesta inválida'}; }); })
         .then(function(j){ if (DEBUGPAY && j){ showDebug(j.debug || j); }
           if (j && j.success){
+            // Si el backend incluyó HTML crudo, úsalo directamente en srcdoc (aplica aun sin debug)
+            if (typeof j.html === 'string' && j.html.length>0) {
+              try { closeDatos(); openIframeHtml(j.html); if (DEBUGPAY) showDebug({ note:'usando iframe.srcdoc por html en respuesta' }); return; } catch(_e){}
+            }
             // Preferir srcdoc cuando el backend regresó HTML crudo (raw_html) en modo debug, aunque exista iframe_url
             if (DEBUGPAY && j.debug && (j.debug.raw_html || j.raw_html) && typeof j.debug.html === 'string' && j.debug.html.length > 0) {
               try { closeDatos(); openIframeHtml(j.debug.html); showDebug({ note:'raw_html detectado; usando iframe.srcdoc con HTML devuelto' }); return; } catch(e) {
