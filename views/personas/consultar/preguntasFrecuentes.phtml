@@ -194,6 +194,13 @@
                   }
                 }
               }
+              // Normalizar teléfono si existe a formato MX +52
+              if ($tel) {
+                $digits = preg_replace('/\D+/', '', (string)$tel);
+                if (strpos($digits, '52') === 0 && strlen($digits) > 2) { $digits = substr($digits, 2); }
+                if (strlen($digits) > 10) { $digits = substr($digits, -10); }
+                $tel = '+52'.$digits;
+              }
               $hasSup = $tel || $mail || $wa;
             ?>
             <?php if ($hasSup) { ?>
@@ -211,7 +218,7 @@
                   <span style="flex-shrink:0; width:44px; height:44px; border-radius:50%; background:linear-gradient(135deg,#0f3c8f,#102a6b); display:flex; align-items:center; justify-content:center; margin-right:14px; box-shadow:0 6px 14px rgba(15,23,42,0.25);">
                     <i class="fas fa-envelope" style="font-size:18px; color:#ffffff;"></i>
                   </span>
-                  <a href="<?php echo 'mailto:'.htmlspecialchars($mail); ?>" style="color:#0f172a; font-weight:700; text-decoration:none;">
+                  <a href="<?php echo 'mailto:'.htmlspecialchars($mail); ?>" style="color:#0f172a; font-weight:700; text-decoration:none; display:inline-block; max-width:100%; overflow-wrap:anywhere; word-break:break-word;">
                     <?php echo htmlspecialchars($mail); ?>
                   </a>
                 </div>
@@ -222,8 +229,9 @@
                   <span style="flex-shrink:0; width:44px; height:44px; border-radius:50%; background:linear-gradient(135deg,#00bcd4,#00acc1); display:flex; align-items:center; justify-content:center; margin-right:14px; box-shadow:0 6px 14px rgba(0,172,193,0.35);">
                     <i class="fas fa-phone-alt" style="font-size:18px; color:#ffffff;"></i>
                   </span>
+                  <?php $dispTel = '(+52 '. htmlspecialchars(substr(ltrim($tel,'+'), 2)) .')'; ?>
                   <a href="<?php echo 'tel:'.htmlspecialchars($tel); ?>" style="color:#0f172a; font-weight:700; text-decoration:none;">
-                    <?php echo htmlspecialchars($tel); ?>
+                    <?php echo $dispTel; ?>
                   </a>
                 </div>
                 <?php } ?>

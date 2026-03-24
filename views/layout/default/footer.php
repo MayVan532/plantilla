@@ -320,20 +320,36 @@
                   <?php } ?>
                   <?php if (!empty($F_tel)) { ?>
                     <?php 
-                      $num = preg_replace('/\D+/', '', $F_tel);
-                      $hrefTel = $num !== '' ? ('tel:+'.$num) : '';
+                      // Normalizar teléfono MX: mostrar (+52 NNNNNNNNNN) y enlazar tel:+52NNNNNNNNNN
+                      $raw = (string)$F_tel;
+                      $digits = preg_replace('/\D+/', '', $raw);
+                      // Quitar 52 inicial si viene, para quedarnos con el nacional
+                      $national = $digits;
+                      if (strpos($national, '52') === 0 && strlen($national) > 2) { $national = substr($national, 2); }
+                      // Si sobran dígitos, tomar los últimos 10 como nacional
+                      if (strlen($national) > 10) { $national = substr($national, -10); }
+                      $hrefTel = $national !== '' ? ('tel:+52'.$national) : '';
+                      $dispTel = $national !== '' ? '(+52 '. $national .')' : '';
                     ?>
                     <p style="opacity:0.9; font-size:14px;"><i class="fa fa-phone-alt mr-2"></i>
-                      <?php if ($hrefTel !== '') { ?><a href="<?php echo htmlspecialchars($hrefTel); ?>" style="color:#ffffff; text-decoration:none;">+<?php echo htmlspecialchars($num); ?></a><?php } else { echo htmlspecialchars($F_tel); } ?>
+                      <?php if ($hrefTel !== '') { ?><a href="<?php echo htmlspecialchars($hrefTel); ?>" style="color:#ffffff; text-decoration:none;"><?php echo htmlspecialchars($dispTel); ?></a><?php } else { echo htmlspecialchars($F_tel); } ?>
                     </p>
                   <?php } ?>
                   <?php if (!empty($F_mail)) { ?>
                     <?php 
-                      $hrefMail = stripos($F_mail, 'mailto:') === 0 ? $F_mail : ('mailto:'.trim($F_mail));
+                      // Normalizar correo si llega como URL del CMS (e.g. https://correo@dominio)
+                      $mailRaw = trim((string)$F_mail);
+                      $mailRaw = preg_replace('/^mailto:/i','', $mailRaw);
+                      if (stripos($mailRaw, 'http') === 0) {
+                        $mailRaw = preg_replace('#^https?://#i','', $mailRaw);
+                        $parts = preg_split('#[/?#]#', $mailRaw);
+                        foreach ($parts as $p) { if (strpos($p,'@') !== false) { $mailRaw = $p; break; } }
+                      }
+                      $hrefMail = 'mailto:'. $mailRaw;
                     ?>
                     <p style="opacity:0.9; font-size:14px;"><i class="fa fa-envelope mr-2"></i>
                       <a href="<?php echo htmlspecialchars($hrefMail); ?>" style="color:#ffffff; text-decoration:none;">
-                        <?php echo htmlspecialchars(preg_replace('/^mailto:/i','',$hrefMail)); ?>
+                        <?php echo htmlspecialchars($mailRaw); ?>
                       </a>
                     </p>
                   <?php } ?>
