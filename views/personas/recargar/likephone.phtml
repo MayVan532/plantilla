@@ -114,6 +114,17 @@
                     font-weight: 500;
                     color: #556270; /* Muted gray for meta */
                 }
+                .about-section .pricing-block .upper-box .top-row { width:100%; display:flex; align-items:center; justify-content:space-between; gap:10px; }
+                .about-section .pricing-block .upper-box .price-badge {
+                    background: #00c8f8;
+                    color: #fff;
+                    font-weight: 800;
+                    font-size: 16px;
+                    padding: 4px 10px;
+                    border-radius: 10px;
+                    box-shadow: 0 8px 18px rgba(0,200,248,0.25);
+                    white-space: nowrap;
+                }
                 .about-section .pricing-block .upper-box .title {
                     display: flex !important;
                     align-items: center;
@@ -139,12 +150,23 @@
                 .about-section .pricing-block center {
                     line-height: 0;
                     order: 2; /* Imagen debajo del header */
+                    width: 500px;
+                    max-width: 100%;
+                    height: 120px;
+                    background: #f3f4f6; /* gris claro */
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin: 0 auto;
+                    border-radius: 8px;
                 }
                 .about-section .pricing-block center img {
-                    width: 100% !important;
-                    height: 220px !important;
+                    width: 500px !important;
+                    max-width: 100% !important;
+                    height: 120px !important;
                     object-fit: cover;
                     display: block;
+                    margin: 0 auto;
                 }
                 .about-section .pricing-block .lower-content {
                 padding: 0 18px 14px 18px !important;
@@ -209,7 +231,12 @@
                     grid-template-columns: 1fr;
                     gap: 16px !important;
                   }
-                  .about-section .pricing-block center img { height: 160px !important; }
+                  /* Reducir padding lateral para usar más ancho en móvil */
+                  .about-section .auto-container { padding: 0 12px !important; }
+                  .about-section .pricing-section { padding-left: 0 !important; padding-right: 0 !important; }
+                  .about-section .pricing-block .inner-box { border-radius: 14px; }
+                  .about-section .pricing-block center { width: 100%; height: 160px; }
+                  .about-section .pricing-block center img { height: 160px !important; object-fit: cover !important; }
                   .about-section .pricing-block .lower-content .text { min-height: 0; font-size: 16px; }
                   .about-section .container > div[style*="grid-template-columns"] { grid-template-columns: 1fr !important; }
                 }
@@ -228,10 +255,12 @@
                     $monto  = isset($p['monto']) ? trim($p['monto']) : '';
                     $ticket = isset($p['ticket']) ? trim($p['ticket']) : '';
                     $offId  = isset($p['offeringId']) ? trim($p['offeringId']) : '';
-                    // Imagen: preferir imagen_web2 y fallback a imagen_web1
+                    // Imagen horizontal prioridad: web2 (banner), luego web1, luego móviles
                     $imgRel = '';
                     if (!empty($p['imagen_web2'])) { $imgRel = trim($p['imagen_web2']); }
                     elseif (!empty($p['imagen_web1'])) { $imgRel = trim($p['imagen_web1']); }
+                    elseif (!empty($p['imagen_movil1'])) { $imgRel = trim($p['imagen_movil1']); }
+                    elseif (!empty($p['imagen_movil2'])) { $imgRel = trim($p['imagen_movil2']); }
                     // Base configurable; ya debe incluir la subcarpeta final si aplica
                     $imgBase = defined('WL_IMG_BASE_URL') ? WL_IMG_BASE_URL : (BASE_URL.'public/img/');
                     $imgUrl = $imgRel !== '' ? rtrim($imgBase,'/').'/'.rawurlencode($imgRel) : '';
@@ -243,16 +272,21 @@
                     <div class="inner-box" style="display:flex; flex-direction:column; height:100%;">
                         <center>
                             <?php if ($imgUrl !== '') { ?>
-                                <img src="<?php echo htmlspecialchars($imgUrl); ?>" alt="<?php echo htmlspecialchars($nombre); ?>" style="width:100%; height:220px; object-fit:cover; display:block;">
+                                <img src="<?php echo htmlspecialchars($imgUrl); ?>" alt="<?php echo htmlspecialchars($nombre); ?>" style="width:500px; max-width:100%; height:120px; object-fit:contain; display:block; margin:0 auto;">
                             <?php } ?>
                         </center>
                         <div class="upper-box">
-                            <div class="title">📱
-                            <?php if ($nombre !== '') { ?>
-                                <div style="width:100%; text-align:center; font-size: 20px; font-weight: 800; margin-top: 2px; color: #00C8D7;">
-                                    <?php echo htmlspecialchars($nombre); ?>
+                            <div class="top-row">
+                                <div class="title">📱
+                                <?php if ($nombre !== '') { ?>
+                                    <div style="font-size: 20px; font-weight: 800; color: #00C8D7;">
+                                        <?php echo htmlspecialchars($nombre); ?>
+                                    </div>
+                                <?php } ?>
                                 </div>
-                            <?php } ?>
+                                <?php $precioTop = ($monto !== '' ? $monto : (isset($p['precio']) ? trim($p['precio']) : '')); if ($precioTop !== '') { ?>
+                                    <span class="price-badge">$<?php echo htmlspecialchars(number_format((float)$precioTop, 2, '.', '')); ?></span>
+                                <?php } ?>
                             </div>
                             <p>
                                 <?php if ($vig !== '') { ?>🗓️ Vigencia <?php echo htmlspecialchars($vig); ?> días<?php } ?>

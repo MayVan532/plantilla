@@ -4,6 +4,16 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 
 <div class="personas-main-content" style="background:#ffffff;font-family:'Poppins',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;color:#0b2238;">
+  <?php 
+    // Usar únicamente los valores provistos por el controlador (CMS)
+    $contacto_banner_src      = isset($this->contacto_banner) ? trim((string)$this->contacto_banner) : '';
+    $contacto_banner_link_src = isset($this->contacto_banner_link) ? trim((string)$this->contacto_banner_link) : '';
+    $contacto_sec_src         = isset($this->contacto_secundario) ? trim((string)$this->contacto_secundario) : '';
+    $contacto_sec_link_src    = isset($this->contacto_secundario_link) ? trim((string)$this->contacto_secundario_link) : '';
+    // Si ambos son iguales, ocultar el secundario para evitar duplicado
+    if ($contacto_banner_src !== '' && $contacto_sec_src === $contacto_banner_src) { $contacto_sec_src = ''; }
+    $is_dup_banner = false; // ya controlado arriba; mantener compatibilidad con render condicional
+  ?>
   <?php if (isset($_GET['debugcms']) && $_GET['debugcms']=='1') { ?>
     <?php if (isset($this->debug_bloque30)) { ?>
       <pre style="background:#f8fafc;border:1px solid #e2e8f0;color:#0f172a;font-size:12px;padding:10px;border-radius:6px;margin:10px 0;white-space:pre-wrap;">B30: <?php echo htmlspecialchars(json_encode($this->debug_bloque30, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES)); ?></pre>
@@ -20,12 +30,12 @@
   <?php } ?>
 
   <!-- Imagen principal -->
-  <?php if (!empty($this->contacto_banner)) { ?>
+  <?php if ($contacto_banner_src !== '') { ?>
   <div style="position: relative; max-width: 100%; overflow: hidden; margin-top: 0;">
     <div style="display: block; width: 100%;">
-      <?php $href = isset($this->contacto_banner_link) ? trim((string)$this->contacto_banner_link) : ''; ?>
+      <?php $href = $contacto_banner_link_src; ?>
       <?php if ($href) { ?><a href="<?php echo htmlspecialchars($href); ?>" style="display:block;"><?php } ?>
-      <img src="<?php echo htmlspecialchars($this->contacto_banner); ?>" 
+      <img src="<?php echo htmlspecialchars($contacto_banner_src); ?>" 
            style="width: 100%; height: auto; display: block;">
       <?php if ($href) { ?></a><?php } ?>
     </div>
@@ -37,12 +47,12 @@
     <div class="row" style="display:flex;flex-wrap:wrap;gap:40px;justify-content:center;align-items:flex-start;">
 
       <!-- Columna Imagen (solo si CMS provee) -->
-      <?php if (!empty($this->contacto_secundario)) { ?>
+      <?php if ($contacto_sec_src !== '' && !$is_dup_banner) { ?>
       <div class="form-column contactimg1 col-lg-3 col-md-12 col-sm-12" style="text-align:center;">
-        <?php $href2 = isset($this->contacto_secundario_link) ? trim((string)$this->contacto_secundario_link) : ''; ?>
+        <?php $href2 = $contacto_sec_link_src; ?>
         <?php if ($href2) { ?><a href="<?php echo htmlspecialchars($href2); ?>" style="display:inline-block;">
         <?php } ?>
-        <img class="pronto" src="<?php echo htmlspecialchars($this->contacto_secundario); ?>" style="max-width:100%;border-radius:20px;">
+        <img class="pronto" src="<?php echo htmlspecialchars($contacto_sec_src); ?>" style="max-width:100%;border-radius:20px;">
         <?php if ($href2) { ?></a><?php } ?>
       </div>
       <?php } else { ?>

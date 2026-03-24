@@ -140,6 +140,10 @@
     <?php } ?>
 
 
+    
+
+    
+
 
     <!-- PLAN ACTIVACIÓN (imagen desde API, textos/botones desde CMS) -->
     <?php
@@ -373,6 +377,7 @@
                     })();
                 </script>
 
+                
                <!-- NUEVO: Modal datos Activación (completo) -->
                 <div id="actDatosModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:2147483647; align-items:center; justify-content:center; padding:16px;">
                 <div style="background:#ffffff; width:100%; max-width:860px; border-radius:12px; overflow:auto; max-height:92vh;">
@@ -620,7 +625,157 @@
     </div>
     <?php } ?>
 
+        <!-- Carrusel de planes (imagen_web1) bajo todo el bloque de activación -->
+    <?php 
+      $planesHome = isset($this->planesSocio) && is_array($this->planesSocio) ? $this->planesSocio : [];
+      $planesImg1 = [];
+      foreach ($planesHome as $ph) {
+        $w2 = isset($ph['imagen_web2']) ? trim((string)$ph['imagen_web2']) : '';
+        $w1 = isset($ph['imagen_web1']) ? trim((string)$ph['imagen_web1']) : '';
+        if ($w2 !== '' || $w1 !== '') { $planesImg1[] = $ph; }
+      }
+      $toRecargas = BASE_URL . 'recargas';
+    ?>
+    <?php if (!empty($planesImg1)) { ?>
+    <div class="planes-carrusel-wrap" style="max-width:1200px; margin:20px auto 28px auto; padding:0 16px;">
+      <div class="planes-carrusel" id="planesCarrusel" style="position:relative; overflow:hidden; border-radius:12px;">
+        <div class="planes-track" style="display:flex; gap:16px; align-items:center; will-change:transform; transition: transform .45s ease; padding:8px 4px;">
+          <?php foreach ($planesImg1 as $p) { 
+            // Prioridad final: imagen_web1 (principal), luego imagen_web2 como respaldo
+            $imgRaw = isset($p['imagen_web1']) && trim((string)$p['imagen_web1']) !== ''
+                      ? trim((string)$p['imagen_web1'])
+                      : (isset($p['imagen_web2']) ? trim((string)$p['imagen_web2']) : '');
+            if ($imgRaw === '') { continue; }
+            $imgBase = defined('WL_IMG_BASE_URL') ? WL_IMG_BASE_URL : (BASE_URL.'public/img/');
+            if (preg_match('#^https?://#', $imgRaw)) {
+              $src = $imgRaw;
+            } else {
+              $path = ltrim($imgRaw, '/');
+              $src = rtrim($imgBase,'/').'/'.$path;
+            }
+          ?>
+            <a href="<?php echo htmlspecialchars($toRecargas); ?>" class="plan-slide" style="flex:0 0 260px; width:260px; display:block; text-decoration:none; cursor:pointer;" title="Ir a Recargas">
+              <div style="background:transparent; border:0; border-radius:14px; box-shadow:0 8px 20px rgba(15,23,42,0.06); overflow:hidden;">
+                <img src="<?php echo htmlspecialchars($src); ?>" alt="Plan" style="display:block; width:100%; height:320px; object-fit:contain; object-position:center;">
+              </div>
+            </a>
+          <?php } ?>
+        </div>
+        <button type="button" id="plPrev" style="position:absolute; left:6px; top:50%; transform:translateY(-50%); width:36px; height:36px; border-radius:999px; border:0; background:#ffffff; box-shadow:0 6px 14px rgba(0,0,0,0.12); cursor:pointer; z-index:5;">‹</button>
+        <button type="button" id="plNext" style="position:absolute; right:6px; top:50%; transform:translateY(-50%); width:36px; height:36px; border-radius:999px; border:0; background:#ffffff; box-shadow:0 6px 14px rgba(0,0,0,0.12); cursor:pointer; z-index:5;">›</button>
+      </div>
+    </div>
 
+    <script>
+      (function(){
+        var wrap = document.getElementById('planesCarrusel');
+        if (!wrap) return;
+        var track = wrap.querySelector('.planes-track');
+        var slides = Array.prototype.slice.call(track.querySelectorAll('.plan-slide'));
+        if (!slides.length) return;
+        // Asegurar transición declarada
+        track.style.transition = 'transform .45s ease';
+        var DURATION = 460; // ms
+        // Calcular cuántos slides caben en viewport para clonar esa cantidad en extremos
+        function baseStep(){
+          var a = slides[0], b = slides[1];
+          if (a && b) {
+            var d = Math.round(b.getBoundingClientRect().left - a.getBoundingClientRect().left);
+            if (d > 0) return d;
+          }
+          var w = (slides[0] ? slides[0].getBoundingClientRect().width : 200);
+          return Math.round(w + 16);
+        }
+        var step0 = baseStep();
+        var visibleCount = Math.max(1, Math.floor(wrap.clientWidth / step0));
+        // Clonar visibleCount al inicio y al final
+        for (var i=0; i<visibleCount; i++) {
+          var cEnd = slides[i % slides.length].cloneNode(true);
+          track.appendChild(cEnd);
+        }
+        for (var j=0; j<visibleCount; j++) {
+          var cStart = slides[(slides.length - 1 - j + slides.length) % slides.length].cloneNode(true);
+          track.insertBefore(cStart, track.firstChild);
+        }
+        var all = Array.prototype.slice.call(track.querySelectorAll('.plan-slide'));
+        var realCount = slides.length;
+        var startIndex = visibleCount; // primer real
+        var endVirtualStart = realCount + visibleCount; // índice después del último real
+        var idx = startIndex;
+        var moving = false;
+        var unlockTO = null;
+        function gapPx(){
+          try {
+            var g = getComputedStyle(track).gap || getComputedStyle(track).columnGap || '16px';
+            return Math.round(parseFloat(g)) || 16;
+          } catch(_){ return 16; }
+        }
+        function slideStep(){
+          // Preferir diferencia de posiciones consecutivas para evitar errores por bordes/redondeos
+          var a = all[1], b = all[2];
+          if (a && b) {
+            var d = Math.round(b.getBoundingClientRect().left - a.getBoundingClientRect().left);
+            if (d > 0) return d;
+          }
+          var m = all[1] || all[0];
+          return Math.round((m ? m.getBoundingClientRect().width : 200) + gapPx());
+        }
+        function slideW(){ return slideStep(); }
+        function setX(instant){
+          if (instant) track.style.transition = 'none';
+          var x = Math.round(-idx * slideW());
+          track.style.transform = 'translate3d(' + x + 'px,0,0)';
+          if (instant) { track.offsetHeight; track.style.transition = 'transform .45s ease'; }
+        }
+        // Posicionar tras layout y cuando carguen imágenes
+        function positionSoon(){ setTimeout(function(){ setX(true); }, 60); }
+        positionSoon();
+        try {
+          var imgs = wrap.querySelectorAll('img');
+          imgs.forEach(function(im){ if (!im.complete) im.addEventListener('load', function(){ positionSoon(); }, {once:true}); });
+        } catch(_){ }
+        function afterMove(){
+          // Si pasamos más allá del último real, regresa al equivalente empezando por startIndex
+          if (idx >= endVirtualStart) {
+            idx = startIndex + (idx - endVirtualStart);
+            setX(true);
+          }
+          // Si pasamos antes del primero real, salta desde el final manteniendo offset
+          else if (idx < startIndex) {
+            idx = (endVirtualStart - 1) - (startIndex - 1 - idx);
+            setX(true);
+          }
+          moving = false;
+        }
+        function next(){ if(moving) return; moving = true; idx += 1; setX(false); if (unlockTO) clearTimeout(unlockTO); unlockTO = setTimeout(afterMove, DURATION+40); }
+        function prev(){ if(moving) return; moving = true; idx -= 1; setX(false); if (unlockTO) clearTimeout(unlockTO); unlockTO = setTimeout(afterMove, DURATION+40); }
+        track.addEventListener('transitionend', function(ev){
+          // Ignorar si la transición no es de transform
+          if (ev && ev.propertyName && ev.propertyName !== 'transform') return;
+          if (unlockTO) { clearTimeout(unlockTO); unlockTO=null; }
+          if (!moving) return; // evitar doble desbloqueo
+          afterMove();
+        });
+        // Autoplay con pausa en hover
+        var timer = setInterval(next, 3000);
+        wrap.addEventListener('mouseenter', function(){ clearInterval(timer); timer = null; });
+        wrap.addEventListener('mouseleave', function(){ if (!timer) timer = setInterval(next, 3000); });
+        // Controles
+        var btnN = document.getElementById('plNext');
+        var btnP = document.getElementById('plPrev');
+        if (btnN) btnN.addEventListener('click', function(e){ e.preventDefault(); e.stopPropagation(); if (timer){ clearInterval(timer); timer=null; } next(); });
+        if (btnP) btnP.addEventListener('click', function(e){ e.preventDefault(); e.stopPropagation(); if (timer){ clearInterval(timer); timer=null; } prev(); });
+        // Recalcular en resize
+        window.addEventListener('resize', function(){ setX(true); });
+        try {
+          if ('ResizeObserver' in window) {
+            var ro = new ResizeObserver(function(){ setX(true); });
+            ro.observe(wrap);
+          }
+        } catch(_){ }
+      })();
+    </script>
+    <?php } ?>
 
     <?php
         $planesPublic = isset($this->planesPublic) && is_array($this->planesPublic) ? $this->planesPublic : [];

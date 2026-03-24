@@ -449,7 +449,18 @@ class personasController extends Controller
             $this->_view->Recargalikes = $bloque6['byType'];
             $this->_view->debug_bloque6 = $bloque6['debug']; 
 
-            // (Inicio público) No se muestran listas de planes; solo Plan Activación (imagen la integraremos desde API aparte)
+            // Exponer planes para Inicio público (usar mismo origen que Recargas)
+            try {
+                $apiDebug = ['step' => 'getPlanes', 'page_id' => $this->resolveCmsPageId()];
+                // En inicio público NO hay usuario logueado; pasar null para obtener catálogo general
+                list($planes, $dbg) = $this->fetchPlanesNew(null);
+                $this->_view->planesSocio = is_array($planes) ? $planes : [];
+                $apiDebug['planes'] = $dbg;
+                $this->_view->planesSocioDebug = $apiDebug;
+            } catch (\Throwable $e) {
+                $this->_view->planesSocio = [];
+                $this->_view->planesSocioDebug = ['error' => $e->getMessage()];
+            }
 
         } catch (\Throwable $e) {
             $debug['error'] = $e->getMessage();
@@ -1229,7 +1240,8 @@ class personasController extends Controller
             }
             // 30: Banner principal – pestaña dinámica Contacto
             $PESTANA = $this->resolveCmsTabId('personas', 'Contacto');
-            $id30 = $this->cmsResolveId($PESTANA, 'Banner contacto', 'banner', null);
+            // En CMS el título del bloque es 'Banner principal'
+            $id30 = $this->cmsResolveId($PESTANA, 'Banner principal', 'banner', null);
             $b30 = CmsRepository::loadElementsByBlockId($id30, 'imagen', 1);
             $this->_view->contacto_banner = $b30['items'][0] ?? null;
             $this->_view->contacto_banner_link = CmsRepository::getFirstLinkForType($id30, 'imagen', 1);

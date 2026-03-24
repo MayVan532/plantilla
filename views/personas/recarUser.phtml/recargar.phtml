@@ -60,6 +60,34 @@
               .lkp-cards-row { display:grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap:16px; margin:0; align-items:stretch; }
               @media (max-width: 991px) { .lkp-cards-row { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
               @media (max-width: 767px) { .lkp-cards-row { grid-template-columns: 1fr; } }
+              /* Marco de imagen fijo 500x120 con fondo gris claro */
+              .lkp-card .lkp-imgbox {
+                width: 500px;
+                max-width: 100%;
+                height: 120px;
+                background: #f3f4f6;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 12px auto 0 auto;
+                border-radius: 8px;
+                order: 2;
+              }
+              .lkp-card .lkp-imgbox img {
+                width: 500px;
+                max-width: 100%;
+                height: 120px;
+                object-fit: cover;
+                display: block;
+              }
+              @media (max-width: 767px) {
+                .lkp-card .lkp-imgbox { width: 100%; height: 160px; }
+                .lkp-card .lkp-imgbox img { height: 160px; object-fit: cover; }
+              }
+              /* Badge de precio */
+              .lkp-upper-box { order: 1; padding:12px 14px 8px 14px; border-bottom:1px solid #eef2f7; background:#fff; display:flex; flex-direction:column; gap:4px; }
+              .lkp-upper-box .top-row { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+              .lkp-price-badge { background:#00c8f8; color:#fff; font-weight:800; font-size:16px; padding:4px 10px; border-radius:10px; box-shadow:0 8px 18px rgba(0,200,248,0.25); white-space:nowrap; }
             </style>
             <?php if (!empty($planesUser)) { ?>
             <div class="container-fluid" style="padding:0;">
@@ -75,21 +103,29 @@
                   <div style="background:#f9fafb; border-radius:16px; overflow:hidden; box-shadow:0 6px 16px rgba(15,23,42,.06); height:100%; display:flex; flex-direction:column;">
                     <?php 
                       $imgFile = '';
-                      if (!empty($plan['imagen_web1'])) { $imgFile = (string)$plan['imagen_web1']; }
+                      // Priorizar banner horizontal: web2, luego web1, luego móviles
+                      if (!empty($plan['imagen_web2'])) { $imgFile = (string)$plan['imagen_web2']; }
+                      elseif (!empty($plan['imagen_web1'])) { $imgFile = (string)$plan['imagen_web1']; }
                       elseif (!empty($plan['imagen_movil1'])) { $imgFile = (string)$plan['imagen_movil1']; }
+                      elseif (!empty($plan['imagen_movil2'])) { $imgFile = (string)$plan['imagen_movil2']; }
                       if ($imgFile !== '') {
                         $imgBase = defined('WL_IMG_BASE_URL') ? WL_IMG_BASE_URL : (BASE_URL . 'public/img/');
                         $imgSrc = rtrim($imgBase, '/').'/'. rawurlencode($imgFile);
-                        echo '<img src="' . htmlspecialchars($imgSrc) . '" alt="' . htmlspecialchars($nombre ?: 'Plan') . '" style="width:100%; height:220px; object-fit:cover; display:block;">';
+                        echo '<div class="lkp-imgbox"><img src="' . htmlspecialchars($imgSrc) . '" alt="' . htmlspecialchars($nombre ?: 'Plan') . '"></div>';
                       }
                     ?>
-                    <div style="padding:12px 14px 8px 14px; border-bottom:1px solid #eef2f7;">
-                      <div style="color:#0ea5a6; font-weight:800; text-transform:uppercase; font-size:14px;"><?php echo htmlspecialchars(strtoupper($nombre)); ?></div>
+                    <div class="lkp-upper-box">
+                      <div class="top-row">
+                        <div style="color:#0ea5a6; font-weight:800; text-transform:uppercase; font-size:14px;"><?php echo htmlspecialchars(strtoupper($nombre)); ?></div>
+                        <?php $precioTop = isset($plan['monto']) ? $plan['monto'] : (isset($plan['precio']) ? $plan['precio'] : ''); if ($precioTop !== '') { ?>
+                          <span class="lkp-price-badge">$<?php echo htmlspecialchars(number_format((float)$precioTop, 2, '.', '')); ?></span>
+                        <?php } ?>
+                      </div>
                       <?php if ($vigencia !== '') { ?>
-                      <div style="color:#64748b; font-size:12px; margin-top:4px;">Vigencia <?php echo htmlspecialchars($vigencia); ?> días</div>
+                        <div style="color:#64748b; font-size:12px;">Vigencia <?php echo htmlspecialchars($vigencia); ?> días</div>
                       <?php } ?>
                     </div>
-                    <div style="padding:12px 14px 16px 14px; flex:1; display:flex; flex-direction:column;">
+                    <div style="padding:12px 14px 16px 14px; flex:1; display:flex; flex-direction:column; order:3;">
                       <?php if ($datosMb !== '') { ?>
                       <div style="font-size:13px; color:#111827; margin-bottom:8px;">Incluye <?php echo htmlspecialchars($datosMb); ?> MB de datos</div>
                       <?php } ?>
