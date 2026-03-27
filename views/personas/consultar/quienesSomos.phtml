@@ -11,6 +11,45 @@
     @media (min-width: 577px) and (max-width: 992px) {
       .auto-container { padding-left:24px !important; padding-right:24px !important; }
     }
+    /* QS Cobertura responsive */
+    .qs-cob-section {}
+    .qs-cob-img { max-height:300px; width:auto; }
+    .qs-cob-form { display:flex; flex-wrap:wrap; }
+    @media (max-width: 992px) {
+      .qs-cob-section h2 { font-size:28px !important; }
+    }
+    @media (max-width: 768px) {
+      .qs-cob-section { padding: 0 12px !important; }
+      .qs-cob-img { max-height:none !important; width:100% !important; height:auto !important; }
+      .qs-cob-form { gap:10px !important; margin: 12px auto 40px !important; }
+      .qs-cob-form .form-group { flex:1 1 100% !important; }
+      .qs-cob-form button { width:100% !important; }
+    }
+    @media (max-width: 576px) {
+      .qs-cob-section h2 { font-size:24px !important; }
+      .qs-cob-section p { font-size:14px !important; }
+    }
+    /* QS Misión/Visión responsive */
+    /* Unificar tipografía base para Misión y Visión */
+    .qs-mv h2, .qs-mv2 h2 { font-size:32px !important; font-weight:800 !important; color:#0ea5a6 !important; }
+    .qs-mv p, .qs-mv2 p { font-size:16px !important; line-height:1.8 !important; color:#556070 !important; text-align:justify !important; margin:0 !important; }
+    .qs-row { display:flex; flex-wrap:wrap; }
+    .qs-mv2 {}
+    @media (max-width: 992px) {
+      .qs-row { gap: 32px !important; }
+      .qs-mv h2, .qs-mv2 h2 { font-size:28px !important; }
+    }
+    @media (max-width: 768px) {
+      .qs-row { gap: 24px !important; }
+      .qs-mv, .qs-mv2 { text-align:left !important; padding-left:6px !important; padding-right:6px !important; }
+      .qs-mv h2, .qs-mv2 h2 { font-size:26px !important; text-align:center !important; }
+      .qs-mv p, .qs-mv2 p { font-size:15px !important; line-height:1.75 !important; text-align:justify !important; }
+    }
+    @media (max-width: 576px) {
+      .qs-row { gap: 18px !important; }
+      .qs-mv h2, .qs-mv2 h2 { font-size:24px !important; text-align:center !important; }
+      .qs-mv p, .qs-mv2 p { font-size:14px !important; text-align:justify !important; }
+    }
   </style>
   <?php if (isset($_GET['debugcms']) && $_GET['debugcms'] == '1' && isset($this->debug_bloque47)) { ?>
     <pre style="background:#f8fafc;border:1px solid #e2e8f0;color:#0f172a;font-size:12px;padding:10px;border-radius:6px;margin:10px 0;white-space:pre-wrap;">
@@ -48,7 +87,7 @@
   <!-- Sección Misión / Visión -->
   <section style="padding: 60px 0; background:#ffffff;">
     <div class="auto-container" style="max-width: 1200px; margin: 0 auto;">
-      <div class="row" style="display: flex; justify-content: center; gap: 50px; flex-wrap: wrap;">
+      <div class="row qs-row" style="display: flex; justify-content: center; gap: 50px; flex-wrap: wrap;">
         <?php $qs_mv = isset($this->qs_mv) && is_array($this->qs_mv) ? $this->qs_mv : ['titulo'=>[],'texto'=>[]]; ?>
         <?php if (!empty($qs_mv['titulo'][0]) || !empty($qs_mv['texto'][0])) { ?>
         <!-- Misión -->
@@ -67,7 +106,7 @@
         </div>
         <?php } else { ?>
         <!-- Misión (skeleton) -->
-        <div class="col-lg-5 col-md-6 col-sm-12" style="text-align: center;">
+        <div class="col-lg-5 col-md-6 col-sm-12 qs-mv2" style="text-align: center;">
           <div style="height:28px; width:60%; background:#cfd6dd; border-radius:8px; margin:0 auto 12px;"></div>
           <div style="width:42px; height:3px; background:#0ea5a6; opacity:.25; margin:0 auto 16px; border-radius:2px;"></div>
           <div style="height:10px; width:90%; background:#e9edf1; border-radius:6px; margin:6px auto;"></div>
@@ -76,7 +115,7 @@
         <?php } ?>
         <?php if (!empty($qs_mv['titulo'][1]) || !empty($qs_mv['texto'][1])) { ?>
         <!-- Visión -->
-        <div class="col-lg-5 col-md-6 col-sm-12" style="text-align: center;">
+        <div class="col-lg-5 col-md-6 col-sm-12 qs-mv2" style="text-align: center;">
           <?php if (!empty($qs_mv['titulo'][1])) { ?>
           <h2 style="font-size: 32px; font-weight: 800; margin-bottom: 8px; color: #0ea5a6;">
             <?php echo htmlspecialchars($qs_mv['titulo'][1]); ?>
@@ -91,7 +130,7 @@
         </div>
         <?php } else { ?>
         <!-- Visión (skeleton) -->
-        <div class="col-lg-5 col-md-6 col-sm-12" style="text-align: center;">
+        <div class="col-lg-5 col-md-6 col-sm-12 qs-mv2" style="text-align: center;">
           <div style="height:28px; width:60%; background:#cfd6dd; border-radius:8px; margin:0 auto 12px;"></div>
           <div style="width:42px; height:3px; background:#0ea5a6; opacity:.25; margin:0 auto 16px; border-radius:2px;"></div>
           <div style="height:10px; width:90%; background:#e9edf1; border-radius:6px; margin:6px auto;"></div>
@@ -148,14 +187,14 @@
   </section>
   <!-- Cobertura (B20): título/imagen dinámicos + texto fijo y formulario estático -->
   <?php $qs_cob = isset($this->qs_titulogif) && is_array($this->qs_titulogif) ? $this->qs_titulogif : []; ?>
-  <div class="col-lg-12 col-md-12 col-sm-12 text-center" style="margin-top: 40px;">
+  <div class="col-lg-12 col-md-12 col-sm-12 text-center qs-cob-section" style="margin-top: 40px;">
       <?php if (!empty($qs_cob['titulo'][0])) { ?>
       <h2 style="margin:0 0 10px; font-size:32px; font-weight:800; color:#0f172a; letter-spacing:.2px;">
         <?php echo htmlspecialchars($qs_cob['titulo'][0]); ?>
       </h2>
       <?php } ?>
       <?php if (!empty($qs_cob['imagen'][0])) { ?>
-      <img src="<?php echo htmlspecialchars($qs_cob['imagen'][0]); ?>" alt="Cobertura" style="max-height:300px; width:auto; margin-bottom:14px;">
+      <img class="qs-cob-img" src="<?php echo htmlspecialchars($qs_cob['imagen'][0]); ?>" alt="Cobertura" style="max-height:300px; width:auto; margin-bottom:14px;">
       <?php } else { ?>
       <div style="height:40px; width:240px; background:#e6eef7; border-radius:10px; margin:0 auto 12px;"></div>
       <?php } ?>
@@ -169,7 +208,7 @@
       <?php } else { ?>
           <div style="height:12px; width:70%; max-width:720px; background:#e9edf1; border-radius:6px; margin:8px auto 16px;"></div>
       <?php } ?>
-      <div class="d-flex align-items-center contact-form default-form" style="max-width: 600px; margin: 12px auto 70px; gap:12px;">
+      <div class="d-flex align-items-center contact-form default-form qs-cob-form" style="max-width: 600px; margin: 12px auto 70px; gap:12px;">
         <div class="spin1 spinner-border text-success" role="status" style="display:none; margin-right: 10px;">
           <div class="spinner"></div>
         </div>

@@ -1,4 +1,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* Banner estatus responsive */
+  .estatus-banner { position: relative; max-width: 100%; overflow: hidden; margin-top: 0; }
+  .estatus-banner-img { width: 100%; height: 300px; object-fit: cover; display: block; }
+  @media (max-width: 768px) {
+    .estatus-banner-img { height: auto !important; object-fit: contain !important; max-height: 60vh !important; }
+  }
+</style>
 <div class="personas-main-content" style="background:#ffffff; font-family:'Montserrat', sans-serif; overflow-x:hidden;">
   <?php if (isset($_GET['debugcms']) && $_GET['debugcms'] == '1' && isset($this->debug_bloque13)) { ?>
     <pre style="background:#f8fafc;border:1px solid #e2e8f0;color:#0f172a;font-size:12px;padding:10px;border-radius:6px;margin:10px 0;white-space:pre-wrap;">
@@ -7,11 +15,11 @@
   <?php } ?>
   <!-- BANNER -->
   <?php if (!empty($this->banner_estatus)) { ?>
-  <div style="position: relative; max-width: 100%; overflow: hidden; margin-top: 0;">
+  <div class="estatus-banner" style="position: relative; max-width: 100%; overflow: hidden; margin-top: 0;">
       <div style="display: block; width: 100%;">
           <?php $href = isset($this->banner_estatus_link) ? trim((string)$this->banner_estatus_link) : ''; ?>
           <?php if ($href) { ?><a href="<?php echo htmlspecialchars($href); ?>" style="display:block;"><?php } ?>
-          <img src="<?php echo htmlspecialchars($this->banner_estatus); ?>" 
+          <img class="estatus-banner-img" src="<?php echo htmlspecialchars($this->banner_estatus); ?>" 
               style="width: 100%; height: 300px; object-fit: cover; display: block;">
           <?php if ($href) { ?></a><?php } ?>
       </div>

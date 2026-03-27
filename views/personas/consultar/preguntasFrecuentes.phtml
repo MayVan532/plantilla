@@ -13,6 +13,12 @@
     @media (min-width: 577px) and (max-width: 992px) {
       .auto-container { padding-left: 24px !important; padding-right: 24px !important; }
     }
+    /* Banner FAQ responsive */
+    .faq-banner { position: relative; max-width: 100%; overflow: hidden; margin-top: 0; }
+    .faq-banner-img { width: 100%; height: 300px; object-fit: cover; display: block; }
+    @media (max-width: 768px) {
+      .faq-banner-img { height: auto !important; object-fit: contain !important; max-height: 60vh !important; }
+    }
   </style>
   <?php if (isset($_GET['debugcms']) && $_GET['debugcms'] == '1') { ?>
     <?php if (isset($this->debug_bloque17)) { ?>
@@ -28,16 +34,17 @@
   <?php } ?>
   <!-- BANNER -->
   <?php if (!empty($this->banner_preguntas)) { ?>
-  <div style="position: relative; max-width: 100%; overflow: hidden; margin-top: 0;">
+  <div class="faq-banner" style="position: relative; max-width: 100%; overflow: hidden; margin-top: 0;">
       <div style="display: block; width: 100%;">
           <?php $href = isset($this->banner_preguntas_link) ? trim((string)$this->banner_preguntas_link) : ''; ?>
           <?php if ($href) { ?><a href="<?php echo htmlspecialchars($href); ?>" style="display:block;"><?php } ?>
-          <img src="<?php echo htmlspecialchars($this->banner_preguntas); ?>" 
+          <img class="faq-banner-img" src="<?php echo htmlspecialchars($this->banner_preguntas); ?>" 
               style="width: 100%; height: 300px; object-fit: cover; display: block;">
           <?php if ($href) { ?></a><?php } ?>
       </div>
   </div>
   <?php } else { ?>
+    
   <div style="position: relative; max-width: 100%; overflow: hidden; margin-top: 0; min-height: 300px; border-radius:12px; background:linear-gradient(180deg,#eef5fb 0%,#e6eef7 100%); border:1px solid #d9e5f0; box-shadow:0 6px 18px rgba(15, 23, 42, 0.05);"></div>
   <?php } ?>
   <section class="faq-section" style="padding: 56px 0; background:#ffffff;">

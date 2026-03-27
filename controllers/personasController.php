@@ -917,6 +917,220 @@ class personasController extends Controller
         $this->_view->renderizar(array('@personas/consultar/compatibilidad'));
     }
 
+    // API: Cobertura (proxy seguro con Authorization)
+    public function coberturaApi()
+    {
+        header('Content-Type: application/json; charset=UTF-8');
+        try {
+            $cp = (string)($this->getPostParam('codigo_postal') ?? $this->getPostParam('cp') ?? '');
+            $cp = preg_replace('/\D+/', '', $cp);
+            if ($cp === '' || strlen($cp) !== 5) {
+                echo json_encode(['ok'=>false,'message'=>'El código postal debe tener 5 dígitos.']);
+                return;
+            }
+
+            $url = $this->getWlApiBaseUrl().'/gateway/cobertura';
+            $headers = ['Authorization: ' . TokenApiExterno::obtenerAuthorizationHeader()];
+            $payload = ['codigo_postal' => $cp];
+            $res = $this->callJsonApi($url, $headers, $payload);
+
+            if (!empty($res['ok'])) {
+                $body = is_array($res['body']) ? $res['body'] : [];
+                // Si regresa {status:400, message:"..."} con HTTP 200
+                if (isset($body['status']) && is_numeric($body['status']) && (int)$body['status'] >= 400) {
+                    $msg = isset($body['message']) && is_string($body['message']) ? $body['message'] : 'No se pudo consultar la compatibilidad';
+                    echo json_encode(['ok'=>false,'message'=>$msg,'debug'=>['status_app'=>$body['status']]]);
+                    return;
+                }
+                // Si viene como lista [ {...} ] tomar el primero como cuerpo útil
+                $useful = $body;
+                if (array_keys($body) === range(0, count($body) - 1) && isset($body[0]) && is_array($body[0])) {
+                    $useful = $body[0];
+                }
+                $msg = '';
+                if (isset($useful['message']) && is_string($useful['message'])) { $msg = $useful['message']; }
+                elseif (isset($useful['mensaje']) && is_string($useful['mensaje'])) { $msg = $useful['mensaje']; }
+                // Fallback: usar homologated/homologado como mensaje si existe
+                if ($msg === '') {
+                    if (isset($useful['homologated']) && is_string($useful['homologated'])) { $msg = $useful['homologated']; }
+                    elseif (isset($useful['homologado']) && is_string($useful['homologado'])) { $msg = $useful['homologado']; }
+                }
+                echo json_encode(['ok'=>true,'message'=>$msg !== '' ? $msg : 'Consulta realizada','body'=>$useful]);
+                return;
+            }
+
+            $msg = 'No se pudo consultar la cobertura';
+            if (is_array($res['body'] ?? null)) {
+                if (isset($res['body']['message']) && is_string($res['body']['message'])) { $msg = $res['body']['message']; }
+                elseif (isset($res['body']['mensaje']) && is_string($res['body']['mensaje'])) { $msg = $res['body']['mensaje']; }
+                elseif (isset($res['body']['error']['message']) && is_string($res['body']['error']['message'])) { $msg = $res['body']['error']['message']; }
+            }
+            echo json_encode(['ok'=>false,'message'=>$msg,'debug'=>['status'=>$res['status']??null,'error'=>$res['error']??null,'raw'=>$res['body']??null]]);
+        } catch (\Throwable $e) {
+            echo json_encode(['ok'=>false,'message'=>'Error interno']);
+        }
+    }
+
+    // API: Compatibilidad por IMEI (proxy seguro con Authorization)
+    public function imeiApi()
+    {
+        header('Content-Type: application/json; charset=UTF-8');
+        try {
+            $imei = (string)($this->getPostParam('imei') ?? '');
+            $imei = preg_replace('/\D+/', '', $imei);
+            $len = strlen($imei);
+            if ($imei === '' || $len < 14 || $len > 17) {
+                echo json_encode(['ok'=>false,'message'=>'IMEI inválido. Debe contener solo dígitos (14 a 17).']);
+                return;
+            }
+
+            $url = $this->getWlApiBaseUrl().'/gateway/imei';
+            $headers = ['Authorization: ' . TokenApiExterno::obtenerAuthorizationHeader()];
+            $payload = ['imei' => $imei];
+            $res = $this->callJsonApi($url, $headers, $payload);
+
+            if (!empty($res['ok'])) {
+                $body = is_array($res['body']) ? $res['body'] : [];
+                // Tratar {status:>=400,message} como error lógico aunque HTTP sea 200
+                if (isset($body['status']) && is_numeric($body['status']) && (int)$body['status'] >= 400) {
+                    $msg = isset($body['message']) && is_string($body['message']) ? $body['message'] : 'No se pudo consultar la compatibilidad';
+                    echo json_encode(['ok'=>false,'message'=>$msg,'debug'=>['status_app'=>$body['status']]]);
+                    return;
+                }
+                // Si viene arreglo de resultados, usar el primero
+                $useful = $body;
+                if (array_keys($body) === range(0, count($body) - 1) && isset($body[0]) && is_array($body[0])) {
+                    $useful = $body[0];
+                }
+                // Si trae un nodo 'imei' con el objeto de compatibilidad, utilizarlo y conservar deviceFeatures hermanos
+                if (isset($useful['imei']) && is_array($useful['imei'])) {
+                    $imeiNode = $useful['imei'];
+                    // Conservar deviceFeatures del nivel raíz si existe
+                    if (isset($body['deviceFeatures']) && is_array($body['deviceFeatures'])) {
+                        $imeiNode['deviceFeatures'] = $body['deviceFeatures'];
+                    }
+                    $useful = $imeiNode;
+                }
+                $msg = '';
+                if (isset($useful['message']) && is_string($useful['message'])) { $msg = $useful['message']; }
+                elseif (isset($useful['mensaje']) && is_string($useful['mensaje'])) { $msg = $useful['mensaje']; }
+                if ($msg === '') {
+                    if (isset($useful['homologated']) && is_string($useful['homologated'])) { $msg = $useful['homologated']; }
+                    elseif (isset($useful['homologado']) && is_string($useful['homologado'])) { $msg = $useful['homologado']; }
+                }
+                echo json_encode(['ok'=>true,'message'=>$msg !== '' ? $msg : 'Consulta realizada','body'=>$useful]);
+                return;
+            }
+
+            $msg = 'No se pudo consultar la compatibilidad';
+            if (is_array($res['body'] ?? null)) {
+                if (isset($res['body']['message']) && is_string($res['body']['message'])) { $msg = $res['body']['message']; }
+                elseif (isset($res['body']['mensaje']) && is_string($res['body']['mensaje'])) { $msg = $res['body']['mensaje']; }
+                elseif (isset($res['body']['error']['message']) && is_string($res['body']['error']['message'])) { $msg = $res['body']['error']['message']; }
+            }
+            echo json_encode(['ok'=>false,'message'=>$msg,'debug'=>['status'=>$res['status']??null,'error'=>$res['error']??null,'raw'=>$res['body']??null]]);
+        } catch (\Throwable $e) {
+            echo json_encode(['ok'=>false,'message'=>'Error interno']);
+        }
+    }
+
+    // API: Registro de Portabilidad (proxy seguro con Authorization)
+    public function portabilidadApi()
+    {
+        header('Content-Type: application/json; charset=UTF-8');
+        try {
+            $nombre = trim((string)($this->getPostParam('nombre_cliente') ?? ''));
+            $correo = trim((string)($this->getPostParam('correo_cliente') ?? ''));
+            $numero = preg_replace('/\D+/', '', (string)($this->getPostParam('numero_a_portar') ?? ''));
+            $iccid  = preg_replace('/\D+/', '', (string)($this->getPostParam('iccid') ?? ''));
+            $nip    = preg_replace('/\D+/', '', (string)($this->getPostParam('nip') ?? ''));
+
+            if ($nombre === '' || mb_strlen($nombre, 'UTF-8') < 3) { echo json_encode(['ok'=>false,'message'=>'Nombre inválido.']); return; }
+            if ($correo === '' || !filter_var($correo, FILTER_VALIDATE_EMAIL)) { echo json_encode(['ok'=>false,'message'=>'Correo inválido.']); return; }
+            if (strlen($numero) !== 10) { echo json_encode(['ok'=>false,'message'=>'Número telefónico inválido (10 dígitos).']); return; }
+            if (strlen($iccid) < 18 || strlen($iccid) > 22) { echo json_encode(['ok'=>false,'message'=>'ICC inválido.']); return; }
+            if (strlen($nip) < 4 || strlen($nip) > 8) { echo json_encode(['ok'=>false,'message'=>'NIP inválido.']); return; }
+
+            $url = $this->getWlApiBaseUrl().'/gateway/portabilidad';
+            $headers = ['Authorization: ' . TokenApiExterno::obtenerAuthorizationHeader()];
+            $payload = [
+                'iccid'            => $iccid,
+                'nombre_cliente'   => $nombre,
+                'correo_cliente'   => $correo,
+                'numero_a_portar'  => $numero,
+                'nip'              => $nip,
+            ];
+            $res = $this->callJsonApi($url, $headers, $payload);
+
+            if (!empty($res['ok'])) {
+                $body = is_array($res['body']) ? $res['body'] : [];
+                // Errores lógicos con HTTP 200
+                if ((isset($body['status']) && is_numeric($body['status']) && (int)$body['status'] >= 400) || isset($body['detail']) || isset($body['error'])) {
+                    $msg = isset($body['message']) ? (string)$body['message'] : (isset($body['detail']) ? (string)$body['detail'] : 'No se pudo registrar la portabilidad');
+                    echo json_encode(['ok'=>false,'message'=>$msg,'debug'=>['status_app'=>$body['status'] ?? null,'raw'=>$body]]);
+                    return;
+                }
+                // Si el cuerpo es lista, tomar el primero
+                if (array_keys($body) === range(0, count($body) - 1) && isset($body[0]) && is_array($body[0])) { $body = $body[0]; }
+                $msg = '';
+                if (isset($body['message']) && is_string($body['message'])) { $msg = $body['message']; }
+                elseif (isset($body['mensaje']) && is_string($body['mensaje'])) { $msg = $body['mensaje']; }
+                elseif (isset($body['estatus']) && is_string($body['estatus'])) { $msg = 'Estatus: '.$body['estatus']; }
+                echo json_encode(['ok'=>true,'message'=> $msg !== '' ? $msg : 'Solicitud registrada','body'=>$body]);
+                return;
+            }
+
+            $msg = 'No se pudo registrar la portabilidad';
+            if (is_array($res['body'] ?? null)) {
+                if (isset($res['body']['message']) && is_string($res['body']['message'])) { $msg = $res['body']['message']; }
+                elseif (isset($res['body']['detail']) && is_string($res['body']['detail'])) { $msg = $res['body']['detail']; }
+                elseif (isset($res['body']['error']['message']) && is_string($res['body']['error']['message'])) { $msg = $res['body']['error']['message']; }
+            }
+            echo json_encode(['ok'=>false,'message'=>$msg,'debug'=>['status'=>$res['status']??null,'error'=>$res['error']??null,'raw'=>$res['body']??null]]);
+        } catch (\Throwable $e) {
+            echo json_encode(['ok'=>false,'message'=>'Error interno']);
+        }
+    }
+
+    // API: Estatus de Portabilidad (proxy seguro con Authorization)
+    public function statusPortabilidadApi()
+    {
+        header('Content-Type: application/json; charset=UTF-8');
+        try {
+            $folio = preg_replace('/\D+/', '', (string)($this->getPostParam('folio') ?? ''));
+            if ($folio === '' || strlen($folio) > 12) { echo json_encode(['ok'=>false,'message'=>'Folio inválido.']); return; }
+
+            $url = $this->getWlApiBaseUrl().'/gateway/statusPortabilidad';
+            $headers = ['Authorization: ' . TokenApiExterno::obtenerAuthorizationHeader()];
+            $payload = ['folio' => $folio];
+            $res = $this->callJsonApi($url, $headers, $payload);
+
+            if (!empty($res['ok'])) {
+                $body = is_array($res['body']) ? $res['body'] : [];
+                if ((isset($body['status']) && is_numeric($body['status']) && (int)$body['status'] >= 400) || isset($body['detail']) || isset($body['error'])) {
+                    $msg = isset($body['message']) ? (string)$body['message'] : (isset($body['detail']) ? (string)$body['detail'] : 'No se pudo consultar el estatus');
+                    echo json_encode(['ok'=>false,'message'=>$msg,'debug'=>['status_app'=>$body['status'] ?? null,'raw'=>$body]]);
+                    return;
+                }
+                if (array_keys($body) === range(0, count($body) - 1) && isset($body[0]) && is_array($body[0])) { $body = $body[0]; }
+                $msg = '';
+                if (isset($body['estatus']) && is_string($body['estatus'])) { $msg = $body['estatus']; }
+                elseif (isset($body['message']) && is_string($body['message'])) { $msg = $body['message']; }
+                echo json_encode(['ok'=>true,'message'=> $msg !== '' ? $msg : 'Consulta realizada','body'=>$body]);
+                return;
+            }
+
+            $msg = 'No se pudo consultar el estatus';
+            if (is_array($res['body'] ?? null)) {
+                if (isset($res['body']['detail']) && is_string($res['body']['detail'])) { $msg = $res['body']['detail']; }
+                elseif (isset($res['body']['message']) && is_string($res['body']['message'])) { $msg = $res['body']['message']; }
+            }
+            echo json_encode(['ok'=>false,'message'=>$msg,'debug'=>['status'=>$res['status']??null,'error'=>$res['error']??null,'raw'=>$res['body']??null]]);
+        } catch (\Throwable $e) {
+            echo json_encode(['ok'=>false,'message'=>'Error interno']);
+        }
+    }
+
     public function estatusenvio()
     {
         $this->loadFooterPersonas();

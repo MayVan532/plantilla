@@ -1,5 +1,13 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-KyZXEAg3QhqLMpG8r+Knujsl5+5hb7O1RZ3rYbYz2v8xB0c1dM3b5LrWYY7j2hz9L5Jq1Y8uF+XyOaG2vVt8wg==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* Banner portabilidad responsive */
+  .port-banner { position: relative; max-width: 100%; overflow: hidden; margin-top: 0; }
+  .port-banner-img { width: 100%; height: 300px; object-fit: cover; display: block; }
+  @media (max-width: 768px) {
+    .port-banner-img { height: auto !important; object-fit: contain !important; max-height: 60vh !important; }
+  }
+</style>
 
 <div class="personas-main-content" style="background:#ffffff; font-family:'Montserrat', sans-serif;">
   <?php if (isset($_GET['debugcms']) && $_GET['debugcms'] == '1') { ?>
@@ -18,11 +26,11 @@
   <?php } ?>
   <!-- BANNER -->
   <?php if (!empty($this->port_banner)) { ?>
-  <div style="position: relative; max-width: 100%; overflow: hidden; margin-top: 0;">
+  <div class="port-banner" style="position: relative; max-width: 100%; overflow: hidden; margin-top: 0;">
     <div style="display: block; width: 100%;">
       <?php $href = isset($this->port_banner_link) ? trim((string)$this->port_banner_link) : ''; ?>
       <?php if ($href) { ?><a href="<?php echo htmlspecialchars($href); ?>" style="display:block;"><?php } ?>
-      <img src="<?php echo htmlspecialchars($this->port_banner); ?>" style="width: 100%; height: 300px; object-fit: cover; display: block;">
+      <img class="port-banner-img" src="<?php echo htmlspecialchars($this->port_banner); ?>" style="width: 100%; height: 300px; object-fit: cover; display: block;">
       <?php if ($href) { ?></a><?php } ?>
     </div>
   </div>
@@ -238,7 +246,7 @@
           </div>
           <!-- BOTÓN -->
           <div style="text-align: center; margin-top: 10px;">
-            <button type="submit"
+            <button type="submit" id="btn-porta"
               style="background:#17a2b8; border: none; color: #fff; padding: 12px 40px; border-radius: 6px; font-weight: 700; font-size: 16px; letter-spacing: 0.2px; cursor: pointer; box-shadow: 0 6px 16px rgba(23,162,184,0.20); transition: background .25s, transform .15s;" onmouseover="this.style.background='#128a99'; this.style.transform='translateY(-1px)';" onmouseout="this.style.background='#17a2b8'; this.style.transform='translateY(0)';">
               Enviar solicitud
             </button>
@@ -253,7 +261,7 @@
       <div style="display: flex; justify-content: center; align-items: center; gap: 10px; flex-wrap: wrap;">
         <input type="text" name="folio" id="folio" placeholder="Ingresa Folio"
           style="width: 300px; max-width: 90%; padding: 12px 14px; border-radius: 8px; border: 1px solid #e5e7eb; font-size: 15px; outline:none; transition:border-color .25s; box-shadow:0 1px 2px rgba(0,0,0,0.04);" onfocus="this.style.borderColor='#17a2b8'" onblur="this.style.borderColor='#e5e7eb'">
-        <button
+        <button id="btn-status"
           style="background:#17a2b8; color: #fff; border: none; padding: 12px 26px; border-radius: 6px; font-weight: 700; cursor: pointer; transition: background .25s, transform .15s; box-shadow:0 6px 16px rgba(23,162,184,0.20);" onmouseover="this.style.background='#128a99'; this.style.transform='translateY(-1px)';" onmouseout="this.style.background='#17a2b8'; this.style.transform='translateY(0)';">
           Consultar
         </button>
@@ -303,4 +311,134 @@
       <?php } ?>
     </div>
   </div>
+  <!-- Modal de alertas (reutilizable) y JS -->
+  <style>
+    .porta-modal{ display:none; position:fixed; inset:0; z-index:2147483647; background:rgba(15,23,42,0.78); align-items:center; justify-content:center; padding:20px; }
+    .porta-modal .box{ width:100%; max-width:560px; background:#ffffff; border-radius:18px; box-shadow:0 24px 80px rgba(15,23,42,0.35); border:1px solid #e5e7eb; overflow:hidden; }
+    .porta-modal .head{ padding:16px 18px; color:#ffffff; font-weight:800; font-size:14px; display:flex; justify-content:space-between; align-items:center; }
+    .porta-modal .head.info{    background:linear-gradient(90deg,#0ea5a6 0%,#06b6d4 100%); }
+    .porta-modal .head.success{ background:linear-gradient(90deg,#22c55e 0%,#00bcd4 100%); }
+    .porta-modal .head.error{   background:linear-gradient(90deg,#ef4444 0%,#f97316 100%); }
+    .porta-modal .close-btn{ border:none; background:rgba(255,255,255,0.18); color:#ffffff; border-radius:10px; padding:6px 10px; font-weight:800; cursor:pointer; }
+    .porta-modal .body{ padding:18px 18px 20px; }
+    .porta-modal .row{ display:flex; gap:12px; align-items:flex-start; }
+    .porta-modal .ico{ width:42px; height:42px; border-radius:999px; display:flex; align-items:center; justify-content:center; flex:0 0 auto; }
+    .porta-modal .ico.success{ background:rgba(34,197,94,0.10); border:1px solid rgba(34,197,94,0.25); color:#16a34a; }
+    .porta-modal .ico.error{   background:rgba(239,68,68,0.10); border:1px solid rgba(239,68,68,0.25); color:#dc2626; }
+    .porta-modal .txt-title{ font-size:16px; font-weight:900; color:#0f172a; margin-bottom:6px; }
+    .porta-modal .txt-sub{ font-size:13px; color:#475569; line-height:1.6; }
+    .porta-modal .autoclose{ margin-top:12px; font-size:12px; color:#64748b; }
+    .porta-modal .actions{ padding:10px 16px; display:flex; justify-content:flex-end; gap:10px; }
+    .porta-modal .btn-pri{ background:#0ea5a6; color:#fff; border:0; border-radius:10px; padding:8px 14px; font-weight:800; cursor:pointer; }
+    .porta-spinner{ width:24px; height:24px; border:3px solid #e5e7eb; border-top-color:#00bcd4; border-radius:50%; animation: portaSpin .9s linear infinite; flex-shrink:0; }
+    @keyframes portaSpin{ to{ transform: rotate(360deg); } }
+    .kv-grid{ display:grid; grid-template-columns: 1fr 1fr; gap:6px 24px; align-items:start; }
+    .kv-item{ font-size:13px; color:#475569; }
+    .kv-item b{ color:#0f172a; }
+    @media (max-width: 576px){ .kv-grid{ grid-template-columns: 1fr; } }
+  </style>
+  <div id="portaModal" class="porta-modal" role="dialog" aria-modal="true" aria-labelledby="portaModalTitle">
+    <div class="box">
+      <div id="portaHead" class="head info"><span id="portaModalTitle">Procesando</span><button type="button" id="portaClose" class="close-btn">Cerrar</button></div>
+      <div class="body">
+        <div class="row" id="portaRowLoading" style="display:flex; align-items:center; gap:12px;">
+          <span class="porta-spinner" aria-hidden="true"></span>
+          <div class="txt-sub" id="portaLoadingText">Procesando…</div>
+        </div>
+        <div class="row" id="portaRowResult" style="display:none;">
+          <div id="portaIcon" class="ico success"><i id="portaIconI" class="fas fa-check" aria-hidden="true"></i></div>
+          <div class="col">
+            <div id="portaMsgTitle" class="txt-title">Resultado</div>
+            <div id="portaMsgText" class="txt-sub"></div>
+            <div class="autoclose" id="portaAutoCloseHint">Este mensaje se cerrará automáticamente.</div>
+          </div>
+        </div>
+      </div>
+      <div class="actions"><button id="portaOk" type="button" class="btn-pri">Aceptar</button></div>
+    </div>
+  </div>
+  <script>
+    (function(){
+      var frm   = document.getElementById('frm_nuevo');
+      var btnP  = document.getElementById('btn-porta');
+      var folio = document.getElementById('folio');
+      var btnS  = document.getElementById('btn-status');
+      var modal = document.getElementById('portaModal');
+      var head  = document.getElementById('portaHead');
+      var title = document.getElementById('portaModalTitle');
+      var rowL  = document.getElementById('portaRowLoading');
+      var rowR  = document.getElementById('portaRowResult');
+      var ico   = document.getElementById('portaIcon');
+      var icoI  = document.getElementById('portaIconI');
+      var msgT  = document.getElementById('portaMsgTitle');
+      var msgTx = document.getElementById('portaMsgText');
+      var autoHint = document.getElementById('portaAutoCloseHint');
+      var okBtn = document.getElementById('portaOk');
+      var x1=document.getElementById('x1'), x2=document.getElementById('x2'), x3=document.getElementById('x3'), x4=document.getElementById('x4'), x5=document.getElementById('x5');
+      var saved=null; function ensureInBody(el){ try{ if(el && el.parentNode !== document.body){ document.body.appendChild(el); } }catch(e){} }
+      function lockScroll(){ try{ if(saved===null){ saved=document.body.style.overflow||''; } document.body.style.overflow='hidden'; }catch(e){} }
+      function unlockScroll(){ try{ if(saved!==null){ document.body.style.overflow=saved; saved=null; } }catch(e){} }
+      var persistMode=false; var confirmChk=null; var copyBtn=null; var currentFolio=''; var autoTimer=null;
+      function setupPersistUI(folioVal){
+        currentFolio = folioVal||'';
+        var html = ''+
+          '<div style="margin-top:10px; padding:10px; border:1px dashed #cbd5e1; border-radius:8px; background:#f8fafc;">'+
+            '<div style="font-weight:800; color:#0f172a; margin-bottom:8px;">Guarda tu folio para consultar el estatus:</div>'+
+            '<div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">'+
+              '<code style="font-weight:900; font-size:16px; padding:6px 10px; background:#eef2f7; color:#0f172a; border-radius:8px;">'+(currentFolio||'-')+'</code>'+
+              '<button type="button" id="portaCopyFolio" class="btn-pri" style="background:#0ea5a6; padding:6px 10px; border-radius:8px;">Copiar folio</button>'+
+            '</div>'+
+            '<label style="display:flex; align-items:center; gap:8px; margin-top:12px; font-size:13px; color:#475569;">'+
+              '<input type="checkbox" id="portaFolioChk" style="width:16px; height:16px;">'+
+              '<span>Ya copié o guardé mi folio y deseo cerrar este mensaje.</span>'+
+            '</label>'+
+          '</div>';
+        try{ msgTx.insertAdjacentHTML('beforeend', html); }catch(e){}
+        confirmChk=document.getElementById('portaFolioChk');
+        copyBtn=document.getElementById('portaCopyFolio');
+        if(copyBtn){ copyBtn.addEventListener('click', function(){
+          var t=currentFolio+''; if(!t){ return; }
+          if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(t); copyBtn.textContent='Copiado'; setTimeout(function(){ copyBtn.textContent='Copiar folio'; }, 2000); }
+          else {
+            var ta=document.createElement('textarea'); ta.value=t; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); copyBtn.textContent='Copiado'; setTimeout(function(){ copyBtn.textContent='Copiar folio'; }, 2000); }catch(_){} document.body.removeChild(ta);
+          }
+        }); }
+        // Deshabilitar cierre hasta que confirme
+        if(okBtn){ okBtn.textContent='Cerrar'; okBtn.onclick=function(){ if(persistMode && confirmChk && !confirmChk.checked){ confirmChk.focus(); return; } closeAlert(); }; }
+        var closeBtn=document.getElementById('portaClose'); if(closeBtn){ closeBtn.onclick=function(){ if(persistMode && confirmChk && !confirmChk.checked){ confirmChk.focus(); return; } closeAlert(); } }
+      }
+      function openAlert(opts){
+        opts=opts||{}; persistMode = !!opts.persist; var type=opts.type||'info'; var t=opts.title||(type==='success'?'Éxito': type==='error'?'Error':'Procesando');
+        title.textContent=t; head.className='head '+(type==='success'?'success': type==='error'?'error':'info');
+        rowL.style.display=opts.loading?'flex':'none'; rowR.style.display=opts.loading?'none':'flex';
+        if(autoTimer){ clearTimeout(autoTimer); autoTimer=null; }
+        if(!opts.loading){
+          var ok=(type==='success'); ico.className='ico '+(ok?'success':'error'); icoI.className= ok? 'fas fa-check':'fas fa-times';
+          msgT.textContent = opts.titleStrong || opts.message || (ok?'Operación exitosa':'Operación fallida');
+          var det = opts.detail||''; try{ msgTx.innerHTML=(det+'').replace(/\n/g,'<br>'); }catch(e){ msgTx.textContent=det; }
+          if(persistMode){ if(autoHint){ autoHint.style.display='none'; } if(opts.folio){ setupPersistUI(opts.folio); } }
+          else { if(autoHint){ autoHint.style.display='block'; } autoTimer = window.setTimeout(closeAlert,10000); if(okBtn){ okBtn.textContent='Aceptar'; okBtn.onclick=closeAlert; } var closeBtn=document.getElementById('portaClose'); if(closeBtn){ closeBtn.onclick=closeAlert; } }
+        }
+        ensureInBody(modal); modal.style.display='flex'; lockScroll();
+      }
+      function closeAlert(){ modal.style.display='none'; unlockScroll(); persistMode=false; confirmChk=null; copyBtn=null; currentFolio=''; if(autoHint){ autoHint.style.display='block'; } }
+      // El cierre por la X se define en setupPersistUI() u openAlert() según el modo.
+      modal && modal.addEventListener('click', function(e){ if(e.target===modal){ if(!persistMode){ closeAlert(); } else if(confirmChk && confirmChk.checked){ closeAlert(); } } });
+      function setBtnLoading(btn, on, txt){ if(!btn) return; if(on){ btn.disabled=true; btn.setAttribute('data-old',btn.textContent); if(txt) btn.textContent=txt; btn.style.opacity='0.7'; btn.style.cursor='not-allowed'; } else { btn.disabled=false; btn.textContent=btn.getAttribute('data-old')||btn.textContent; btn.style.opacity=''; btn.style.cursor=''; } }
+      function validateEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+      function onlyDigits(s){ return (s||'').replace(/\D+/g,''); }
+
+      if(frm){ frm.addEventListener('submit', function(e){ e.preventDefault(); var nombre=(x1.value||'').trim(); var correo=(x2.value||'').trim(); var numero=onlyDigits(x3.value).slice(0,10); var iccid=onlyDigits(x4.value).slice(0,22); var nip=onlyDigits(x5.value).slice(0,8); x3.value=numero; x4.value=iccid; x5.value=nip; if(nombre.length<3){ openAlert({type:'error', titleStrong:'Nombre inválido.'}); return; } if(!validateEmail(correo)){ openAlert({type:'error', titleStrong:'Correo inválido.'}); return; } if(numero.length!==10){ openAlert({type:'error', titleStrong:'Número telefónico inválido (10 dígitos).'}); return; } if(iccid.length<18||iccid.length>22){ openAlert({type:'error', titleStrong:'ICC inválido.'}); return; } if(nip.length<4||nip.length>8){ openAlert({type:'error', titleStrong:'NIP inválido.'}); return; }
+        openAlert({type:'info', loading:true}); setBtnLoading(btnP,true,'Enviando…'); var fd=new FormData(); fd.append('nombre_cliente',nombre); fd.append('correo_cliente',correo); fd.append('numero_a_portar',numero); fd.append('iccid',iccid); fd.append('nip',nip); fetch('<?php echo BASE_URL; ?>personas/portabilidadApi',{method:'POST', body: fd}).then(function(r){return r.json().catch(function(){return {ok:false,message:'Respuesta inválida'};});}).then(function(j){ if(j&&j.ok){ var m=(j.message&&typeof j.message==='string')? j.message : 'Solicitud registrada'; var b=(j.body&&typeof j.body==='object')? j.body:{}; var fol=(b&&b.folio!=null)? String(b.folio):''; if(fol){ openAlert({type:'success', titleStrong:m, detail:'Tu solicitud fue registrada correctamente.', persist:true, folio: fol}); } else { openAlert({type:'success', titleStrong:m}); } } else { var em=(j&&j.message)? j.message : 'No se pudo registrar la portabilidad.'; openAlert({type:'error', titleStrong:em}); } }).catch(function(){ openAlert({type:'error', titleStrong:'Error de red al registrar portabilidad.'}); }).finally(function(){ setBtnLoading(btnP,false); });
+      }); }
+
+      if(btnS){ btnS.addEventListener('click', function(){ var f=onlyDigits(folio.value).slice(0,12); folio.value=f; if(f.length===0){ openAlert({type:'error', titleStrong:'Ingresa el folio.'}); return; } openAlert({type:'info', loading:true}); setBtnLoading(btnS,true,'Consultando…'); var fd=new FormData(); fd.append('folio', f); fetch('<?php echo BASE_URL; ?>personas/statusPortabilidadApi',{method:'POST', body: fd}).then(function(r){return r.json().catch(function(){return {ok:false,message:'Respuesta inválida'};});}).then(function(j){ if(j&&j.ok){ var b=(j.body&&typeof j.body==='object')? j.body:{}; var kv=[]; if(b.folio!=null){ kv.push(['Folio', b.folio]); } if(b.estatus){ kv.push(['Estatus', b.estatus]); } var html = kv.length>5? '<div class="kv-grid">'+kv.map(function(p){return '<div class="kv-item"><b>'+p[0]+':</b> '+p[1]+'</div>';}).join('')+'</div>' : kv.map(function(p){return '<div class="kv-item"><b>'+p[0]+':</b> '+p[1]+'</div>';}).join(''); var title=(j.message&&typeof j.message==='string')? j.message : (b.estatus||'Consulta realizada'); openAlert({type:'success', titleStrong:title, detail:html}); } else { var em=(j&&j.message)? j.message : 'No se pudo consultar el estatus.'; openAlert({type:'error', titleStrong:em}); } }).catch(function(){ openAlert({type:'error', titleStrong:'Error de red al consultar estatus.'}); }).finally(function(){ setBtnLoading(btnS,false); }); }); }
+
+      if(x3){ x3.addEventListener('input', function(){ this.value=onlyDigits(this.value).slice(0,10); }); }
+      if(x4){ x4.addEventListener('input', function(){ this.value=onlyDigits(this.value).slice(0,22); }); }
+      if(x5){ x5.addEventListener('input', function(){ this.value=onlyDigits(this.value).slice(0,8); }); }
+      if(folio){ folio.addEventListener('input', function(){ this.value=onlyDigits(this.value).slice(0,12); }); folio.addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); btnS && btnS.click(); } }); }
+    })();
+  </script>
+</div>
 </div>

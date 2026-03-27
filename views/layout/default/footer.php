@@ -216,6 +216,14 @@
                       <i class="fab fa-instagram"></i>
                   </a>
                 <?php } ?>
+                <?php if (!empty($F_social['x']) || !empty($F_social['twitter'])) { ?>
+                  <a class="btn btn-outline-light btn-square mx-1" href="<?php echo htmlspecialchars(!empty($F_social['x']) ? $F_social['x'] : $F_social['twitter']); ?>" target="_blank" 
+                     style="width:38px; height:38px; border-radius:10px;">
+                      <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M18.244 2.25H22.5l-9.81 11.24L24 21.75h-7.03l-5.4-6.38-6.06 6.38H1.5l10.21-10.75L0 2.25h7.03l5.16 6.1 6.05-6.1z"/>
+                      </svg>
+                  </a>
+                <?php } ?>
                 <?php if (!empty($F_social['tiktok'])) { ?>
                   <a class="btn btn-outline-light btn-square mx-1" href="<?php echo htmlspecialchars($F_social['tiktok']); ?>" target="_blank" 
                      style="width:38px; height:38px; border-radius:10px;">

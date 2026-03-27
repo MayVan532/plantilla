@@ -27,8 +27,26 @@
     .cp-search{ position:static; transform:none; display:flex; gap:8px; justify-content:center; background:transparent; padding:0; border-radius:0; box-shadow:none; z-index:auto; margin:0 auto; width:min(720px,92%); }
     .cp-search input{ flex:1 1 auto; padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px; }
     .cp-search button{ padding:10px 16px; border-radius:6px; border:0; color:#fff; font-weight:700; background:#0ea5a6; cursor:pointer; }
-    .city-search{ position:static; transform:none; width:min(720px,92%); background:transparent; padding:0; border-radius:0; box-shadow:none; margin:10px auto 0; }
-    .city-search input{ width:100%; padding:10px 12px; border:1px solid #e5e7eb; border-radius:6px; }
+    /* Alerta modal (replica estilo panel login) */
+    .cob-modal{ display:none; position:fixed; inset:0; z-index:2147483647; background:rgba(15,23,42,0.78); align-items:center; justify-content:center; padding:20px; }
+    .cob-modal .box{ width:100%; max-width:560px; background:#ffffff; border-radius:18px; box-shadow:0 24px 80px rgba(15,23,42,0.35); border:1px solid #e5e7eb; overflow:hidden; }
+    .cob-modal .head{ padding:16px 18px; color:#ffffff; font-weight:800; font-size:14px; display:flex; justify-content:space-between; align-items:center; }
+    .cob-modal .head.info{    background:linear-gradient(90deg,#0ea5a6 0%,#06b6d4 100%); }
+    .cob-modal .head.success{ background:linear-gradient(90deg,#22c55e 0%,#00bcd4 100%); }
+    .cob-modal .head.error{   background:linear-gradient(90deg,#ef4444 0%,#f97316 100%); }
+    .cob-modal .close-btn{ border:none; background:rgba(255,255,255,0.18); color:#ffffff; border-radius:10px; padding:6px 10px; font-weight:800; cursor:pointer; }
+    .cob-modal .body{ padding:18px 18px 20px; }
+    .cob-modal .row{ display:flex; gap:12px; align-items:flex-start; }
+    .cob-modal .ico{ width:42px; height:42px; border-radius:999px; display:flex; align-items:center; justify-content:center; flex:0 0 auto; }
+    .cob-modal .ico.success{ background:rgba(34,197,94,0.10); border:1px solid rgba(34,197,94,0.25); color:#16a34a; }
+    .cob-modal .ico.error{   background:rgba(239,68,68,0.10); border:1px solid rgba(239,68,68,0.25); color:#dc2626; }
+    .cob-modal .txt-title{ font-size:16px; font-weight:900; color:#0f172a; margin-bottom:6px; }
+    .cob-modal .txt-sub{ font-size:13px; color:#475569; line-height:1.6; }
+    .cob-modal .autoclose{ margin-top:12px; font-size:12px; color:#64748b; }
+    .cob-modal .actions{ padding:10px 16px; display:flex; justify-content:flex-end; gap:10px; }
+    .cob-modal .btn-pri{ background:#0ea5a6; color:#fff; border:0; border-radius:10px; padding:8px 14px; font-weight:800; cursor:pointer; }
+    .cob-spinner{ width:24px; height:24px; border:3px solid #e5e7eb; border-top-color:#00bcd4; border-radius:50%; animation: cobSpin .9s linear infinite; flex-shrink:0; }
+    @keyframes cobSpin{ to{ transform: rotate(360deg); } }
     #mapCobertura{ width:100%; height:520px; border-radius:12px; border:1px solid #e5e7eb; margin-top:16px; }
     @media (max-width:640px){ .cp-search input{ width:100%; } }
   </style>
@@ -37,10 +55,28 @@
       <input id="cpInput" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="5" placeholder="Ingresa tu código postal">
       <button id="cpBtn" type="button">Consultar</button>
     </div>
-    <div id="mapCobertura"></div>
-    <div class="city-search">
-      <input id="cityInput" type="text" placeholder="Ingresa el nombre de tu ciudad">
+    <!-- Modal de alerta -->
+    <div id="cobModal" class="cob-modal" role="dialog" aria-modal="true" aria-labelledby="cobModalTitle">
+      <div class="box">
+        <div id="cobModalHead" class="head info"><span id="cobModalTitle">Consulta</span><button type="button" id="cobModalClose" class="close-btn">Cerrar</button></div>
+        <div class="body">
+          <div class="row" id="cobRowLoading" style="display:flex; align-items:center; gap:12px;">
+            <span class="cob-spinner" aria-hidden="true"></span>
+            <div class="txt-sub" id="cobLoadingText">Procesando…</div>
+          </div>
+          <div class="row" id="cobRowResult" style="display:none;">
+            <div id="cobIcon" class="ico success"><i id="cobIconI" class="fas fa-check" aria-hidden="true"></i></div>
+            <div class="col">
+              <div id="cobMsgTitle" class="txt-title">Resultado</div>
+              <div id="cobMsgText" class="txt-sub"></div>
+              <div class="autoclose">Este mensaje se cerrará automáticamente.</div>
+            </div>
+          </div>
+        </div>
+        <div class="actions"><button id="cobModalOk" type="button" class="btn-pri">Aceptar</button></div>
+      </div>
     </div>
+    <div id="mapCobertura"></div>
   </div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
@@ -68,21 +104,99 @@
 
       var cpBtn = document.getElementById('cpBtn');
       var cpInput = document.getElementById('cpInput');
-      cpBtn && cpBtn.addEventListener('click', function(){
-        var v = (cpInput.value||'').trim();
-        if (!v) return;
-        geocode(v + ' México', function(res){ flyTo(res.lat, res.lon, 'CP ' + v); });
-      });
-      cpInput && cpInput.addEventListener('keydown', function(e){ if (e.key==='Enter') cpBtn.click(); });
+      var cobModal = document.getElementById('cobModal');
+      var cobModalHead = document.getElementById('cobModalHead');
+      var cobModalTitle = document.getElementById('cobModalTitle');
+      var cobRowLoading = document.getElementById('cobRowLoading');
+      var cobRowResult  = document.getElementById('cobRowResult');
+      var cobIcon       = document.getElementById('cobIcon');
+      var cobIconI      = document.getElementById('cobIconI');
+      var cobMsgTitle   = document.getElementById('cobMsgTitle');
+      var cobMsgText    = document.getElementById('cobMsgText');
+      var cobModalOk = document.getElementById('cobModalOk');
+      var cobModalClose = document.getElementById('cobModalClose');
 
-      var cityInput = document.getElementById('cityInput');
-      cityInput && cityInput.addEventListener('keydown', function(e){
-        if (e.key==='Enter'){
-          var q = (cityInput.value||'').trim();
-          if (!q) return;
-          geocode(q + ' México', function(res){ flyTo(res.lat, res.lon, q); });
+      var cobTimer = null;
+      var bodyOverflowSaved = null;
+      function ensureInBody(el){ try { if (el && el.parentNode !== document.body) { document.body.appendChild(el); } } catch(e){} }
+      function lockScroll(){ try { if (bodyOverflowSaved === null) { bodyOverflowSaved = document.body.style.overflow || ''; } document.body.style.overflow = 'hidden'; } catch(e){} }
+      function unlockScroll(){ try { if (bodyOverflowSaved !== null) { document.body.style.overflow = bodyOverflowSaved; bodyOverflowSaved = null; } } catch(e){} }
+      function openAlert(opts){
+        opts = opts || {};
+        var type = opts.type || 'info';
+        var title= opts.title|| (type==='success'?'Éxito': type==='error'?'Error':'Consulta');
+        cobModalTitle.textContent = title;
+        cobModalHead.className = 'head ' + (type==='success'?'success': type==='error'?'error':'info');
+        cobRowLoading.style.display = opts.loading ? 'flex' : 'none';
+        cobRowResult.style.display  = opts.loading ? 'none' : 'flex';
+        if (!opts.loading){
+          var isOk = (type === 'success');
+          cobIcon.className = 'ico ' + (isOk ? 'success' : 'error');
+          cobIconI.className = isOk ? 'fas fa-check' : 'fas fa-times';
+          // Mostrar el mensaje principal en negritas y más grande
+          var strongMsg = opts.titleStrong || opts.message || (isOk ? 'Consulta exitosa' : 'No se pudo consultar');
+          cobMsgTitle.textContent = strongMsg;
+          // Texto secundario opcional
+          cobMsgText.textContent  = opts.detail || '';
+          if (cobTimer) { clearTimeout(cobTimer); }
+          cobTimer = setTimeout(closeAlert, 8000);
         }
-      });
+        ensureInBody(cobModal);
+        cobModal.style.display = 'flex';
+        lockScroll();
+      }
+      function closeAlert(){ cobModal.style.display='none'; unlockScroll(); }
+      cobModalOk && cobModalOk.addEventListener('click', closeAlert);
+      cobModalClose && cobModalClose.addEventListener('click', closeAlert);
+      cobModal && cobModal.addEventListener('click', function(e){ if (e.target === cobModal) closeAlert(); });
+
+      function setLoading(loading){
+        if (!cpBtn) return;
+        if (loading){
+          cpBtn.disabled = true;
+          cpBtn.setAttribute('data-old', cpBtn.textContent);
+          cpBtn.textContent = 'Consultando…';
+          cpBtn.style.opacity = '0.7';
+          cpBtn.style.cursor = 'not-allowed';
+        } else {
+          cpBtn.disabled = false;
+          var old = cpBtn.getAttribute('data-old') || 'Consultar';
+          cpBtn.textContent = old;
+          cpBtn.style.opacity = '';
+          cpBtn.style.cursor = '';
+        }
+      }
+
+      function doQuery(){
+        var v = (cpInput.value||'').trim();
+        if (!/^\d{5}$/.test(v)) { openAlert({type:'error', message:'Ingresa un código postal válido de 5 dígitos.', loading:false}); return; }
+        openAlert({type:'info', loading:true});
+        setLoading(true);
+        var fd = new FormData();
+        fd.append('codigo_postal', v);
+        fetch('<?php echo BASE_URL; ?>personas/coberturaApi', { method:'POST', body: fd })
+          .then(function(r){ return r.json().catch(function(){ return {ok:false,message:'Respuesta inválida'}; }); })
+          .then(function(j){
+            if (j && j.ok){
+              var m = (j.message && typeof j.message==='string') ? j.message : 'Consulta realizada';
+              // Usar el mensaje del API como título fuerte para evitar duplicación
+              openAlert({type:'success', title:'Éxito', titleStrong:m});
+              geocode(v + ' México', function(res){ flyTo(res.lat, res.lon, 'CP ' + v); });
+            } else {
+              var em = (j&&j.message)? j.message : 'No se pudo consultar la cobertura.';
+              // En error, también mostrar el mensaje fuerte
+              openAlert({type:'error', title:'Error', titleStrong: em});
+            }
+          })
+          .catch(function(){ openAlert({type:'error', title:'Error', titleStrong:'Error de red al consultar la cobertura.'}); })
+          .finally(function(){ setLoading(false); });
+      }
+
+      cpBtn && cpBtn.addEventListener('click', doQuery);
+      if (cpInput){
+        cpInput.addEventListener('keydown', function(e){ if (e.key==='Enter') doQuery(); });
+        cpInput.addEventListener('input', function(){ this.value = this.value.replace(/\D+/g,'').slice(0,5); });
+      }
     })();
   </script>
 </div>

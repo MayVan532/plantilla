@@ -1,3 +1,11 @@
+<style>
+  /* Banner LikePhone responsive */
+  .rec-like-banner { position: relative; max-width: 100%; overflow: hidden; margin-top: 0; }
+  .rec-like-banner-img { width: 100%; height: 300px; object-fit: cover; display: block; }
+  @media (max-width: 768px) {
+    .rec-like-banner-img { height: auto !important; object-fit: contain !important; max-height: 60vh !important; }
+  }
+</style>
 <div class="personas-main-content" style="background:#ffffff;">
   <?php if (isset($_GET['debugcms']) && $_GET['debugcms']=='1') { ?>
     <?php if (isset($this->debug_bloque65)) { ?>
@@ -9,11 +17,11 @@
   <?php } ?>
   <!-- BANNER -->
   <?php if (!empty($this->rec_banner)) { ?>
-  <div style="position: relative; max-width: 100%; overflow: hidden; margin-top: 0;">
+  <div class="rec-like-banner" style="position: relative; max-width: 100%; overflow: hidden; margin-top: 0;">
       <div style="display: block; width: 100%;">
           <?php $href = isset($this->rec_banner_link) ? trim((string)$this->rec_banner_link) : ''; ?>
           <?php if ($href) { ?><a href="<?php echo htmlspecialchars($href); ?>" style="display:block;"><?php } ?>
-          <img src="<?php echo htmlspecialchars($this->rec_banner); ?>" 
+          <img class="rec-like-banner-img" src="<?php echo htmlspecialchars($this->rec_banner); ?>" 
               style="width: 100%; height: 300px; object-fit: cover; display: block;">
           <?php if ($href) { ?></a><?php } ?>
       </div>
