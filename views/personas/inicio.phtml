@@ -54,6 +54,11 @@
     .homeresponsive2 .outer-box { height: calc(100vw * 9 / 16) !important; max-height: 320px !important; align-items: center !important; background-size: contain !important; background-position: center !important; background-repeat: no-repeat !important; }
     .homeresponsive2 .inner-column { max-width: 92% !important; padding: 16px 12px 14px !important; }
   }
+  .plan-activacion .plan-img img { width:100% !important; max-width:380px !important; height:auto !important; }
+  @media (max-width: 1200px) { .plan-activacion .plan-img img { max-width:340px !important; } }
+  @media (max-width: 991px)  { .plan-activacion .plan-img img { max-width:300px !important; } .plan-activacion .plan-content { margin-left:0 !important; max-width:100% !important; padding:32px 24px !important; } }
+  @media (max-width: 768px)  { .plan-activacion .plan-img img { max-width:260px !important; } }
+  @media (max-width: 640px)  { .plan-activacion .plan-img img { max-width:220px !important; } }
 </style>
 <div class="personas-main-content" style="background:#ffffff;">
     <?php if (isset($_GET['debugcms']) && $_GET['debugcms'] == '1') { ?>
