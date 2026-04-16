@@ -27,12 +27,12 @@
               <div></div>
               <div style="display:flex; gap:10px; align-items:center;">
                 <label style="font-size:13px; color:#4b5563; margin:0;">Buscar:</label>
-                <input type="text" style="border:1px solid #d1d5db; border-radius:4px; padding:4px 8px; font-size:13px; min-width:160px;" />
+                <input id="mcBuscar" type="text" style="border:1px solid #d1d5db; border-radius:4px; padding:4px 8px; font-size:13px; min-width:160px;" />
               </div>
             </div>
 
-            <div id="tablaPlanes" style="border:1px solid #e5e7eb; border-radius:4px; overflow:hidden;">
-              <table style="width:100%; border-collapse:collapse; font-size:13px;">
+            <div id="tablaPlanes" style="border:1px solid #e5e7eb; border-radius:4px; overflow:auto;">
+              <table style="width:100%; min-width:760px; border-collapse:collapse; font-size:13px;">
                 <thead style="background:#f9fafb; color:#4b5563;">
                   <tr>
                     <th style="padding:8px 10px; border-bottom:1px solid #e5e7eb; text-align:left;">Folio Compra</th>
@@ -44,16 +44,16 @@
                     <th style="padding:8px 10px; border-bottom:1px solid #e5e7eb; text-align:left;">Detalles</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody id="planesTbody">
                   <tr>
-                    <td colspan="7" style="padding:16px 10px; text-align:center; color:#9ca3af;">Ningún dato disponible en esta tabla</td>
+                    <td colspan="7" style="padding:16px 10px; text-align:center; color:#9ca3af;">Cargando…</td>
                   </tr>
                 </tbody>
               </table>
             </div>
 
-            <div id="tablaRecargas" style="display:none; border:1px solid #e5e7eb; border-radius:4px; overflow:hidden;">
-              <table style="width:100%; border-collapse:collapse; font-size:13px;">
+            <div id="tablaRecargas" style="display:none; border:1px solid #e5e7eb; border-radius:4px; overflow:auto;">
+              <table style="width:100%; min-width:760px; border-collapse:collapse; font-size:13px;">
                 <thead style="background:#f9fafb; color:#4b5563;">
                   <tr>
                     <th style="padding:8px 10px; border-bottom:1px solid #e5e7eb; text-align:left;">Folio Recarga</th>
@@ -65,19 +65,19 @@
                     <th style="padding:8px 10px; border-bottom:1px solid #e5e7eb; text-align:left;">Estatus</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody id="recTbody">
                   <tr>
-                    <td colspan="7" style="padding:16px 10px; text-align:center; color:#9ca3af;">Ningún dato disponible en esta tabla</td>
+                    <td colspan="7" style="padding:16px 10px; text-align:center; color:#9ca3af;">Cargando…</td>
                   </tr>
                 </tbody>
               </table>
             </div>
 
             <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px; font-size:12px; color:#6b7280;">
-              <div>Mostrando registros del 0 al 0 de un total de 0 registros</div>
+              <div id="mcInfo">Mostrando registros del 0 al 0 de un total de 0 registros</div>
               <div style="display:flex; gap:6px;">
-                <button type="button" style="border:1px solid #00bcd4; background:#00bcd4; color:#f9fafb; font-size:12px; padding:4px 10px; border-radius:4px;">Anterior</button>
-                <button type="button" style="border:1px solid #00bcd4; background:#00bcd4; color:#f9fafb; font-size:12px; padding:4px 10px; border-radius:4px;">Siguiente</button>
+                <button id="mcPrev" type="button" style="border:1px solid #00bcd4; background:#00bcd4; color:#f9fafb; font-size:12px; padding:4px 10px; border-radius:4px;">Anterior</button>
+                <button id="mcNext" type="button" style="border:1px solid #00bcd4; background:#00bcd4; color:#f9fafb; font-size:12px; padding:4px 10px; border-radius:4px;">Siguiente</button>
               </div>
             </div>
 
@@ -94,6 +94,14 @@
     var tabRecargas = document.getElementById('tabRecargas');
     var tablaPlanes = document.getElementById('tablaPlanes');
     var tablaRec    = document.getElementById('tablaRecargas');
+    var recTbody    = document.getElementById('recTbody');
+    var buscar      = document.getElementById('mcBuscar');
+    var info        = document.getElementById('mcInfo');
+    var prevBtn     = document.getElementById('mcPrev');
+    var nextBtn     = document.getElementById('mcNext');
+    var recRows     = [];
+    var page        = 1;
+    var per         = 10;
     if (!tabPlanes || !tabRecargas) return;
 
     function activarPlanes() {
@@ -116,11 +124,48 @@
       tabRecargas.style.background = '#ffffff';
       tabRecargas.style.color      = '#111827';
       tabRecargas.style.fontWeight = '600';
+      // cargar si vacío
+      if (!recRows || recRows.length===0) { fetchRecargas(); }
     }
 
     tabPlanes.addEventListener('click', function(e) { e.preventDefault(); activarPlanes(); });
     tabRecargas.addEventListener('click', function(e) { e.preventDefault(); activarRecargas(); });
 
-    activarPlanes();
+    // Activar por defecto la pestaña 'Recargas' para ejecutar el fetch al abrir la vista
+    activarRecargas();
+
+    function fmtDateIso(s){ try{ var d=new Date(s); if(isNaN(d.getTime())) return s||''; var pad=n=>(''+n).padStart(2,'0'); return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+' '+pad(d.getHours())+':'+pad(d.getMinutes()); }catch(_){ return s||''; } }
+    function dinero(v){ var n=parseFloat(v); if(!isFinite(n)) n=0; return '$'+n.toFixed(2); }
+
+    function getFiltered(){ var q=(buscar&&buscar.value||'').toLowerCase(); return recRows.filter(function(r){ return !q || (String(r.cv_recarga||'').toLowerCase().indexOf(q)>-1) || (String(r.numero_telefono||'').toLowerCase().indexOf(q)>-1) || (String(r.nombre_comercial||'').toLowerCase().indexOf(q)>-1); }); }
+
+    function setPager(){ var total=getFiltered().length; var pages=Math.max(1, Math.ceil(total/per)); if(prevBtn){ prevBtn.disabled=(page<=1||pages<=1);} if(nextBtn){ nextBtn.disabled=(page>=pages||pages<=1);} }
+
+    function renderRec(){
+      var data=getFiltered(); var total=data.length; if(total===0){ recTbody.innerHTML='<tr><td colspan="7" style="padding:16px 10px; text-align:center; color:#9ca3af;">Sin registros</td></tr>'; info.textContent='Mostrando 0 de 0'; setPager(); return; }
+      var pages=Math.max(1, Math.ceil(total/per)); if(page>pages) page=pages; var start=(page-1)*per; var end=Math.min(start+per,total); var slice=data.slice(start,end);
+      recTbody.innerHTML=slice.map(function(r){ var totalp=r.precio_likephone_wl||r.precio||0; return '<tr>'+
+        '<td style="padding:10px; border-bottom:1px solid #f1f5f9;">'+(r.cv_recarga||'')+'</td>'+
+        '<td style="padding:10px; border-bottom:1px solid #f1f5f9;">'+(r.numero_telefono||'')+'</td>'+
+        '<td style="padding:10px; border-bottom:1px solid #f1f5f9;">'+(r.nombre_comercial||'')+'</td>'+
+        '<td style="padding:10px; border-bottom:1px solid #f1f5f9;">'+fmtDateIso(r.fecha_recarga)+'</td>'+
+        '<td style="padding:10px; border-bottom:1px solid #f1f5f9;">'+dinero(totalp)+'</td>'+
+        '<td style="padding:10px; border-bottom:1px solid #f1f5f9;">'+(r.metodo_pago||'-')+'</td>'+
+        '<td style="padding:10px; border-bottom:1px solid #f1f5f9;">'+((r.estatus_paquete==1)?'Activo':(r.estatus_paquete==0?'Pendiente':(r.estatus||'-')) )+'</td>'+
+      '</tr>'; }).join('');
+      info.textContent='Mostrando registros del '+(start+1)+' al '+end+' de un total de '+total+' registros'; setPager();
+    }
+
+    function fetchRecargas(){
+      if(recTbody){ recTbody.innerHTML='<tr><td colspan="7" style="padding:16px 10px; text-align:center; color:#9ca3af;">Cargando…</td></tr>'; }
+      fetch('<?php echo BASE_URL; ?>personas/userRechargesListComprasApi', {method:'POST'})
+        .then(function(r){ return r.json().catch(function(){ return {ok:false}; }); })
+        .then(function(j){ if(j&&j.ok){ recRows=(j.body&&j.body.data)? j.body.data: []; page=1; renderRec(); } else { recRows=[]; renderRec(); } })
+        .catch(function(){ recRows=[]; renderRec(); });
+    }
+
+    buscar && buscar.addEventListener('input', function(){ if(tablaRec.style.display==='block'){ page=1; renderRec(); } });
+    prevBtn && prevBtn.addEventListener('click', function(){ if(page>1){ page--; renderRec(); }});
+    nextBtn && nextBtn.addEventListener('click', function(){ var total=getFiltered().length; var pages=Math.max(1, Math.ceil(total/per)); if(page<pages){ page++; renderRec(); }});
   })();
 </script>

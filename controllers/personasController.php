@@ -19,6 +19,287 @@ class personasController extends Controller
         return rtrim((string)$baseUrl, '/');
     }
 
+    // API: Mis Recargas - Historial
+    public function userRechargesListApi()
+    {
+        header('Content-Type: application/json; charset=UTF-8');
+        try {
+            $id = (string)($this->getPostParam('id') ?? (class_exists('Session') ? (Session::get('id') ?? '') : ''));
+            $id = trim($id);
+            if ($id === '') { echo json_encode(['ok'=>false,'message'=>'ID de usuario requerido']); return; }
+
+            $url = $this->getWlApiBaseUrl().'/gateway/misrecargas';
+            $headers = ['Authorization: ' . TokenApiExterno::obtenerAuthorizationHeader()];
+            $res = $this->callJsonApi($url, $headers, ['id' => $id]);
+
+            if (!empty($res['ok'])) {
+                $body = is_array($res['body']) ? $res['body'] : [];
+                if (isset($body['status']) && is_numeric($body['status']) && (int)$body['status'] >= 400) {
+                    $msg = isset($body['message']) ? (string)$body['message'] : 'No se pudo obtener el historial';
+                    echo json_encode(['ok'=>false,'message'=>$msg,'debug'=>['status_app'=>$body['status']]]); return;
+                }
+                $data = isset($body['data']) && is_array($body['data']) ? $body['data'] : (isset($body[0]) ? $body : []);
+                $msg  = isset($body['mensaje']) ? (string)$body['mensaje'] : (isset($body['message']) ? (string)$body['message'] : 'Historial obtenido');
+                echo json_encode(['ok'=>true,'message'=>$msg,'body'=>['data'=>$data]]); return;
+            }
+            $msg = 'No se pudo obtener el historial';
+            if (is_array($res['body'] ?? null)) { $msg = (string)($res['body']['message'] ?? $res['body']['mensaje'] ?? $msg); }
+            echo json_encode(['ok'=>false,'message'=>$msg,'debug'=>['status'=>$res['status']??null,'error'=>$res['error']??null,'raw'=>$res['body']??null]]);
+        } catch (\Throwable $e) { echo json_encode(['ok'=>false,'message'=>'Error interno']); }
+    }
+
+    // API: Portabilidades - Listar
+    public function userPortabilitiesListApi()
+    {
+        header('Content-Type: application/json; charset=UTF-8');
+        try {
+            $id = (string)($this->getPostParam('id') ?? (class_exists('Session') ? (Session::get('id') ?? '') : ''));
+            $id = trim($id);
+            if ($id === '') { echo json_encode(['ok'=>false,'message'=>'ID de usuario requerido']); return; }
+
+            $url = $this->getWlApiBaseUrl().'/portabilities/list';
+            $headers = ['Authorization: ' . TokenApiExterno::obtenerAuthorizationHeader()];
+            $res = $this->callJsonApi($url, $headers, ['id' => $id]);
+
+            if (!empty($res['ok'])) {
+                $body = is_array($res['body']) ? $res['body'] : [];
+                if (isset($body['status']) && is_numeric($body['status']) && (int)$body['status'] >= 400) {
+                    $msg = isset($body['message']) ? (string)$body['message'] : 'No se pudo obtener la lista de portabilidades';
+                    echo json_encode(['ok'=>false,'message'=>$msg,'debug'=>['status_app'=>$body['status']]]); return;
+                }
+                $data = isset($body['data']) && is_array($body['data']) ? $body['data'] : (isset($body[0]) ? $body : []);
+                $msg  = isset($body['mensaje']) ? (string)$body['mensaje'] : (isset($body['message']) ? (string)$body['message'] : 'Lista obtenida');
+                echo json_encode(['ok'=>true,'message'=>$msg,'body'=>['data'=>$data]]); return;
+            }
+            $msg = 'No se pudo obtener la lista de portabilidades';
+            if (is_array($res['body'] ?? null)) { $msg = (string)($res['body']['message'] ?? $res['body']['mensaje'] ?? $msg); }
+            echo json_encode(['ok'=>false,'message'=>$msg,'debug'=>['status'=>$res['status']??null,'error'=>$res['error']??null,'raw'=>$res['body']??null]]);
+        } catch (\Throwable $e) { echo json_encode(['ok'=>false,'message'=>'Error interno']); }
+    }
+
+    // API: Portabilidades - Registrar (origen_porta = 3)
+    public function userPortabilitiesRegisterApi()
+    {
+        header('Content-Type: application/json; charset=UTF-8');
+        try {
+            $id   = (string)($this->getPostParam('id') ?? (class_exists('Session') ? (Session::get('id') ?? '') : ''));
+            $tel  = preg_replace('/\D+/', '', (string)($this->getPostParam('numero_a_portar') ?? ''));
+            $icc  = preg_replace('/\D+/', '', (string)($this->getPostParam('icc') ?? ''));
+            $nip  = preg_replace('/\D+/', '', (string)($this->getPostParam('nip') ?? ''));
+            if (trim($id) === '') { echo json_encode(['ok'=>false,'message'=>'ID de usuario requerido']); return; }
+            if (strlen($tel) !== 10) { echo json_encode(['ok'=>false,'message'=>'Número inválido (10 dígitos).']); return; }
+            if (strlen($icc) < 15 || strlen($icc) > 22) { echo json_encode(['ok'=>false,'message'=>'ICC inválido.']); return; }
+            if (strlen($nip) !== 4) { echo json_encode(['ok'=>false,'message'=>'NIP inválido (4 dígitos).']); return; }
+
+            $payload = [
+                'id' => $id,
+                'numero_a_portar' => $tel,
+                'icc' => $icc,
+                'nip' => $nip,
+                'origen_porta' => 3,
+            ];
+            $url = $this->getWlApiBaseUrl().'/portabilities/registerportabilities';
+            $headers = ['Authorization: ' . TokenApiExterno::obtenerAuthorizationHeader()];
+            $res = $this->callJsonApi($url, $headers, $payload);
+
+            if (!empty($res['ok'])) {
+                $body = is_array($res['body']) ? $res['body'] : [];
+                if (isset($body['status']) && is_numeric($body['status']) && (int)$body['status'] >= 400) {
+                    $msg = isset($body['message']) ? (string)$body['message'] : 'No se pudo registrar la portabilidad';
+                    echo json_encode(['ok'=>false,'message'=>$msg,'debug'=>['status_app'=>$body['status']]]); return;
+                }
+                $msg  = isset($body['mensaje']) ? (string)$body['mensaje'] : (isset($body['message']) ? (string)$body['message'] : 'Registro exitoso');
+                echo json_encode(['ok'=>true,'message'=>$msg,'body'=>$body]); return;
+            }
+            $msg = 'No se pudo registrar la portabilidad';
+            if (is_array($res['body'] ?? null)) { $msg = (string)($res['body']['message'] ?? $res['body']['mensaje'] ?? $msg); }
+            echo json_encode(['ok'=>false,'message'=>$msg,'debug'=>['status'=>$res['status']??null,'error'=>$res['error']??null,'raw'=>$res['body']??null]]);
+        } catch (\Throwable $e) { echo json_encode(['ok'=>false,'message'=>'Error interno']); }
+    }
+
+    // API: Recuperar contraseña (envía contraseña temporal por WhatsApp)
+    public function resetPasswordApi()
+    {
+        header('Content-Type: application/json; charset=UTF-8');
+        try {
+            $numero = preg_replace('/\D+/', '', (string)($this->getPostParam('numero_telefono') ?? ''));
+            if (strlen($numero) !== 10) { echo json_encode(['ok'=>false,'message'=>'Número inválido (10 dígitos).']); return; }
+
+            $url = $this->getWlApiBaseUrl().'/gateway/resetpassword';
+            $headers = ['Authorization: ' . TokenApiExterno::obtenerAuthorizationHeader()];
+            $res = $this->callJsonApi($url, $headers, ['numero_telefono' => $numero]);
+
+            if (!empty($res['ok'])) {
+                $body = is_array($res['body']) ? $res['body'] : [];
+                if (isset($body['status']) && is_numeric($body['status']) && (int)$body['status'] >= 400) {
+                    $msg = isset($body['message']) ? (string)$body['message'] : 'No se pudo procesar la recuperación';
+                    echo json_encode(['ok'=>false,'message'=>$msg,'debug'=>['status_app'=>$body['status']]]); return;
+                }
+                $msg  = isset($body['mensaje']) ? (string)$body['mensaje'] : (isset($body['message']) ? (string)$body['message'] : 'Solicitud procesada');
+                echo json_encode(['ok'=>true,'message'=>$msg,'body'=>$body]); return;
+            }
+            $msg = 'No se pudo procesar la recuperación';
+            if (is_array($res['body'] ?? null)) { $msg = (string)($res['body']['message'] ?? $res['body']['mensaje'] ?? $msg); }
+            echo json_encode(['ok'=>false,'message'=>$msg,'debug'=>['status'=>$res['status']??null,'error'=>$res['error']??null,'raw'=>$res['body']??null]]);
+        } catch (\Throwable $e) { echo json_encode(['ok'=>false,'message'=>'Error interno']); }
+    }
+
+    // API: Mis Compras - Recargas (recharges/list)
+    public function userRechargesListComprasApi()
+    {
+        header('Content-Type: application/json; charset=UTF-8');
+        try {
+            $id = (string)($this->getPostParam('id') ?? (class_exists('Session') ? (Session::get('id') ?? '') : ''));
+            $id = trim($id);
+            if ($id === '') { echo json_encode(['ok'=>false,'message'=>'ID de usuario requerido']); return; }
+
+            $url = $this->getWlApiBaseUrl().'/recharges/list';
+            $headers = ['Authorization: ' . TokenApiExterno::obtenerAuthorizationHeader()];
+            $res = $this->callJsonApi($url, $headers, ['id' => $id]);
+
+            if (!empty($res['ok'])) {
+                $body = is_array($res['body']) ? $res['body'] : [];
+                if (isset($body['status']) && is_numeric($body['status']) && (int)$body['status'] >= 400) {
+                    $msg = isset($body['message']) ? (string)$body['message'] : 'No se pudo obtener el historial de compras';
+                    echo json_encode(['ok'=>false,'message'=>$msg,'debug'=>['status_app'=>$body['status']]]); return;
+                }
+                $data = isset($body['data']) && is_array($body['data']) ? $body['data'] : (isset($body[0]) ? $body : []);
+                $msg  = isset($body['mensaje']) ? (string)$body['mensaje'] : (isset($body['message']) ? (string)$body['message'] : 'Historial obtenido');
+                echo json_encode(['ok'=>true,'message'=>$msg,'body'=>['data'=>$data]]); return;
+            }
+            $msg = 'No se pudo obtener el historial de compras';
+            if (is_array($res['body'] ?? null)) { $msg = (string)($res['body']['message'] ?? $res['body']['mensaje'] ?? $msg); }
+            echo json_encode(['ok'=>false,'message'=>$msg,'debug'=>['status'=>$res['status']??null,'error'=>$res['error']??null,'raw'=>$res['body']??null]]);
+        } catch (\Throwable $e) { echo json_encode(['ok'=>false,'message'=>'Error interno']); }
+    }
+
+    // API: Mis Números - Listar
+    public function userNumbersListApi()
+    {
+        header('Content-Type: application/json; charset=UTF-8');
+        try {
+            $id = (string)($this->getPostParam('id') ?? (class_exists('Session') ? (Session::get('id') ?? '') : ''));
+            $id = trim($id);
+            if ($id === '') { echo json_encode(['ok'=>false,'message'=>'ID de usuario requerido']); return; }
+
+            $url = $this->getWlApiBaseUrl().'/usernumbers/usuarionumeros';
+            $headers = ['Authorization: ' . TokenApiExterno::obtenerAuthorizationHeader()];
+            $res = $this->callJsonApi($url, $headers, ['id' => $id]);
+
+            if (!empty($res['ok'])) {
+                $body = is_array($res['body']) ? $res['body'] : [];
+                if (isset($body['status']) && is_numeric($body['status']) && (int)$body['status'] >= 400) {
+                    $msg = isset($body['message']) ? (string)$body['message'] : 'No se pudo obtener la lista';
+                    echo json_encode(['ok'=>false,'message'=>$msg,'debug'=>['status_app'=>$body['status']]]); return;
+                }
+                $data = isset($body['data']) && is_array($body['data']) ? $body['data'] : (isset($body[0]) ? $body : []);
+                $msg  = isset($body['mensaje']) ? (string)$body['mensaje'] : (isset($body['message']) ? (string)$body['message'] : 'Lista obtenida');
+                echo json_encode(['ok'=>true,'message'=>$msg,'body'=>['data'=>$data]]); return;
+            }
+            $msg = 'No se pudo obtener la lista';
+            if (is_array($res['body'] ?? null)) { $msg = (string)($res['body']['message'] ?? $res['body']['mensaje'] ?? $msg); }
+            echo json_encode(['ok'=>false,'message'=>$msg,'debug'=>['status'=>$res['status']??null,'error'=>$res['error']??null,'raw'=>$res['body']??null]]);
+        } catch (\Throwable $e) { echo json_encode(['ok'=>false,'message'=>'Error interno']); }
+    }
+
+    // API: Mis Números - Registrar
+    public function userNumbersRegisterApi()
+    {
+        header('Content-Type: application/json; charset=UTF-8');
+        try {
+            $numero = preg_replace('/\D+/', '', (string)($this->getPostParam('numero') ?? ''));
+            $alias  = trim((string)($this->getPostParam('alias') ?? ''));
+            $email  = trim((string)($this->getPostParam('email') ?? ''));
+            $id     = (string)($this->getPostParam('id') ?? (class_exists('Session') ? (Session::get('id') ?? '') : ''));
+            if (strlen($numero) !== 10) { echo json_encode(['ok'=>false,'message'=>'Número inválido (10 dígitos).']); return; }
+            if ($alias === '' || mb_strlen($alias,'UTF-8') > 50) { echo json_encode(['ok'=>false,'message'=>'Alias inválido.']); return; }
+            if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) { echo json_encode(['ok'=>false,'message'=>'Correo inválido.']); return; }
+            if (trim($id) === '') { echo json_encode(['ok'=>false,'message'=>'ID de usuario requerido']); return; }
+
+            $url = $this->getWlApiBaseUrl().'/usernumbers/registrarnum';
+            $headers = ['Authorization: ' . TokenApiExterno::obtenerAuthorizationHeader()];
+            $payload = ['numero'=>$numero,'alias'=>$alias,'email'=>$email,'id'=>$id];
+            $res = $this->callJsonApi($url, $headers, $payload);
+            if (!empty($res['ok'])) {
+                $body = is_array($res['body']) ? $res['body'] : [];
+                if (isset($body['status']) && is_numeric($body['status']) && (int)$body['status'] >= 400) {
+                    $msg = isset($body['message']) ? (string)$body['message'] : 'No se pudo registrar el número';
+                    echo json_encode(['ok'=>false,'message'=>$msg,'debug'=>['status_app'=>$body['status'] ?? null,'raw'=>$body]]); return;
+                }
+                $msg = isset($body['mensaje']) ? (string)$body['mensaje'] : (isset($body['message']) ? (string)$body['message'] : 'Número registrado');
+                echo json_encode(['ok'=>true,'message'=>$msg,'body'=>$body]); return;
+            }
+            $msg = 'No se pudo registrar el número';
+            if (is_array($res['body'] ?? null)) { $msg = (string)($res['body']['message'] ?? $res['body']['detalle'] ?? $msg); }
+            echo json_encode(['ok'=>false,'message'=>$msg,'debug'=>['status'=>$res['status']??null,'error'=>$res['error']??null,'raw'=>$res['body']??null]]);
+        } catch (\Throwable $e) { echo json_encode(['ok'=>false,'message'=>'Error interno']); }
+    }
+
+    // API: Mis Números - Eliminar
+    public function userNumbersDeleteApi()
+    {
+        header('Content-Type: application/json; charset=UTF-8');
+        try {
+            $cv = preg_replace('/\D+/', '', (string)($this->getPostParam('cv_usuarionumero') ?? ''));
+            $id = (string)($this->getPostParam('id') ?? (class_exists('Session') ? (Session::get('id') ?? '') : ''));
+            if ($cv === '') { echo json_encode(['ok'=>false,'message'=>'cv_usuarionumero requerido']); return; }
+            if (trim($id) === '') { echo json_encode(['ok'=>false,'message'=>'ID de usuario requerido']); return; }
+
+            $url = $this->getWlApiBaseUrl().'/usernumbers/eliminarnumero';
+            $headers = ['Authorization: ' . TokenApiExterno::obtenerAuthorizationHeader()];
+            $res = $this->callJsonApi($url, $headers, ['cv_usuarionumero'=>$cv,'id'=>$id]);
+            if (!empty($res['ok'])) {
+                $body = is_array($res['body']) ? $res['body'] : [];
+                if (isset($body['status']) && is_numeric($body['status']) && (int)$body['status'] >= 400) {
+                    $msg = isset($body['message']) ? (string)$body['message'] : 'No se pudo eliminar el número';
+                    echo json_encode(['ok'=>false,'message'=>$msg,'debug'=>['status_app'=>$body['status'] ?? null,'raw'=>$body]]); return;
+                }
+                $msg = isset($body['mensaje']) ? (string)$body['mensaje'] : (isset($body['message']) ? (string)$body['message'] : 'Número eliminado');
+                echo json_encode(['ok'=>true,'message'=>$msg,'body'=>$body]); return;
+            }
+            $msg = 'No se pudo eliminar el número';
+            if (is_array($res['body'] ?? null)) { $msg = (string)($res['body']['message'] ?? $res['body']['detalle'] ?? $msg); }
+            echo json_encode(['ok'=>false,'message'=>$msg,'debug'=>['status'=>$res['status']??null,'error'=>$res['error']??null,'raw'=>$res['body']??null]]);
+        } catch (\Throwable $e) { echo json_encode(['ok'=>false,'message'=>'Error interno']); }
+    }
+
+    // API: Mis Números - Editar
+    public function userNumbersEditApi()
+    {
+        header('Content-Type: application/json; charset=UTF-8');
+        try {
+            $cv     = preg_replace('/\D+/', '', (string)($this->getPostParam('cv_usuarionumero') ?? ''));
+            $numero = preg_replace('/\D+/', '', (string)($this->getPostParam('numero') ?? ''));
+            $alias  = trim((string)($this->getPostParam('alias') ?? ''));
+            $email  = trim((string)($this->getPostParam('email') ?? ''));
+            $id     = (string)($this->getPostParam('id') ?? (class_exists('Session') ? (Session::get('id') ?? '') : ''));
+            if ($cv === '') { echo json_encode(['ok'=>false,'message'=>'cv_usuarionumero requerido']); return; }
+            if ($numero !== '' && strlen($numero) !== 10) { echo json_encode(['ok'=>false,'message'=>'Número inválido (10 dígitos).']); return; }
+            if ($alias !== '' && mb_strlen($alias,'UTF-8') > 50) { echo json_encode(['ok'=>false,'message'=>'Alias inválido.']); return; }
+            if ($email !== '' && !filter_var($email, FILTER_VALIDATE_EMAIL)) { echo json_encode(['ok'=>false,'message'=>'Correo inválido.']); return; }
+            if (trim($id) === '') { echo json_encode(['ok'=>false,'message'=>'ID de usuario requerido']); return; }
+
+            $url = $this->getWlApiBaseUrl().'/usernumbers/editarnumero';
+            $headers = ['Authorization: ' . TokenApiExterno::obtenerAuthorizationHeader()];
+            $payload = ['cv_usuarionumero'=>$cv,'id'=>$id];
+            if ($numero !== '') $payload['numero'] = $numero;
+            if ($alias  !== '') $payload['alias']  = $alias;
+            if ($email  !== '') $payload['email']  = $email;
+            $res = $this->callJsonApi($url, $headers, $payload);
+            if (!empty($res['ok'])) {
+                $body = is_array($res['body']) ? $res['body'] : [];
+                if (isset($body['status']) && is_numeric($body['status']) && (int)$body['status'] >= 400) {
+                    $msg = isset($body['message']) ? (string)$body['message'] : 'No se pudo editar el número';
+                    echo json_encode(['ok'=>false,'message'=>$msg,'debug'=>['status_app'=>$body['status'] ?? null,'raw'=>$body]]); return;
+                }
+                $msg = isset($body['mensaje']) ? (string)$body['mensaje'] : (isset($body['message']) ? (string)$body['message'] : 'Número actualizado');
+                echo json_encode(['ok'=>true,'message'=>$msg,'body'=>$body]); return;
+            }
+            $msg = 'No se pudo editar el número';
+            if (is_array($res['body'] ?? null)) { $msg = (string)($res['body']['message'] ?? $res['body']['detalle'] ?? $msg); }
+            echo json_encode(['ok'=>false,'message'=>$msg,'debug'=>['status'=>$res['status']??null,'error'=>$res['error']??null,'raw'=>$res['body']??null]]);
+        } catch (\Throwable $e) { echo json_encode(['ok'=>false,'message'=>'Error interno']); }
+    }
     protected function fetchPlanesNew(?string $userId = null): array
     {
         $debug = [
@@ -532,6 +813,8 @@ class personasController extends Controller
                 return $this->usuariosMisnumeros();
             case 'miscompras':
                 return $this->usuariosMiscompras();
+            case 'misrecargas':
+                return $this->usuariosMisrecargas();
             case 'miperfil':
                 return $this->usuariosMiperfil();
         }
@@ -674,6 +957,14 @@ class personasController extends Controller
         $this->_view->hideMainNav      = true;
         $this->_view->hideGlobalFooter = true;
         $this->_view->renderizar(array('@personas/recarUser.phtml/miscompras'));
+    }
+
+    public function usuariosMisrecargas()
+    {
+        $this->loadFooterPersonas();
+        $this->_view->hideMainNav      = true;
+        $this->_view->hideGlobalFooter = true;
+        $this->_view->renderizar(array('@personas/recarUser.phtml/misrecargas'));
     }
 
     public function usuariosMiperfil()

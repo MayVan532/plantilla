@@ -9,37 +9,45 @@
           <div style="font-size:18px; font-weight:600; color:#111827; margin-bottom:14px; text-align:left;">Mis Números</div>
 
           <div style="background:#ffffff; border-radius:18px; padding:18px 20px 20px 20px; box-shadow:0 18px 40px rgba(15,23,42,.08);">
+            <style>
+              @media (max-width: 640px){
+                .nums-wrap{ justify-content:flex-start !important; }
+                .nums-toolbar{ flex-direction: column !important; align-items: stretch !important; gap:10px !important; width:100% !important; }
+                .nums-toolbar label{ display:block !important; margin:0 0 4px 2px !important; text-align:left !important; }
+                .nums-toolbar input{ width:100% !important; }
+                #btnAgregarNumero{ width:100% !important; text-align:center !important; }
+              }
+            </style>
 
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <div class="nums-wrap" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
               <div></div>
-              <div style="display:flex; gap:10px; align-items:center;">
+              <div class="nums-toolbar" style="display:flex; gap:10px; align-items:center;">
                 <label style="font-size:13px; color:#4b5563; margin:0;">Buscar:</label>
-                <input type="text" style="border:1px solid #d1d5db; border-radius:4px; padding:4px 8px; font-size:13px; min-width:160px;" />
+                <input type="text" id="filtroBuscar" placeholder="Buscar..." style="border:1px solid #d1d5db; border-radius:4px; padding:4px 8px; font-size:13px; min-width:160px;" />
                 <a href="#" id="btnAgregarNumero" style="display:inline-flex; align-items:center; justify-content:center; padding:7px 14px; border-radius:4px; background:#00bcd4; border:1px solid #00bcd4; color:#f9fafb; font-size:13px; font-weight:600; text-decoration:none;">Agregar Nuevo Número</a>
               </div>
             </div>
 
-            <div style="border:1px solid #e5e7eb; border-radius:4px; overflow:hidden;">
-              <table style="width:100%; border-collapse:collapse; font-size:13px;">
+            <div style="border:1px solid #e5e7eb; border-radius:4px; overflow:auto;">
+              <table style="width:100%; min-width:640px; border-collapse:collapse; font-size:13px;">
                 <thead style="background:#f9fafb; color:#4b5563;">
                   <tr>
                     <th style="padding:8px 10px; border-bottom:1px solid #e5e7eb; text-align:left;">Número Teléfono</th>
                     <th style="padding:8px 10px; border-bottom:1px solid #e5e7eb; text-align:left;">Alias</th>
+                    <th style="padding:8px 10px; border-bottom:1px solid #e5e7eb; text-align:left; width:140px;">Acciones</th>
                   </tr>
                 </thead>
-                <tbody>
-                  <tr>
-                    <td colspan="2" style="padding:16px 10px; text-align:center; color:#9ca3af;">Ningún dato disponible en esta tabla</td>
-                  </tr>
+                <tbody id="numsTbody">
+                  <tr><td colspan="3" style="padding:16px 10px; text-align:center; color:#9ca3af;">Cargando…</td></tr>
                 </tbody>
               </table>
             </div>
 
             <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px; font-size:12px; color:#6b7280;">
-              <div>Mostrando registros del 0 al 0 de un total de 0 registros</div>
+              <div id="numsInfo">Mostrando registros del 0 al 0 de un total de 0 registros</div>
               <div style="display:flex; gap:6px;">
-                <button type="button" style="border:1px solid #d1d5db; background:#ffffff; color:#4b5563; font-size:12px; padding:4px 10px; border-radius:4px;">Anterior</button>
-                <button type="button" style="border:1px solid #d1d5db; background:#ffffff; color:#4b5563; font-size:12px; padding:4px 10px; border-radius:4px;">Siguiente</button>
+                <button id="numsPrev" type="button" style="border:1px solid #d1d5db; background:#ffffff; color:#4b5563; font-size:12px; padding:4px 10px; border-radius:4px;">Anterior</button>
+                <button id="numsNext" type="button" style="border:1px solid #d1d5db; background:#ffffff; color:#4b5563; font-size:12px; padding:4px 10px; border-radius:4px;">Siguiente</button>
               </div>
             </div>
 
@@ -48,43 +56,241 @@
       </div>
     </div>
   </div>
-</div>
 
-<div id="modalNumero" style="display:none; position:fixed; inset:0; background:rgba(15,23,42,.45); z-index:1050; align-items:center; justify-content:center;">
-  <div style="background:#ffffff; border-radius:10px; max-width:520px; width:100%; margin:0 16px; box-shadow:0 20px 45px rgba(15,23,42,.45);">
-    <div style="padding:14px 18px; border-bottom:1px solid #e5e7eb; display:flex; justify-content:space-between; align-items:center;">
-      <span style="font-size:16px; font-weight:600; color:#111827;">Nuevo</span>
-      <button type="button" id="btnCerrarNumeroX" style="border:none; background:transparent; font-size:18px; line-height:1; color:#9ca3af; cursor:pointer;">&times;</button>
-    </div>
-    <div style="padding:16px 18px 10px 18px;">
-      <div style="margin-bottom:10px;">
-        <input type="text" placeholder="Número teléfono" style="width:100%; border:1px solid #d1d5db; border-radius:4px; padding:8px 10px; font-size:14px;" />
+  <!-- Modal agregar/editar número (estilo panel) -->
+  <div id="numModal" style="display:none; position:fixed; inset:0; background:rgba(15,23,42,0.45); z-index:2147483646; align-items:center; justify-content:center; padding:16px;">
+    <div class="modal-card" style="background:#ffffff; width:100%; max-width:460px; border-radius:16px; box-shadow:0 24px 80px rgba(15,23,42,0.35); overflow:hidden;">
+      <div style="padding:14px 16px; font-weight:900; color:#ffffff; display:flex; justify-content:space-between; align-items:center; background:linear-gradient(90deg,#0ea5a6 0%, #06b6d4 100%);">
+        <span id="numModalTitle">Agregar número</span>
+        <button type="button" id="numModalClose" style="background:rgba(255,255,255,0.18); color:#ffffff; padding:6px 10px; border-radius:10px; border:0; font-weight:800; cursor:pointer;">Cerrar</button>
       </div>
-      <div>
-        <input type="text" placeholder="Alias" style="width:100%; border:1px solid #d1d5db; border-radius:4px; padding:8px 10px; font-size:14px;" />
+      <div style="padding:18px 16px 16px; display:grid; gap:12px;">
+        <input type="hidden" id="cv_usuarionumero" value="">
+        <label style="font-size:12px; color:#475569;">Número (10 dígitos)</label>
+        <input type="text" id="num_input" placeholder="Ej. 5512345678" style="padding:12px 14px; border:1px solid #e5e7eb; border-radius:10px;">
+        <label style="font-size:12px; color:#475569;">Alias</label>
+        <input type="text" id="alias_input" placeholder="Mi número" style="padding:12px 14px; border:1px solid #e5e7eb; border-radius:10px;">
+        <label style="font-size:12px; color:#475569;">Correo</label>
+        <input type="email" id="email_input" placeholder="correo@ejemplo.com" style="padding:12px 14px; border:1px solid #e5e7eb; border-radius:10px;">
+        <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:8px;">
+          <button type="button" id="numModalSave" style="background:#0ea5a6; color:#fff; padding:10px 16px; border-radius:10px; border:0; font-weight:900; cursor:pointer;">Guardar</button>
+        </div>
       </div>
-    </div>
-    <div style="padding:10px 18px 14px 18px; border-top:1px solid #e5e7eb; display:flex; justify-content:flex-end; gap:8px;">
-      <button type="button" id="btnCerrarNumero" style="border:1px solid #6b7280; background:#6b7280; color:#f9fafb; font-size:13px; padding:7px 14px; border-radius:4px;">Cerrar</button>
-      <button type="button" style="border:1px solid #00bcd4; background:#00bcd4; color:#f9fafb; font-size:13px; padding:7px 14px; border-radius:4px;">Guardar</button>
     </div>
   </div>
+
+  <!-- Modales de alerta/confirmación (estilo panel) -->
+  <style>
+    .usr-modal{ display:none; position:fixed; inset:0; z-index:2147483647; background:rgba(15,23,42,0.78); align-items:center; justify-content:center; padding:20px; }
+    .usr-modal .box{ width:100%; max-width:520px; background:#ffffff; border-radius:18px; box-shadow:0 24px 80px rgba(15,23,42,0.35); border:1px solid #e5e7eb; overflow:hidden; }
+    .usr-modal .head{ padding:14px 16px; color:#ffffff; font-weight:900; font-size:14px; display:flex; justify-content:space-between; align-items:center; background:linear-gradient(90deg,#0ea5a6 0%,#06b6d4 100%); }
+    .usr-modal .close-btn{ border:none; background:rgba(255,255,255,0.18); color:#ffffff; border-radius:10px; padding:6px 10px; font-weight:800; cursor:pointer; }
+    .usr-modal .body{ padding:18px; }
+    .usr-modal .row{ display:flex; gap:12px; align-items:flex-start; }
+    .usr-modal .ico{ width:42px; height:42px; border-radius:999px; display:flex; align-items:center; justify-content:center; flex:0 0 auto; }
+    .usr-modal .ico.success{ background:rgba(34,197,94,0.10); border:1px solid rgba(34,197,94,0.25); color:#16a34a; }
+    .usr-modal .ico.error{   background:rgba(239,68,68,0.10); border:1px solid rgba(239,68,68,0.25); color:#dc2626; }
+    .usr-modal .txt-title{ font-size:16px; font-weight:900; color:#0f172a; margin-bottom:6px; }
+    .usr-modal .txt-sub{ font-size:13px; color:#475569; line-height:1.6; }
+    .usr-modal .spinner{ width:24px; height:24px; border:3px solid #e5e7eb; border-top-color:#00bcd4; border-radius:50%; animation: spin .9s linear infinite; flex-shrink:0; }
+    @keyframes spin{ to{ transform: rotate(360deg); } }
+    .usr-modal .actions{ padding:10px 16px; display:flex; justify-content:flex-end; gap:10px; }
+    .usr-modal .btn{ border:0; border-radius:10px; padding:8px 14px; font-weight:800; cursor:pointer; }
+    .usr-modal .btn.pri{ background:#0ea5a6; color:#fff; }
+    .usr-modal .btn.sec{ background:#e5e7eb; color:#0f172a; }
+  </style>
+  <div id="numsAlertModal" class="usr-modal" role="dialog" aria-modal="true">
+    <div class="box">
+      <div class="head"><span id="numsAlertTitle">Procesando</span><button type="button" id="numsAlertClose" class="close-btn">Cerrar</button></div>
+      <div class="body">
+        <div class="row" id="numsRowLoading" style="display:flex; align-items:center; gap:12px;"><span class="spinner" aria-hidden="true"></span><div class="txt-sub" id="numsLoadingText">Procesando…</div></div>
+        <div class="row" id="numsRowResult" style="display:none;"><div id="numsIcon" class="ico success"><i id="numsIconI" class="fas fa-check" aria-hidden="true"></i></div><div><div id="numsMsgTitle" class="txt-title">Resultado</div><div id="numsMsgText" class="txt-sub"></div><div id="numsAutoCloseHint" class="txt-sub" style="margin-top:8px; color:#64748b; font-size:12px;">Este mensaje se cerrará automáticamente en 6 segundos.</div></div></div>
+      </div>
+      <div class="actions" id="numsActions" style="display:none;"><button id="numsOk" type="button" class="btn pri">Aceptar</button></div>
+    </div>
+  </div>
+
+  <div id="numsConfirm" class="usr-modal" role="dialog" aria-modal="true">
+    <div class="box">
+      <div class="head"><span>Confirmar</span><button type="button" id="numsConfirmClose" class="close-btn">Cerrar</button></div>
+      <div class="body"><div class="txt-sub" id="numsConfirmText">¿Seguro que deseas continuar?</div></div>
+      <div class="actions"><button id="numsConfirmNo" class="btn sec" type="button">Cancelar</button><button id="numsConfirmYes" class="btn pri" type="button">Aceptar</button></div>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      var tbody = document.getElementById('numsTbody');
+      var info  = document.getElementById('numsInfo');
+      var buscar= document.getElementById('filtroBuscar');
+      var btnAdd= document.getElementById('btnAgregarNumero');
+      var modal = document.getElementById('numModal');
+      var mTitle= document.getElementById('numModalTitle');
+      var mClose= document.getElementById('numModalClose');
+      var mSave = document.getElementById('numModalSave');
+      var inNum = document.getElementById('num_input');
+      var inAlias=document.getElementById('alias_input');
+      var inEmail=document.getElementById('email_input');
+      var inCv  = document.getElementById('cv_usuarionumero');
+      // Alert modal refs
+      var alertM = document.getElementById('numsAlertModal');
+      var aTitle = document.getElementById('numsAlertTitle');
+      var aClose = document.getElementById('numsAlertClose');
+      var aRowL  = document.getElementById('numsRowLoading');
+      var aRowR  = document.getElementById('numsRowResult');
+      var aIcon  = document.getElementById('numsIcon');
+      var aIconI = document.getElementById('numsIconI');
+      var aMsgT  = document.getElementById('numsMsgTitle');
+      var aMsgTx = document.getElementById('numsMsgText');
+      var aActs  = document.getElementById('numsActions');
+      var aOk    = document.getElementById('numsOk');
+      var aAuto  = document.getElementById('numsAutoCloseHint');
+      var autoTimer=null, autoInt=null;
+
+      // Confirm modal refs
+      var cM = document.getElementById('numsConfirm');
+      var cClose = document.getElementById('numsConfirmClose');
+      var cText  = document.getElementById('numsConfirmText');
+      var cNo    = document.getElementById('numsConfirmNo');
+      var cYes   = document.getElementById('numsConfirmYes');
+      var cCb    = null;
+      var rows = [];
+      var page = 1;
+      var per  = 10;
+
+      function onlyDigits(s){ return (s||'').replace(/\D+/g,''); }
+      function emailOk(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+      function ensureBody(el){ try{ if(el && el.parentNode!==document.body){ document.body.appendChild(el);} }catch(e){} }
+      function openAlert(opts){
+        opts=opts||{}; var t=opts.title|| (opts.loading?'Procesando':'Aviso'); aTitle.textContent=t;
+        aRowL.style.display=opts.loading?'flex':'none'; aRowR.style.display=opts.loading?'none':'flex';
+        if(autoTimer){ clearTimeout(autoTimer); autoTimer=null; }
+        if(opts.loading){ if(aAuto){ aAuto.style.display='none'; } if(autoTimer){clearTimeout(autoTimer); autoTimer=null;} if(autoInt){clearInterval(autoInt); autoInt=null;} ensureBody(alertM); alertM.style.display='flex'; return; }
+        var ok=(opts.type||'success')==='success'; aIcon.className='ico '+(ok?'success':'error'); aIconI.className= ok? 'fas fa-check':'fas fa-times';
+        aMsgT.textContent = opts.message|| (ok?'Operación exitosa':'Operación fallida');
+        try{ aMsgTx.innerHTML=(opts.detail||'')+''; }catch(e){ aMsgTx.textContent=opts.detail||''; }
+        aActs.style.display='flex'; aOk.onclick=function(){ closeAlert(); };
+        ensureBody(alertM); alertM.style.display='flex';
+        var ms = (typeof opts.autoCloseMs==='number' && opts.autoCloseMs>=1000)? opts.autoCloseMs : 6000;
+        if(aAuto){
+          var remaining = Math.round(ms/1000);
+          aAuto.style.display='block';
+          aAuto.textContent = 'Este mensaje se cerrará automáticamente en '+remaining+' segundos.';
+          if(autoInt){ clearInterval(autoInt); autoInt=null; }
+          autoInt = setInterval(function(){
+            remaining -= 1;
+            if(remaining <= 0){ clearInterval(autoInt); autoInt=null; return; }
+            try{ aAuto.textContent = 'Este mensaje se cerrará automáticamente en '+remaining+' segundos.'; }catch(e){}
+          }, 1000);
+        }
+        autoTimer=setTimeout(closeAlert, ms);
+      }
+      function closeAlert(){ if(autoTimer){clearTimeout(autoTimer); autoTimer=null;} if(autoInt){clearInterval(autoInt); autoInt=null;} alertM.style.display='none'; aActs.style.display='none'; }
+
+      function openConfirm(text, cb){ cCb = typeof cb==='function'? cb:null; cText.textContent=text||'¿Seguro que deseas continuar?'; ensureBody(cM); cM.style.display='flex'; }
+      function closeConfirm(){ cM.style.display='none'; cCb=null; }
+      cNo && cNo.addEventListener('click', closeConfirm);
+      cClose && cClose.addEventListener('click', closeConfirm);
+      cYes && cYes.addEventListener('click', function(){ var fn=cCb; closeConfirm(); if(fn) fn(); });
+      aClose && aClose.addEventListener('click', function(){ closeAlert(); });
+      alertM && alertM.addEventListener('click', function(e){ if(e.target===alertM){ closeAlert(); } });
+      function openModal(edit){ mTitle.textContent = edit? 'Editar número' : 'Agregar número'; modal.style.display='flex'; }
+      function closeModal(){ modal.style.display='none'; inCv.value=''; inNum.value=''; inAlias.value=''; inEmail.value=''; }
+
+      function getFiltered(){
+        var q = (buscar.value||'').toLowerCase();
+        return rows.filter(function(r){ return !q || (String(r.numero_lista_usuario||'').toLowerCase().indexOf(q)>-1) || (String(r.alias||'').toLowerCase().indexOf(q)>-1) || (String(r.email||'').toLowerCase().indexOf(q)>-1); });
+      }
+
+      function render(){
+        var data = getFiltered();
+        var total = data.length;
+        if(!total){ tbody.innerHTML = '<tr><td colspan="3" style="padding:16px 10px; text-align:center; color:#9ca3af;">Sin registros</td></tr>'; info.textContent='Mostrando 0 de 0'; setPagerState(0,0); return; }
+        var pages = Math.max(1, Math.ceil(total / per));
+        if(page>pages) page=pages;
+        var start=(page-1)*per, end=Math.min(start+per,total);
+        var slice = data.slice(start,end);
+        tbody.innerHTML = slice.map(function(r){
+          var cv = r.cv_usuarionumero!=null? r.cv_usuarionumero:'';
+          var num= r.numero_lista_usuario||'';
+          var alias = r.alias||'';
+          var email = r.email||'';
+          return '<tr>'+
+            '<td style="padding:10px; border-bottom:1px solid #f1f5f9;">'+num+'</td>'+
+            '<td style="padding:10px; border-bottom:1px solid #f1f5f9;">'+alias+'</td>'+
+            '<td style="padding:8px; border-bottom:1px solid #f1f5f9;">'+
+              '<button data-act="edit" data-cv="'+cv+'" data-num="'+num+'" data-alias="'+alias.replace(/"/g,'&quot;')+'" data-email="'+email.replace(/"/g,'&quot;')+'" style="border:1px solid #d1d5db; background:#fff; padding:4px 8px; border-radius:4px; font-size:12px; margin-right:6px;">Editar</button>'+
+              '<button data-act="del" data-cv="'+cv+'" style="border:1px solid #ef4444; background:#fff; color:#ef4444; padding:4px 8px; border-radius:4px; font-size:12px;">Eliminar</button>'+
+            '</td>'+
+          '</tr>';
+        }).join('');
+        info.textContent='Mostrando registros del '+(start+1)+' al '+end+' de un total de '+total+' registros';
+        setPagerState(page, Math.max(1, Math.ceil(total/per)));
+      }
+
+      function setPagerState(p, pages){
+        var prev=document.getElementById('numsPrev');
+        var next=document.getElementById('numsNext');
+        if(prev){ prev.disabled=(p<=1||pages<=1); prev.style.opacity=prev.disabled?'.6':'1'; prev.style.cursor=prev.disabled?'not-allowed':'pointer'; }
+        if(next){ next.disabled=(p>=pages||pages<=1); next.style.opacity=next.disabled?'.6':'1'; next.style.cursor=next.disabled?'not-allowed':'pointer'; }
+      }
+
+      function fetchList(){
+        tbody.innerHTML='<tr><td colspan="3" style="padding:16px 10px; text-align:center; color:#9ca3af;">Cargando…</td></tr>';
+        fetch('<?php echo BASE_URL; ?>personas/userNumbersListApi', {method:'POST'}).then(function(r){return r.json().catch(function(){return {ok:false};});}).then(function(j){
+          if(j && j.ok){ rows = (j.body && j.body.data) ? j.body.data : []; }
+          else { rows = []; }
+          render();
+        }).catch(function(){ rows=[]; render(); });
+      }
+
+      function save(isEdit){
+        var num = onlyDigits(inNum.value).slice(0,10); inNum.value=num;
+        var alias=(inAlias.value||'').trim(); var email=(inEmail.value||'').trim();
+        if(!isEdit && num.length!==10){ openAlert({type:'error', message:'Número inválido (10 dígitos)'}); return; }
+        if(alias==='' || alias.length>50){ openAlert({type:'error', message:'Alias inválido'}); return; }
+        if(email==='' || !emailOk(email)){ openAlert({type:'error', message:'Correo inválido'}); return; }
+        openAlert({loading:true, title:'Guardando'});
+        var fd=new FormData();
+        if(isEdit){ fd.append('cv_usuarionumero', inCv.value||''); if(num) fd.append('numero', num); if(alias) fd.append('alias', alias); if(email) fd.append('email', email); var url='<?php echo BASE_URL; ?>personas/userNumbersEditApi'; }
+        else { fd.append('numero', num); fd.append('alias', alias); fd.append('email', email); var url='<?php echo BASE_URL; ?>personas/userNumbersRegisterApi'; }
+        fetch(url,{method:'POST', body: fd}).then(function(r){return r.json().catch(function(){return {ok:false};});}).then(function(j){
+          if(j&&j.ok){ openAlert({type:'success', message:j.message||'Guardado correctamente'}); closeModal(); fetchList(); }
+          else { openAlert({type:'error', message:(j&&j.message)? j.message:'No se pudo guardar'}); }
+        }).catch(function(){ openAlert({type:'error', message:'Error de red'}); });
+      }
+
+      function del(cv){ if(!cv){ return; } openConfirm('¿Eliminar número?', function(){ openAlert({loading:true, title:'Eliminando'}); var fd=new FormData(); fd.append('cv_usuarionumero', String(cv)); fetch('<?php echo BASE_URL; ?>personas/userNumbersDeleteApi',{method:'POST', body: fd}).then(function(r){return r.json().catch(function(){return {ok:false};});}).then(function(j){ if(j&&j.ok){ openAlert({type:'success', message:j.message||'Eliminado'}); fetchList(); } else { openAlert({type:'error', message:(j&&j.message)? j.message:'No se pudo eliminar'}); } }).catch(function(){ openAlert({type:'error', message:'Error de red'}); }); }); }
+
+      // Handlers
+      btnAdd && btnAdd.addEventListener('click', function(e){ e.preventDefault(); inCv.value=''; inNum.value=''; inAlias.value=''; inEmail.value=''; openModal(false); });
+      mClose && mClose.addEventListener('click', function(){ closeModal(); });
+      mSave  && mSave.addEventListener('click', function(){ var isEdit = !!(inCv.value||''); save(isEdit); });
+      buscar && buscar.addEventListener('input', function(){ page=1; render(); });
+      var prevBtn=document.getElementById('numsPrev');
+      var nextBtn=document.getElementById('numsNext');
+      prevBtn && prevBtn.addEventListener('click', function(){ if(page>1){ page--; render(); } });
+      nextBtn && nextBtn.addEventListener('click', function(){ var total=getFiltered().length; var pages=Math.max(1, Math.ceil(total/per)); if(page<pages){ page++; render(); } });
+      document.addEventListener('click', function(e){
+        var b = e.target;
+        if(b && b.getAttribute('data-act')==='edit'){
+          inCv.value = b.getAttribute('data-cv')||'';
+          inNum.value = b.getAttribute('data-num')||'';
+          inAlias.value = b.getAttribute('data-alias')||'';
+          inEmail.value = b.getAttribute('data-email')||'';
+          openModal(true);
+        } else if(b && b.getAttribute('data-act')==='del'){
+          del(b.getAttribute('data-cv')||'');
+        }
+      });
+
+      // Input masking
+      inNum && inNum.addEventListener('input', function(){ this.value = onlyDigits(this.value).slice(0,10); });
+
+      // Init
+      fetchList();
+    })();
+  </script>
 </div>
 
-<script>
-  (function() {
-    var btnAgregar = document.getElementById('btnAgregarNumero');
-    var modal      = document.getElementById('modalNumero');
-    var btnCerrar  = document.getElementById('btnCerrarNumero');
-    var btnCerrarX = document.getElementById('btnCerrarNumeroX');
-    if (!btnAgregar || !modal) return;
-    function abrir()  { modal.style.display = 'flex'; }
-    function cerrar() { modal.style.display = 'none'; }
-    btnAgregar.addEventListener('click', function(e) { e.preventDefault(); abrir(); });
-    if (btnCerrar)  btnCerrar.addEventListener('click', function(e) { e.preventDefault(); cerrar(); });
-    if (btnCerrarX) btnCerrarX.addEventListener('click', function(e) { e.preventDefault(); cerrar(); });
-    modal.addEventListener('click', function(e) {
-      if (e.target === modal) { cerrar(); }
-    });
-  })();
-</script>
+

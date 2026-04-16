@@ -14,13 +14,14 @@
               <div></div>
               <div style="display:flex; gap:10px; align-items:center;">
                 <label style="font-size:13px; color:#4b5563; margin:0;">Buscar:</label>
-                <input type="text" style="border:1px solid #d1d5db; border-radius:4px; padding:4px 8px; font-size:13px; min-width:160px;" />
+                <input id="portBuscar" type="text" style="border:1px solid #d1d5db; border-radius:4px; padding:4px 8px; font-size:13px; min-width:160px;" />
                 <a href="#" id="btnNuevaPortabilidad" style="display:inline-flex; align-items:center; justify-content:center; padding:7px 14px; border-radius:4px; background:#00bcd4; border:1px solid #00bcd4; color:#f9fafb; font-size:13px; font-weight:600; text-decoration:none;">Nueva Portabilidad</a>
+                <span title="Origen de solicitud: Página Web sección usuarios (3)" style="font-size:12px; color:#64748b; border:1px solid #e5e7eb; padding:4px 8px; border-radius:999px;">Origen: Web usuarios (3)</span>
               </div>
             </div>
 
-            <div style="border:1px solid #e5e7eb; border-radius:4px; overflow:hidden;">
-              <table style="width:100%; border-collapse:collapse; font-size:13px;">
+            <div style="border:1px solid #e5e7eb; border-radius:4px; overflow:auto;">
+              <table style="width:100%; min-width:760px; border-collapse:collapse; font-size:13px;">
                 <thead style="background:#f9fafb; color:#4b5563;">
                   <tr>
                     <th style="padding:8px 10px; border-bottom:1px solid #e5e7eb; text-align:left;">Estatus</th>
@@ -31,19 +32,19 @@
                     <th style="padding:8px 10px; border-bottom:1px solid #e5e7eb; text-align:left;">Folio</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody id="portTbody">
                   <tr>
-                    <td colspan="6" style="padding:16px 10px; text-align:center; color:#9ca3af;">Ningún dato disponible en esta tabla</td>
+                    <td colspan="6" style="padding:16px 10px; text-align:center; color:#9ca3af;">Cargando…</td>
                   </tr>
                 </tbody>
               </table>
             </div>
 
             <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px; font-size:12px; color:#6b7280;">
-              <div>Mostrando registros del 0 al 0 de un total de 0 registros</div>
+              <div id="portInfo">Mostrando registros del 0 al 0 de un total de 0 registros</div>
               <div style="display:flex; gap:6px;">
-                <button type="button" style="border:1px solid #d1d5db; background:#ffffff; color:#4b5563; font-size:12px; padding:4px 10px; border-radius:4px;">Anterior</button>
-                <button type="button" style="border:1px solid #d1d5db; background:#ffffff; color:#4b5563; font-size:12px; padding:4px 10px; border-radius:4px;">Siguiente</button>
+                <button id="portPrev" type="button" style="border:1px solid #d1d5db; background:#ffffff; color:#4b5563; font-size:12px; padding:4px 10px; border-radius:4px;">Anterior</button>
+                <button id="portNext" type="button" style="border:1px solid #d1d5db; background:#ffffff; color:#4b5563; font-size:12px; padding:4px 10px; border-radius:4px;">Siguiente</button>
               </div>
             </div>
 
@@ -60,18 +61,19 @@
       <span style="font-size:16px; font-weight:600; color:#111827;">Nuevo</span>
       <button type="button" id="btnCerrarModalX" style="border:none; background:transparent; font-size:18px; line-height:1; color:#9ca3af; cursor:pointer;">&times;</button>
     </div>
-    <div style="padding:16px 18px 10px 18px;">
-      <div style="margin-bottom:10px;">
-        <input type="text" placeholder="Número de teléfono" style="width:100%; border:1px solid #d1d5db; border-radius:4px; padding:8px 10px; font-size:14px;" />
+    <div style="padding:16px 18px 10px 18px; display:grid; gap:10px;">
+      <div>
+        <input id="pTel" type="text" placeholder="Número de teléfono" inputmode="numeric" maxlength="10" oninput="this.value=this.value.replace(/\D+/g,'').slice(0,10);" style="width:100%; border:1px solid #d1d5db; border-radius:4px; padding:8px 10px; font-size:14px;" />
       </div>
       <div style="display:flex; gap:10px;">
-        <input type="text" placeholder="ICC" style="flex:1; border:1px solid #d1d5db; border-radius:4px; padding:8px 10px; font-size:14px;" />
-        <input type="text" placeholder="Nip" style="flex:1; border:1px solid #d1d5db; border-radius:4px; padding:8px 10px; font-size:14px;" />
+        <input id="pIcc" type="text" placeholder="ICC" inputmode="numeric" maxlength="22" oninput="this.value=this.value.replace(/\D+/g,'').slice(0,22);" style="flex:1; border:1px solid #d1d5db; border-radius:4px; padding:8px 10px; font-size:14px;" />
+        <input id="pNip" type="text" placeholder="NIP" inputmode="numeric" maxlength="4" oninput="this.value=this.value.replace(/\D+/g,'').slice(0,4);" style="flex:1; border:1px solid #d1d5db; border-radius:4px; padding:8px 10px; font-size:14px;" />
       </div>
+      <div id="pMsg" style="font-size:13px; color:#64748b; min-height:18px;"></div>
     </div>
     <div style="padding:10px 18px 14px 18px; border-top:1px solid #e5e7eb; display:flex; justify-content:flex-end; gap:8px;">
       <button type="button" id="btnCerrarModal" style="border:1px solid #6b7280; background:#6b7280; color:#f9fafb; font-size:13px; padding:7px 14px; border-radius:4px;">Cerrar</button>
-      <button type="button" style="border:1px solid #00bcd4; background:#00bcd4; color:#f9fafb; font-size:13px; padding:7px 14px; border-radius:4px;">Guardar</button>
+      <button type="button" id="pSave" style="border:1px solid #00bcd4; background:#00bcd4; color:#f9fafb; font-size:13px; padding:7px 14px; border-radius:4px;">Guardar</button>
     </div>
   </div>
 </div>
@@ -82,6 +84,19 @@
     var modal      = document.getElementById('modalPortabilidad');
     var btnCerrar  = document.getElementById('btnCerrarModal');
     var btnCerrarX = document.getElementById('btnCerrarModalX');
+    var pTel = document.getElementById('pTel');
+    var pIcc = document.getElementById('pIcc');
+    var pNip = document.getElementById('pNip');
+    var pMsg = document.getElementById('pMsg');
+    var pSave= document.getElementById('pSave');
+    var tbody = document.getElementById('portTbody');
+    var buscar= document.getElementById('portBuscar');
+    var info  = document.getElementById('portInfo');
+    var prev  = document.getElementById('portPrev');
+    var next  = document.getElementById('portNext');
+    var rows  = [];
+    var page  = 1;
+    var per   = 10;
     if (!btnNueva || !modal) return;
     function abrir()  { modal.style.display = 'flex'; }
     function cerrar() { modal.style.display = 'none'; }
@@ -91,5 +106,76 @@
     modal.addEventListener('click', function(e) {
       if (e.target === modal) { cerrar(); }
     });
+
+    function setMsg(t, ok){ if(!pMsg) return; pMsg.textContent = t||''; pMsg.style.color = ok? '#16a34a' : '#dc2626'; }
+
+    function fetchList(){
+      if(tbody){ tbody.innerHTML='<tr><td colspan="6" style="padding:16px 10px; text-align:center; color:#9ca3af;">Cargando…</td></tr>'; }
+      fetch('<?php echo BASE_URL; ?>personas/userPortabilitiesListApi', {method:'POST'})
+        .then(function(r){ return r.json().catch(function(){ return {ok:false}; }); })
+        .then(function(j){ if(j&&j.ok){ rows=(j.body&&j.body.data)? j.body.data: []; page=1; render(); } else { rows=[]; render(); } })
+        .catch(function(){ rows=[]; render(); });
+    }
+
+    function getFiltered(){ var q=(buscar&&buscar.value||'').toLowerCase(); return rows.filter(function(r){ return !q || (String(r.numero||r.numero_telefono||'').toLowerCase().indexOf(q)>-1) || (String(r.icc||r.iccid||'').toLowerCase().indexOf(q)>-1) || (String(r.nip||'').toLowerCase().indexOf(q)>-1) || (String(r.folio||r.cv_porta||'').toLowerCase().indexOf(q)>-1); }); }
+
+    function render(){
+      var data=getFiltered(); var total=data.length; if(total===0){ tbody.innerHTML='<tr><td colspan="6" style="padding:16px 10px; text-align:center; color:#9ca3af;">Sin registros</td></tr>'; if(info) info.textContent='Mostrando 0 de 0'; setPager(); return; }
+      var pages=Math.max(1, Math.ceil(total/per)); if(page>pages) page=pages; var start=(page-1)*per; var end=Math.min(start+per,total); var slice=data.slice(start,end);
+      function labelEst(v){
+        var t = (typeof v==='number')? v : (isFinite(parseInt(v,10))? parseInt(v,10): v);
+        if (typeof t==='number'){
+          switch(t){
+            case 0: return 'Pendiente (0)';
+            case 1: return 'En proceso (1)';
+            case 2: return 'Completada (2)';
+            case 3: return 'Cancelada (3)';
+            default: return 'Estatus '+t;
+          }
+        }
+        return (t||'-');
+      }
+      tbody.innerHTML=slice.map(function(r){
+        var est = labelEst(r.estatus||r.status);
+        var num = r.numero || r.numero_telefono || '';
+        var icc = r.icc || r.iccid || '';
+        var nip = r.nip || '';
+        var fecha = r.fecha_solicitud || r.fecha || '';
+        var folio = r.folio || r.cv_porta || '';
+        return '<tr>'+
+          '<td style="padding:10px; border-bottom:1px solid #f1f5f9;">'+
+            '<span style="display:inline-block; font-size:12px; padding:3px 8px; border-radius:999px; background:rgba(103,232,249,.12); border:1px solid rgba(103,232,249,.25); color:#0ea5a6;">'+est+'</span>'+
+          '</td>'+
+          '<td style="padding:10px; border-bottom:1px solid #f1f5f9;">'+num+'</td>'+
+          '<td style="padding:10px; border-bottom:1px solid #f1f5f9;">'+icc+'</td>'+
+          '<td style="padding:10px; border-bottom:1px solid #f1f5f9;">'+nip+'</td>'+
+          '<td style="padding:10px; border-bottom:1px solid #f1f5f9;">'+fecha+'</td>'+
+          '<td style="padding:10px; border-bottom:1px solid #f1f5f9;">'+folio+'</td>'+
+        '</tr>';
+      }).join('');
+      if(info) info.textContent='Mostrando registros del '+(start+1)+' al '+end+' de un total de '+total+' registros'; setPager();
+    }
+
+    function setPager(){ var total=getFiltered().length; var pages=Math.max(1, Math.ceil(total/per)); if(prev){ prev.disabled=(page<=1||pages<=1); } if(next){ next.disabled=(page>=pages||pages<=1); } }
+
+    if(buscar){ buscar.addEventListener('input', function(){ page=1; render(); }); }
+    if(prev){ prev.addEventListener('click', function(){ if(page>1){ page--; render(); } }); }
+    if(next){ next.addEventListener('click', function(){ var total=getFiltered().length; var pages=Math.max(1, Math.ceil(total/per)); if(page<pages){ page++; render(); } }); }
+
+    if(pSave){ pSave.addEventListener('click', function(){
+      var tel=(pTel&&pTel.value||'').replace(/\D+/g,''); var icc=(pIcc&&pIcc.value||'').replace(/\D+/g,''); var nip=(pNip&&pNip.value||'').replace(/\D+/g,'');
+      if(tel.length!==10){ setMsg('Número inválido (10 dígitos).', false); return; }
+      if(icc.length<15 || icc.length>22){ setMsg('ICC inválido.', false); return; }
+      if(nip.length!==4){ setMsg('NIP inválido (4 dígitos).', false); return; }
+      setMsg('Enviando…', true);
+      var body='numero_a_portar='+encodeURIComponent(tel)+'&icc='+encodeURIComponent(icc)+'&nip='+encodeURIComponent(nip);
+      fetch('<?php echo BASE_URL; ?>personas/userPortabilitiesRegisterApi', {method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body: body})
+        .then(function(r){ return r.json().catch(function(){ return {ok:false}; }); })
+        .then(function(j){ if(j&&j.ok){ setMsg(j.message||'Registro exitoso.', true); fetchList(); setTimeout(function(){ cerrar(); pTel.value=''; pIcc.value=''; pNip.value=''; setMsg('', true); }, 800); } else { setMsg((j&&j.message)? j.message:'No se pudo registrar.', false); } })
+        .catch(function(){ setMsg('Error de red', false); });
+    }); }
+
+    // Init
+    fetchList();
   })();
 </script>

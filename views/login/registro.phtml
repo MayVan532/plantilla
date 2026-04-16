@@ -50,6 +50,11 @@
       background:rgba(148,163,184,0.18);
       color:#0f172a !important;
     }
+    /* Banner hero login/registro */
+    .login-hero{position:relative; width:100%; height:220px; overflow:hidden; margin:0;}
+    .login-hero a{display:block; width:100%; height:100%;}
+    .login-hero img{width:100%; height:100%; display:block; object-fit:cover; object-position:center;}
+    @media (min-width: 768px){ .login-hero{height:300px;} }
   </style>
   <?php if (isset($_GET['debugcms']) && $_GET['debugcms']=='1') { ?>
     <?php if (isset($this->debug_pending_register)) { ?>
@@ -82,14 +87,14 @@
   <?php } ?>
 
   <?php if (!empty($this->login_banner1)) { ?>
-    <div style="position:relative;max-width:100%;overflow:hidden;margin:0; height:140px;">
+    <div class="login-hero">
       <?php $href1 = isset($this->login_banner1_link) ? trim((string)$this->login_banner1_link) : ''; ?>
-      <?php if ($href1) { ?><a href="<?php echo htmlspecialchars($href1); ?>" style="display:block; height:100%;"><?php } ?>
-      <img src="<?php echo htmlspecialchars($this->login_banner1); ?>" style="width:100%;height:100%;display:block;object-fit:cover;object-position:center;" />
+      <?php if ($href1) { ?><a href="<?php echo htmlspecialchars($href1); ?>"><?php } ?>
+      <img src="<?php echo htmlspecialchars($this->login_banner1); ?>" />
       <?php if ($href1) { ?></a><?php } ?>
     </div>
   <?php } else { ?>
-    <div style="position:relative;max-width:100%;overflow:hidden;margin:0; height:140px; border-radius:8px; background:linear-gradient(180deg,#eef5fb 0%,#e6eef7 100%); border:1px solid #d9e5f0; box-shadow:0 6px 18px rgba(15,23,42,0.05);"></div>
+    <div class="login-hero" style="border-radius:8px; background:linear-gradient(180deg,#eef5fb 0%,#e6eef7 100%); border:1px solid #d9e5f0; box-shadow:0 6px 18px rgba(15,23,42,0.05);"></div>
   <?php } ?>
 
   <?php if (!empty($this->login_banner2)) { ?>
@@ -284,6 +289,13 @@
               <i class="far fa-eye" aria-hidden="true"></i>
             </button>
           </div>
+          <!-- Checklist de contraseña -->
+          <div id="pwChecklist" style="margin:6px 0 10px; font-size:12px; color:#475569; display:grid; gap:4px;">
+            <div class="pw-item" data-rule="len" style="display:flex; align-items:center; gap:8px;"><span class="ico" style="width:18px; height:18px; border-radius:50%; border:1px solid #e5e7eb; display:inline-flex; align-items:center; justify-content:center; color:#dc2626;">✗</span> Mínimo 8 caracteres</div>
+            <div class="pw-item" data-rule="num" style="display:flex; align-items:center; gap:8px;"><span class="ico" style="width:18px; height:18px; border-radius:50%; border:1px solid #e5e7eb; display:inline-flex; align-items:center; justify-content:center; color:#dc2626;">✗</span> Incluye al menos un número</div>
+            <div class="pw-item" data-rule="upper" style="display:flex; align-items:center; gap:8px;"><span class="ico" style="width:18px; height:18px; border-radius:50%; border:1px solid #e5e7eb; display:inline-flex; align-items:center; justify-content:center; color:#dc2626;">✗</span> Incluye al menos una mayúscula</div>
+            <div class="pw-item" data-rule="sym" style="display:flex; align-items:center; gap:8px;"><span class="ico" style="width:18px; height:18px; border-radius:50%; border:1px solid #e5e7eb; display:inline-flex; align-items:center; justify-content:center; color:#dc2626;">✗</span> Incluye al menos un símbolo</div>
+          </div>
           <div style="position:relative;">
             <input type="password" id="reg_password2" name="password2" placeholder="Repetir Contraseña" required
               style="width:100%; padding:10px 42px 10px 14px; margin:6px 0; border:1px solid #e5e7eb; border-radius:10px; font-size:14px; outline:none; background:#f9fafb;">
@@ -292,6 +304,7 @@
               <i class="far fa-eye" aria-hidden="true"></i>
             </button>
           </div>
+          <div id="pwMatch" style="font-size:12px; color:#dc2626; margin-top:2px;">Las contraseñas no coinciden</div>
           <input type="text" name="telefono" placeholder="Teléfono" required
             inputmode="numeric" autocomplete="tel" maxlength="10" pattern="[0-9]{10}"
             oninput="this.value=this.value.replace(/\D+/g,'').slice(0,10);"
@@ -464,6 +477,40 @@
         if (!btn) return;
         togglePassword(btn);
       });
+
+      // Validación en vivo de contraseña
+      var pw = document.getElementById('reg_password');
+      var pw2 = document.getElementById('reg_password2');
+      var checklist = document.getElementById('pwChecklist');
+      var matchMsg = document.getElementById('pwMatch');
+
+      function setItem(rule, ok){
+        if(!checklist) return; var el = checklist.querySelector('.pw-item[data-rule="'+rule+'"]'); if(!el) return;
+        var ico = el.querySelector('.ico'); if(!ico) return;
+        if(ok){ ico.textContent='✔'; ico.style.color='#16a34a'; ico.style.borderColor='rgba(34,197,94,0.45)'; }
+        else { ico.textContent='✗'; ico.style.color='#dc2626'; ico.style.borderColor='#e5e7eb'; }
+      }
+
+      function evalPw(){
+        var v = (pw && pw.value) ? pw.value : '';
+        var rLen = v.length >= 8;
+        var rNum = /\d/.test(v);
+        var rUp  = /[A-ZÁÉÍÓÚÑ]/.test(v);
+        var rSym = /[^A-Za-zÁÉÍÓÚÑ0-9]/.test(v);
+        setItem('len', rLen); setItem('num', rNum); setItem('upper', rUp); setItem('sym', rSym);
+        evalMatch();
+      }
+
+      function evalMatch(){
+        var a = (pw && pw.value) ? pw.value : '';
+        var b = (pw2 && pw2.value) ? pw2.value : '';
+        var ok = a !== '' && b !== '' && a === b;
+        if(matchMsg){ matchMsg.textContent = ok ? 'Las contraseñas coinciden' : 'Las contraseñas no coinciden'; matchMsg.style.color = ok ? '#16a34a' : '#dc2626'; }
+      }
+
+      if(pw){ pw.addEventListener('input', evalPw); pw.addEventListener('blur', evalPw); }
+      if(pw2){ pw2.addEventListener('input', evalMatch); pw2.addEventListener('blur', evalMatch); }
+      evalPw();
     })();
   </script>
 </div>

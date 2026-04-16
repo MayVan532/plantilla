@@ -1,0 +1,167 @@
+<div class="personas-main-content" style="background:#fbfdff; min-height:100vh; padding:0;">
+
+  <div class="container-fluid">
+    <div class="row no-gutters">
+      <?php $activeMenu = 'misrecargas'; require __DIR__ . '/_sidebarUsuarios.phtml'; ?>
+      <div class="col-12 col-lg-10" style="padding-left:0; padding-right:0;">
+        <?php require __DIR__ . '/_headerUsuarios.phtml'; ?>
+        <div style="padding:16px 24px 24px 24px;">
+          <div style="font-size:18px; font-weight:600; color:#111827; margin-bottom:14px; text-align:left;">Mis Recargas</div>
+
+          <div style="background:#ffffff; border-radius:18px; padding:18px 20px 20px 20px; box-shadow:0 18px 40px rgba(15,23,42,.08);">
+
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+              <div></div>
+              <div style="display:flex; gap:10px; align-items:center;">
+                <label style="font-size:13px; color:#4b5563; margin:0;">Buscar:</label>
+                <input type="text" id="recBuscar" placeholder="Buscar..." style="border:1px solid #d1d5db; border-radius:4px; padding:4px 8px; font-size:13px; min-width:180px;" />
+              </div>
+            </div>
+
+            <div style="border:1px solid #e5e7eb; border-radius:4px; overflow:auto;">
+              <table style="width:100%; min-width:760px; border-collapse:collapse; font-size:13px;">
+                <thead style="background:#f9fafb; color:#4b5563;">
+                  <tr>
+                    <th style="padding:8px 10px; border-bottom:1px solid #e5e7eb; text-align:left;">Folio</th>
+                    <th style="padding:8px 10px; border-bottom:1px solid #e5e7eb; text-align:left;">Número</th>
+                    <th style="padding:8px 10px; border-bottom:1px solid #e5e7eb; text-align:left;">Plan</th>
+                    <th style="padding:8px 10px; border-bottom:1px solid #e5e7eb; text-align:left;">Fecha</th>
+                    <th style="padding:8px 10px; border-bottom:1px solid #e5e7eb; text-align:left;">Total</th>
+                    <th style="padding:8px 10px; border-bottom:1px solid #e5e7eb; text-align:left;">Estatus</th>
+                    <th style="padding:8px 10px; border-bottom:1px solid #e5e7eb; text-align:left; width:120px;">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="recsTbody">
+                  <tr><td colspan="7" style="padding:16px 10px; text-align:center; color:#9ca3af;">Cargando…</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px; font-size:12px; color:#6b7280;">
+              <div id="recsInfo">Mostrando registros del 0 al 0 de un total de 0 registros</div>
+              <div style="display:flex; gap:6px;">
+                <button id="recPrev" type="button" style="border:1px solid #d1d5db; background:#ffffff; color:#4b5563; font-size:12px; padding:4px 10px; border-radius:4px;">Anterior</button>
+                <button id="recNext" type="button" style="border:1px solid #d1d5db; background:#ffffff; color:#4b5563; font-size:12px; padding:4px 10px; border-radius:4px;">Siguiente</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Detalle Recarga (estilo panel) -->
+<div id="recDetModal" style="display:none; position:fixed; inset:0; background:rgba(15,23,42,0.45); z-index:2147483646; align-items:center; justify-content:center; padding:16px;">
+  <div style="background:#ffffff; width:100%; max-width:560px; border-radius:16px; box-shadow:0 24px 80px rgba(15,23,42,0.35); overflow:hidden;">
+    <div style="padding:14px 16px; font-weight:900; color:#ffffff; display:flex; justify-content:space-between; align-items:center; background:linear-gradient(90deg,#0ea5a6 0%, #06b6d4 100%);">
+      <span>Detalle de recarga</span>
+      <button type="button" id="recDetClose" style="background:rgba(255,255,255,0.18); color:#ffffff; padding:6px 10px; border-radius:10px; border:0; font-weight:800; cursor:pointer;">Cerrar</button>
+    </div>
+    <div id="recDetBody" style="padding:18px 16px 16px; display:grid; gap:8px; font-size:13px; color:#0f172a;"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var tbody = document.getElementById('recsTbody');
+  var info  = document.getElementById('recsInfo');
+  var buscar= document.getElementById('recBuscar');
+  var m     = document.getElementById('recDetModal');
+  var mC    = document.getElementById('recDetClose');
+  var mB    = document.getElementById('recDetBody');
+  var rows  = [];
+  var page = 1;
+  var per  = 10;
+
+  function fmtDateIso(s){ try{ var d=new Date(s); if(isNaN(d.getTime())) return s||''; var pad=n=>(''+n).padStart(2,'0'); return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+' '+pad(d.getHours())+':'+pad(d.getMinutes()); }catch(_){ return s||''; } }
+  function dinero(v){ var n=parseFloat(v); if(!isFinite(n)) n=0; return '$'+n.toFixed(2); }
+
+  function getFiltered(){
+    var q=(buscar&&buscar.value||'').toLowerCase();
+    return rows.filter(function(r){ return !q || (String(r.cv_recarga||'').toLowerCase().indexOf(q)>-1) || (String(r.numero_telefono||'').toLowerCase().indexOf(q)>-1) || (String(r.nombre_comercial||'').toLowerCase().indexOf(q)>-1); });
+  }
+
+  function render(){
+    var data = getFiltered();
+    var total = data.length;
+    if(total === 0){ tbody.innerHTML='<tr><td colspan="7" style="padding:16px 10px; text-align:center; color:#9ca3af;">Sin registros</td></tr>'; info.textContent='Mostrando 0 de '+(rows.length||0); setPagerState(0,0,0); return; }
+    var pages = Math.max(1, Math.ceil(total / per));
+    if(page > pages) page = pages;
+    var start = (page - 1) * per;
+    var end   = Math.min(start + per, total);
+    var slice = data.slice(start, end);
+    tbody.innerHTML=slice.map(function(r){
+      var est = (r.estatus_paquete==1)? 'Activo' : (r.estatus_paquete==0? 'Pendiente' : (r.estatus||'-'));
+      var total = r.precio_likephone_wl || r.precio || 0;
+      return '<tr>'+
+        '<td style="padding:10px; border-bottom:1px solid #f1f5f9;">'+(r.cv_recarga||'')+'</td>'+
+        '<td style="padding:10px; border-bottom:1px solid #f1f5f9;">'+(r.numero_telefono||'')+'</td>'+
+        '<td style="padding:10px; border-bottom:1px solid #f1f5f9;">'+(r.nombre_comercial||'')+'</td>'+
+        '<td style="padding:10px; border-bottom:1px solid #f1f5f9;">'+fmtDateIso(r.fecha_recarga)+'</td>'+
+        '<td style="padding:10px; border-bottom:1px solid #f1f5f9;">'+dinero(total)+'</td>'+
+        '<td style="padding:10px; border-bottom:1px solid #f1f5f9;">'+est+'</td>'+
+        '<td style="padding:8px; border-bottom:1px solid #f1f5f9;">'+
+          '<button class="rec-det" data-cv="'+(r.cv_recarga||'')+'" style="border:1px solid #d1d5db; background:#fff; padding:4px 8px; border-radius:4px; font-size:12px;">Ver detalle</button>'+
+        '</td>'+
+      '</tr>';
+    }).join('');
+    info.textContent='Mostrando registros del '+(start+1)+' al '+end+' de un total de '+total+' registros';
+    setPagerState(page, pages, total);
+  }
+
+  function setPagerState(p, pages, total){
+    var prev = document.getElementById('recPrev');
+    var next = document.getElementById('recNext');
+    if(prev){ prev.disabled = (p<=1 || pages<=1); prev.style.opacity = prev.disabled? '.6' : '1'; prev.style.cursor = prev.disabled? 'not-allowed':'pointer'; }
+    if(next){ next.disabled = (p>=pages || pages<=1); next.style.opacity = next.disabled? '.6' : '1'; next.style.cursor = next.disabled? 'not-allowed':'pointer'; }
+  }
+
+  function openModal(item){
+    if(!item){ return; }
+    var html='';
+    function row(k,v){ return '<div style="display:flex; gap:8px;"><div style="width:160px; color:#475569;">'+k+':</div><div style="flex:1; color:#0f172a;">'+v+'</div></div>'; }
+    html += row('Folio', (item.cv_recarga||''));
+    html += row('Número', (item.numero_telefono||''));
+    html += row('Plan', (item.nombre_comercial||''));
+    html += row('Fecha', fmtDateIso(item.fecha_recarga));
+    html += row('Precio', dinero(item.precio_likephone_wl||item.precio||0));
+    html += row('Vigencia (días)', (item.vigencia||''));
+    html += row('Datos (MB)', (item.datos||''));
+    html += row('Voz (min)', (item.voz||''));
+    html += row('SMS', (item.sms||''));
+    if(item.ticket){ html += '<div style="margin-top:10px; padding-top:10px; border-top:1px solid #e5e7eb; color:#475569; line-height:1.5;">'+(item.ticket+'').replace(/\n/g,'<br>')+'</div>'; }
+    mB.innerHTML=html; m.style.display='flex';
+  }
+
+  function closeModal(){ m.style.display='none'; mB.innerHTML=''; }
+  mC && mC.addEventListener('click', closeModal);
+  m && m.addEventListener('click', function(e){ if(e.target===m){ closeModal(); } });
+
+  document.addEventListener('click', function(e){
+    var b=e.target;
+    if(b && b.classList && b.classList.contains('rec-det')){
+      var cv=b.getAttribute('data-cv');
+      var it=rows.find(function(x){ return String(x.cv_recarga||'')===String(cv||''); });
+      openModal(it||null);
+    }
+  });
+
+  buscar && buscar.addEventListener('input', function(){ page = 1; render(); });
+  var prevBtn = document.getElementById('recPrev');
+  var nextBtn = document.getElementById('recNext');
+  prevBtn && prevBtn.addEventListener('click', function(){ if(page>1){ page--; render(); } });
+  nextBtn && nextBtn.addEventListener('click', function(){ var total=getFiltered().length; var pages=Math.max(1, Math.ceil(total/per)); if(page<pages){ page++; render(); } });
+
+  function fetchList(){
+    tbody.innerHTML='<tr><td colspan="7" style="padding:16px 10px; text-align:center; color:#9ca3af;">Cargando…</td></tr>';
+    fetch('<?php echo BASE_URL; ?>personas/userRechargesListApi', {method:'POST'})
+      .then(function(r){ return r.json().catch(function(){ return {ok:false}; }); })
+      .then(function(j){ if(j&&j.ok){ rows=(j.body&&j.body.data)? j.body.data : []; } else { rows=[]; } render(); })
+      .catch(function(){ rows=[]; render(); });
+  }
+
+  fetchList();
+})();
+</script>

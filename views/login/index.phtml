@@ -42,6 +42,11 @@
   #frm_nuevo .btn-login{transition:transform .12s ease, filter .12s ease;}
   #frm_nuevo .btn-login:hover{filter:brightness(1.03); transform:translateY(-1px);}
   #frm_nuevo .btn-login:active{filter:brightness(0.98); transform:translateY(0);}
+  /* Banner hero login */
+  .login-hero{position:relative; width:100%; height:220px; overflow:hidden; margin:0;}
+  .login-hero a{display:block; width:100%; height:100%;}
+  .login-hero img{width:100%; height:100%; display:block; object-fit:cover; object-position:center;}
+  @media (min-width: 768px){ .login-hero{height:300px;} }
 </style>
 <div class="personas-main-content" style="background:#ffffff;">
 <?php if (isset($_GET['debugcms']) && $_GET['debugcms']=='1') { ?>
@@ -60,14 +65,15 @@
 <?php } ?>
 
 <?php if (!empty($this->login_banner1)) { ?>
-  <div style="position:relative;max-width:100%;overflow:hidden;margin:0; height:140px;">
+  <div class="login-hero">
     <?php $href1 = isset($this->login_banner1_link) ? trim((string)$this->login_banner1_link) : ''; ?>
-    <?php if ($href1) { ?><a href="<?php echo htmlspecialchars($href1); ?>" style="display:block; height:100%;"><?php } ?>
-    <img src="<?php echo htmlspecialchars($this->login_banner1); ?>" style="width:100%;height:100%;display:block;object-fit:cover;object-position:center;" />
+    <?php if ($href1) { ?><a href="<?php echo htmlspecialchars($href1); ?>">
+    <?php } ?>
+    <img src="<?php echo htmlspecialchars($this->login_banner1); ?>" />
     <?php if ($href1) { ?></a><?php } ?>
   </div>
 <?php } else { ?>
-  <div style="position:relative;max-width:100%;overflow:hidden;margin:0; height:140px; border-radius:8px; background:linear-gradient(180deg,#eef5fb 0%,#e6eef7 100%); border:1px solid #d9e5f0; box-shadow:0 6px 18px rgba(15,23,42,0.05);"></div>
+  <div class="login-hero" style="border-radius:8px; background:linear-gradient(180deg,#eef5fb 0%,#e6eef7 100%); border:1px solid #d9e5f0; box-shadow:0 6px 18px rgba(15,23,42,0.05);"></div>
 <?php } ?>
 
 <?php if (!empty($this->login_banner2)) { ?>
@@ -172,6 +178,11 @@
     Iniciar Sesión
   </button>
 
+  <!-- Link recuperar -->
+  <div style="margin-top:10px; font-size:13px;">
+    <a href="#" id="lnkForgot" style="color:#00bcd4; text-decoration:none; font-weight:800;">¿Olvidaste tu contraseña?</a>
+  </div>
+
   <!-- Link registro -->
   <p style="margin-top: 15px; font-size: 13px; color: #666;">
     ¿No tienes cuenta? <a href="<?php echo BASE_URL; ?>registro" style="color: #00bcd4; text-decoration: none; font-weight: bold;">Regístrate</a>
@@ -233,5 +244,57 @@
       icon.classList.toggle('fa-eye-slash', isHidden);
     }
   }
+</script>
+
+<!-- Modal Recuperar contraseña -->
+<div id="forgotModal" style="display:none; position:fixed; inset:0; background:rgba(15,23,42,0.55); z-index:2147483646; align-items:center; justify-content:center; padding:16px;">
+  <div style="background:#ffffff; width:100%; max-width:460px; border-radius:16px; box-shadow:0 24px 80px rgba(15,23,42,0.35); overflow:hidden; border:1px solid rgba(2,132,199,0.12);">
+    <div style="padding:14px 16px; font-weight:900; color:#ffffff; display:flex; justify-content:space-between; align-items:center; background:linear-gradient(90deg,#0ea5a6 0%, #06b6d4 100%);">
+      <span>Recuperar contraseña</span>
+      <button type="button" id="fgClose" style="background:rgba(255,255,255,0.18); color:#ffffff; padding:6px 10px; border-radius:10px; border:0; font-weight:800; cursor:pointer;">Cerrar</button>
+    </div>
+    <div style="padding:16px; display:grid; gap:10px;">
+      <label for="fgTel" style="font-size:13px; color:#475569;">Ingresa tu teléfono</label>
+      <input type="tel" id="fgTel" placeholder="Ej. 5512345678" inputmode="numeric" maxlength="10"
+             oninput="this.value=this.value.replace(/\D+/g,'').slice(0,10);"
+             style="padding:12px 14px; border:1px solid #e5e7eb; border-radius:10px;">
+      <div id="fgMsg" style="font-size:13px; color:#64748b; min-height:18px;"></div>
+      <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:4px;">
+        <button type="button" id="fgSend" style="background:#00bcd4; color:#fff; padding:10px 16px; border-radius:10px; border:0; font-weight:900; cursor:pointer;">Enviar</button>
+      </div>
+    </div>
+  </div>
+  </div>
+
+<script>
+  (function(){
+    var link = document.getElementById('lnkForgot');
+    var m = document.getElementById('forgotModal');
+    var mClose = document.getElementById('fgClose');
+    var tel = document.getElementById('fgTel');
+    var send = document.getElementById('fgSend');
+    var msg = document.getElementById('fgMsg');
+
+    function openM(){ if(m){ m.style.display='flex'; if(tel){ tel.focus(); } msg.textContent=''; } }
+    function closeM(){ if(m){ m.style.display='none'; } }
+
+    function setMsg(text, ok){ if(!msg) return; msg.textContent = text||''; msg.style.color = ok? '#16a34a' : '#dc2626'; }
+
+    function enviar(){
+      var v = (tel && tel.value ? tel.value.replace(/\D+/g,'') : '');
+      if(v.length !== 10){ setMsg('Ingresa un teléfono válido de 10 dígitos.', false); return; }
+      setMsg('Enviando...', true);
+      fetch('<?php echo BASE_URL; ?>personas/resetPasswordApi', {
+        method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body: 'numero_telefono='+encodeURIComponent(v)
+      }).then(function(r){ return r.json().catch(function(){ return {ok:false, message:'Error'}; }); })
+        .then(function(j){ if(j&&j.ok){ setMsg(j.message||'Solicitud procesada. Revisa tu WhatsApp.', true); } else { setMsg((j&&j.message)? j.message:'No se pudo procesar la solicitud.', false); } })
+        .catch(function(){ setMsg('Error de red', false); });
+    }
+
+    if(link) link.addEventListener('click', function(e){ e.preventDefault(); openM(); });
+    if(mClose) mClose.addEventListener('click', closeM);
+    if(m) m.addEventListener('click', function(e){ if(e.target===m){ closeM(); } });
+    if(send) send.addEventListener('click', enviar);
+  })();
 </script>
 </div>
