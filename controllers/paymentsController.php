@@ -92,11 +92,15 @@ class paymentsController extends Controller
 
     // Nota: cooldown del lado servidor deshabilitado por solicitud del usuario
 
+    $uid = '';
+    try { if (class_exists('Session')) { $uid = (string)(Session::get('id') ?? ''); } } catch (\Throwable $e) { $uid=''; }
+
     $payload = [
       'cv_plan'     => $cv_plan,
       'numero_data' => $numero_data,
     ];
     if ($email !== '') { $payload['email'] = $email; }
+    if ($uid !== '') { $payload['id'] = $uid; }
 
     $url = 'https://apis.likephone.mx/api/v1/whitelabels/generic/payments/crearcheckoutrecargaconekta';
     if ($debugFlag) { $this->logDebugCheckout('recarga:request', ['url'=>$url, 'payload'=>$payload]); }
