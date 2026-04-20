@@ -61,58 +61,97 @@
       </div>
       <?php } ?>
 
-      <!-- Formulario -->
+      <!-- Contacto directo (informativo) -->
       <div class="form-column col-lg-5 col-md-12 col-sm-12 formcontactores"
         style="background:#fff;padding:40px 30px;border-radius:16px;box-shadow:0 16px 40px rgba(6,25,41,0.08);border:1px solid rgba(30,198,227,0.08);flex:1;min-width:320px;">
-        
+
+        <?php 
+          // Extraer dinámicamente WhatsApp y correo desde los bloques del CMS (igual que en el sidebar)
+          $linksRawCard = [];
+          if (!empty($this->contacto_social_links) && is_array($this->contacto_social_links)) { $linksRawCard = array_merge($linksRawCard, $this->contacto_social_links); }
+          if (!empty($this->contacto_social) && is_array($this->contacto_social)) { $linksRawCard = array_merge($linksRawCard, $this->contacto_social); }
+          $mailCard = '';$waCard='';$waLinkCard='';
+          foreach ($linksRawCard as $r) {
+            $tipo=''; $lnk='';
+            if (is_array($r)) {
+              $tipo = strtolower((string)($r['tipo'] ?? ''));
+              $lnk  = (string)($r['link'] ?? '');
+              if ($lnk==='') { $lnk = (string)($r['contenido'] ?? ''); }
+              if ($lnk==='') { $lnk = (string)($r['valor'] ?? ''); }
+              if ($lnk==='') { $lnk = (string)($r['url'] ?? ''); }
+              if ($lnk==='') { $lnk = (string)($r['texto'] ?? ''); }
+              if ($lnk==='') { $lnk = (string)($r['titulo'] ?? ''); }
+            } elseif (is_object($r)) {
+              $tipo = strtolower((string)($r->tipo ?? ''));
+              $lnk  = (string)($r->link ?? '');
+              if ($lnk==='') { $lnk = (string)($r->contenido ?? ''); }
+              if ($lnk==='') { $lnk = (string)($r->valor ?? ''); }
+              if ($lnk==='') { $lnk = (string)($r->url ?? ''); }
+              if ($lnk==='') { $lnk = (string)($r->texto ?? ''); }
+              if ($lnk==='') { $lnk = (string)($r->titulo ?? ''); }
+            } else { continue; }
+            if (!$mailCard && strpos($tipo,'envelope')!==false && $lnk!=='') { $mailCard = trim(preg_replace('/^mailto:/i','',$lnk)); }
+            if (!$waCard && strpos($tipo,'whatsapp')!==false && $lnk!=='') { $waCard = preg_replace('/\D+/','',$lnk); $waLinkCard = $lnk; }
+          }
+          // Fallback: intentar detectar en listas planas
+          $valsCard = [];
+          foreach ($linksRawCard as $r) { if (is_string($r)) $valsCard[] = $r; }
+          foreach ($valsCard as $u) {
+            $lu = strtolower(trim($u));
+            if (!$mailCard) {
+              if (strpos($lu,'mailto:')===0) { $mailCard = preg_replace('/^mailto:\s*/i','', $u); }
+              elseif (preg_match('/^[\w.+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/', trim($u))) { $mailCard = trim($u); }
+            }
+            if (!$waCard) {
+              if (strpos($lu,'wa.me/')!==false || strpos($lu,'api.whatsapp')!==false || strpos($lu,'whatsapp.com')!==false) {
+                $waCard = preg_replace('/\D+/','', $u); $waLinkCard = trim($u);
+              } elseif (strpos($lu,'phone=')!==false) {
+                if (preg_match('/phone=([0-9]+)/i', $u, $m)) { $waCard = $m[1]; }
+                $waLinkCard = trim($u);
+              }
+            }
+          }
+          // Normalizar wa link
+          $waHrefCard = '';
+          if ($waCard) {
+            $waHrefCard = $waLinkCard ?: ('https://wa.me/'.$waCard);
+            if (stripos($waHrefCard,'http') !== 0) {
+              if (stripos($waHrefCard,'send?') !== false) { $waHrefCard = 'https://api.whatsapp.com/' . ltrim($waHrefCard,'/'); }
+              else { $waHrefCard = 'https://' . ltrim($waHrefCard,'/'); }
+            }
+          }
+        ?>
+
         <div style="background:#1ec6e3;color:#fff;text-align:center;font-weight:700;font-size:32px;line-height:1.2;padding:18px 24px;border-radius:16px 16px 0 0;width:calc(100% + 60px);margin-left:-30px;margin-top:-36px;margin-bottom:20px;">
           Contáctanos
         </div>
-        <div class="text" style="font-size:15px;line-height:22px;color:#3b4b59;margin-bottom:20px;">
-          Para dudas y aclaraciones utiliza el formulario de contacto y un agente de servicio al cliente se contactará contigo.
+        <div class="text" style="font-size:15px;line-height:22px;color:#3b4b59;margin-bottom:18px;">
+          Escríbenos por WhatsApp o envíanos un correo y con gusto te atenderemos.
         </div>
 
-        <form method="post" id="frm_nuevo" class="custom-validation">
-          <div class="form-group" style="margin-bottom:15px;">
-            <input type="text" name="x1" id="x1" placeholder="Nombre" required
-              style="width:100%;padding:12px 14px;border:1px solid #d9e2ea;border-radius:10px;font-size:15px;outline:none;transition:box-shadow .25s,border-color .25s;"
-              onfocus="this.style.borderColor='#1ec6e3';this.style.boxShadow='0 0 0 4px rgba(30,198,227,0.18)';"
-              onblur="this.style.borderColor='#d9e2ea';this.style.boxShadow='none';">
-          </div>
-          <div class="form-group" style="margin-bottom:15px;">
-            <input type="email" name="x2" id="x2" placeholder="Correo electrónico" required
-              style="width:100%;padding:12px 14px;border:1px solid #d9e2ea;border-radius:10px;font-size:15px;outline:none;transition:box-shadow .25s,border-color .25s;"
-              onfocus="this.style.borderColor='#1ec6e3';this.style.boxShadow='0 0 0 4px rgba(30,198,227,0.18)';"
-              onblur="this.style.borderColor='#d9e2ea';this.style.boxShadow='none';">
-          </div>
-          <div class="form-group" style="margin-bottom:15px;">
-            <input type="text" name="x3" id="x3" placeholder="Teléfono" required
-              style="width:100%;padding:12px 14px;border:1px solid #d9e2ea;border-radius:10px;font-size:15px;outline:none;transition:box-shadow .25s,border-color .25s;"
-              onfocus="this.style.borderColor='#1ec6e3';this.style.boxShadow='0 0 0 4px rgba(30,198,227,0.18)';"
-              onblur="this.style.borderColor='#d9e2ea';this.style.boxShadow='none';">
-          </div>
-          <div class="form-group" style="margin-bottom:15px;">
-            <input type="text" name="x4" id="x4" placeholder="Asunto" required
-              style="width:100%;padding:12px 14px;border:1px solid #d9e2ea;border-radius:10px;font-size:15px;outline:none;transition:box-shadow .25s,border-color .25s;"
-              onfocus="this.style.borderColor='#1ec6e3';this.style.boxShadow='0 0 0 4px rgba(30,198,227,0.18)';"
-              onblur="this.style.borderColor='#d9e2ea';this.style.boxShadow='none';">
-          </div>
-          <div class="form-group" style="margin-bottom:25px;">
-            <textarea name="x5" id="x5" placeholder="Mensaje"
-              style="width:100%;padding:12px 14px;border:1px solid #d9e2ea;border-radius:10px;font-size:15px;height:110px;resize:none;outline:none;transition:box-shadow .25s,border-color .25s;"
-              onfocus="this.style.borderColor='#1ec6e3';this.style.boxShadow='0 0 0 4px rgba(30,198,227,0.18)';"
-              onblur="this.style.borderColor='#d9e2ea';this.style.boxShadow='none';"></textarea>
-          </div>
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <?php if (!empty($waHrefCard)) { ?>
+          <a href="<?php echo htmlspecialchars($waHrefCard); ?>" target="_blank" rel="noopener"
+             style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;background:linear-gradient(90deg,#00c853,#00e676);color:#fff;padding:12px 18px;border-radius:9999px;text-decoration:none;font-weight:800;font-size:15px;box-shadow:0 10px 22px rgba(0,200,83,0.45);">
+            <i class="fab fa-whatsapp" style="font-size:18px;color:#fff;"></i>
+            Contáctanos por WhatsApp
+          </a>
+          <?php } ?>
 
-          <div class="form-group" style="text-align:center;">
-            <button class="theme-btn btn-style-three" type="submit" name="Submit"
-              style="background:linear-gradient(90deg,#1ec6e3 0%,#12a9c1 100%);color:#fff;padding:12px 40px;border:none;border-radius:0;font-size:16px;font-weight:700;cursor:pointer;box-shadow:0 12px 26px rgba(30,198,227,0.35);transition:transform .2s ease,box-shadow .2s ease;"
-              onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 16px 32px rgba(30,198,227,0.45)';"
-              onmouseout="this.style.transform='none';this.style.boxShadow='0 12px 26px rgba(30,198,227,0.35)';">
-              Enviar
-            </button>
+          <?php if (!empty($mailCard)) { ?>
+          <a href="<?php echo 'mailto:'.htmlspecialchars($mailCard); ?>"
+             style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;background:linear-gradient(90deg,#0f3c8f,#102a6b);color:#fff;padding:12px 18px;border-radius:9999px;text-decoration:none;font-weight:800;font-size:15px;box-shadow:0 10px 22px rgba(15,23,42,0.35);">
+            <i class="fas fa-envelope" style="font-size:18px;color:#fff;"></i>
+            Envíanos un correo
+          </a>
+          <?php } ?>
+
+          <?php if (empty($waHrefCard) && empty($mailCard)) { ?>
+          <div style="padding:12px 14px; border:1px dashed #cbd5e1; border-radius:10px; color:#475569; font-size:14px; text-align:center;">
+            Próximamente compartiremos nuestros canales de contacto. Mientras tanto, puedes seguirnos en nuestras redes sociales.
           </div>
-        </form>
+          <?php } ?>
+        </div>
       </div>
 
       <!-- Redes Sociales y Contacto -->
